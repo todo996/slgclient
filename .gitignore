@@ -5,7 +5,13 @@
 library/
 temp/
 local/
-build/
+
+# Chỉ lưu bản Web Desktop dùng để deploy Vercel.
+# Các nền tảng build khác vẫn bị bỏ qua.
+build/*
+!build/web-desktop/
+!build/web-desktop/**
+
 profiles/
 native
 #//////////////////////////
