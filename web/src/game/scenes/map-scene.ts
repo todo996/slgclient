@@ -4,6 +4,7 @@ import { MapCoordinate } from "../map/map-coordinate";
 import { MapInputController } from "../map/map-input-controller";
 import { MapResourceCatalog } from "../map/map-resource-catalog";
 import { MapResourceLayer } from "../map/map-resource-layer";
+import { MapEntityLayer } from "../map/map-entity-layer";
 import { MapEntityStore } from "../../legacy/map/map-entity-store";
 import { MapScanController } from "../../legacy/map/map-scan-controller";
 import { NetManager } from "../../legacy/network/socket/net-manager";
@@ -39,6 +40,7 @@ export class MapScene extends Phaser.Scene {
   private resourceLayer: MapResourceLayer | null = null;
   private scanController: MapScanController | null = null;
   private entityStore: MapEntityStore | null = null;
+  private entityLayer: MapEntityLayer | null = null;
   private mapBootstrapReady = false;
   private lastCenterCellId = -1;
 
@@ -62,6 +64,27 @@ export class MapScene extends Phaser.Scene {
       "/game-assets/world/atlases/map_res.png",
       "/game-assets/world/atlases/map_res.json",
     );
+    this.load.atlas(
+      "map-frame-color",
+      "/game-assets/world/atlases/map_frame_color.png",
+      "/game-assets/world/atlases/map_frame_color.json",
+    );
+    this.load.atlas(
+      "component-outside",
+      "/game-assets/world/atlases/component_outside.png",
+      "/game-assets/world/atlases/component_outside.json",
+    );
+    this.load.atlas(
+      "map-qibing",
+      "/game-assets/world/atlases/map_qibing.png",
+      "/game-assets/world/atlases/map_qibing.json",
+    );
+    this.load.image("system-city", "/game-assets/world/sys_city.png");
+    this.load.image("army-arrow", "/game-assets/world/army_arrow.png");
+    this.load.json(
+      "army-animation-manifest",
+      "/game-assets/world/army_animations.json",
+    );
 
     for (const tileset of TILESET_TEXTURES) {
       this.load.image(tileset.key, tileset.url);
@@ -81,6 +104,7 @@ export class MapScene extends Phaser.Scene {
 
   update(): void {
     this.syncMapCenter();
+    this.entityLayer?.update();
   }
 
   private createWorldMap(): void {
@@ -127,6 +151,12 @@ export class MapScene extends Phaser.Scene {
     }
 
     this.entityStore = new MapEntityStore(this.map.width);
+    this.entityLayer = new MapEntityLayer(
+      this,
+      this.coordinate,
+      areaGrid,
+      this.entityStore,
+    );
     this.resourceLayer = new MapResourceLayer(
       this,
       this.coordinate,
@@ -217,7 +247,10 @@ export class MapScene extends Phaser.Scene {
   private readonly onMapBootstrapReady = (
     snapshot?: MapBootstrapSnapshot,
   ): void => {
-    if (snapshot) this.entityStore?.seedRoleProperty(snapshot.roleProperty);
+    if (snapshot) {
+      this.entityLayer?.setRoleProperty(snapshot.roleProperty);
+      this.entityStore?.seedRoleProperty(snapshot.roleProperty);
+    }
     this.mapBootstrapReady = true;
     this.lastCenterCellId = -1;
     this.syncMapCenter();
@@ -227,9 +260,11 @@ export class MapScene extends Phaser.Scene {
     this.game.events.off(MAP_READY_EVENT, this.onMapBootstrapReady, this);
     this.resourceLayer?.destroy();
     this.scanController?.destroy();
+    this.entityLayer?.destroy();
     this.entityStore?.destroy();
     this.resourceLayer = null;
     this.scanController = null;
+    this.entityLayer = null;
     this.entityStore = null;
     this.marker = null;
     this.groundLayer = null;
