@@ -231,6 +231,70 @@ def copy_runtime_assets(project_root: Path, public_root: Path) -> None:
             public_root / "ui/map-hud/tab-red.png",
         project_root / "assets/texure/ui/img_gem_21.png":
             public_root / "ui/map-hud/notice.png",
+        project_root / "assets/texure/bg/bg.jpg":
+            public_root / "ui/general/background.jpg",
+        project_root / "assets/texure/ui/btn/btn_close.png":
+            public_root / "ui/general/close.png",
+        project_root / "assets/texure/ui/btn/btn_pw_green.png":
+            public_root / "ui/general/button-green.png",
+        project_root / "assets/texure/ui/card_bg.png":
+            public_root / "ui/general/card-bg.png",
+        project_root / "assets/resources/generalpic/head_wrap.png":
+            public_root / "ui/general/head-wrap.png",
+        project_root / "assets/texure/ui/img_star.png":
+            public_root / "ui/general/star.png",
+        project_root / "assets/texure/ui/img_shiyongz.png":
+            public_root / "ui/general/used.png",
+        project_root / "assets/texure/ui/actport_xfqp__box_select.png":
+            public_root / "ui/general/selected.png",
+        project_root / "assets/texure/ui/btn/btn_pw_red.png":
+            public_root / "ui/general/button-red.png",
+        project_root / "assets/texure/ui/btn/btn_pw_yellow.png":
+            public_root / "ui/general/button-yellow.png",
+        project_root / "assets/texure/ui/bg_team_item4.png":
+            public_root / "ui/general/attribute-row.png",
+        project_root / "assets/texure/ui/btn/btn_old_jia_edd.png":
+            public_root / "ui/general/plus.png",
+        project_root / "assets/texure/ui/btn/btn_old_jian.png":
+            public_root / "ui/general/minus.png",
+        project_root / "assets/texure/ui/bg_vipshop_top.png":
+            public_root / "ui/general/scroll-panel.png",
+        project_root / "assets/texure/ui/facility_wrap.png":
+            public_root / "ui/general/skill-wrap.png",
+        project_root / "assets/texure/ui/diban1_23.png":
+            public_root / "ui/general/detail-panel.png",
+        project_root / "assets/texure/ui/card_110500.png":
+            public_root / "ui/general/draw-card.png",
+        project_root / "assets/texure/ui/skill/tactics_1.png":
+            public_root / "ui/general/skill-1.png",
+        project_root / "assets/texure/ui/skill/tactics_2.png":
+            public_root / "ui/general/skill-2.png",
+        project_root / "assets/texure/ui/skill/tactics_3.png":
+            public_root / "ui/general/skill-3.png",
+        project_root / "assets/texure/ui/skill/tactics_4.png":
+            public_root / "ui/general/skill-4.png",
+        project_root / "assets/texure/bg/war_bg.png":
+            public_root / "ui/war/background.png",
+        project_root / "assets/texure/ui/bg_1.png":
+            public_root / "ui/army/background.png",
+        project_root / "assets/texure/ui/icon_cross.png":
+            public_root / "ui/army/close.png",
+        project_root / "assets/resources/config/basic.json":
+            public_root / "config/basic.json",
+        project_root / "assets/resources/config/json/general/general.json":
+            public_root / "config/general/general.json",
+        project_root / "assets/resources/config/json/general/general_basic.json":
+            public_root / "config/general/general_basic.json",
+        project_root / "assets/resources/config/json/skill/skill_outline.json":
+            public_root / "config/skill/skill-outline.json",
+        project_root / "assets/resources/config/json/skill/zhudong/tuji.json":
+            public_root / "config/skill/active.json",
+        project_root / "assets/resources/config/json/skill/beidong/baizhanjingbing.json":
+            public_root / "config/skill/passive.json",
+        project_root / "assets/resources/config/json/skill/zuiji/zhongzhan.json":
+            public_root / "config/skill/pursuit.json",
+        project_root / "assets/resources/config/json/skill/zhihui/fengshi.json":
+            public_root / "config/skill/command.json",
     }
 
     for source, destination in copies.items():
@@ -238,6 +302,12 @@ def copy_runtime_assets(project_root: Path, public_root: Path) -> None:
             raise FileNotFoundError(f"Thiếu asset Cocos: {source}")
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, destination)
+
+    cards_source = project_root / "assets/resources/generalpic"
+    cards_output = public_root / "general/cards"
+    cards_output.mkdir(parents=True, exist_ok=True)
+    for source in cards_source.glob("card_*.png"):
+        shutil.copy2(source, cards_output / source.name)
 
     world_source = project_root / "assets/resources/world"
     atlas_output = public_root / "world/atlases"

@@ -1,0 +1,203 @@
+.general-system-panel {
+  --legacy-panel-scale: 1;
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  overflow: hidden;
+  background: rgba(10, 7, 4, 0.72);
+  pointer-events: auto;
+}
+
+.general-system-panel__stage,
+.skill-info-panel__stage {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1280px;
+  height: 720px;
+  overflow: hidden;
+  transform: translate(-50%, -50%) scale(var(--legacy-panel-scale));
+  transform-origin: center;
+  color: #f8e9c5;
+  background:
+    linear-gradient(rgba(17, 10, 4, 0.16), rgba(17, 10, 4, 0.38)),
+    url("/game-assets/ui/general/background.jpg") center / cover no-repeat;
+  font-family: Arial, "Noto Sans", sans-serif;
+  text-shadow: 0 2px 2px #251208;
+}
+
+.general-system-panel__stage::before,
+.skill-info-panel__stage::before {
+  content: "";
+  position: absolute;
+  inset: 20px;
+  border: 2px solid rgba(197, 145, 70, 0.58);
+  box-shadow: inset 0 0 44px rgba(0, 0, 0, 0.56);
+  pointer-events: none;
+}
+
+.general-system-panel__title {
+  position: absolute;
+  z-index: 3;
+  left: 390px;
+  top: 15px;
+  width: 500px;
+  margin: 0;
+  color: #ffe9ad;
+  font-size: 34px;
+  line-height: 64px;
+  text-align: center;
+  letter-spacing: .08em;
+}
+
+.general-system-panel__close {
+  position: absolute;
+  z-index: 8;
+  right: 35px;
+  top: 31px;
+  width: 70px;
+  height: 70px;
+  padding: 0;
+  border: 0;
+  background: url("/game-assets/ui/general/close.png") center / contain no-repeat;
+}
+
+.general-system-button {
+  min-width: 150px;
+  height: 68px;
+  padding: 0 25px 7px;
+  border: 0;
+  color: #fff0c3;
+  background: url("/game-assets/ui/general/button-green.png") center / 100% 100% no-repeat;
+  font-size: 23px;
+  font-weight: 700;
+  text-shadow: 0 2px 2px #1f0e05;
+}
+.general-system-button--red { background-image: url("/game-assets/ui/general/button-red.png"); }
+.general-system-button--yellow { background-image: url("/game-assets/ui/general/button-yellow.png"); }
+.general-system-button:disabled { opacity: .45; filter: grayscale(.6); }
+.general-system-panel__empty { color: #f6dfaa; font-size: 25px; text-align: center; }
+
+.general-detail__tabs {
+  position: absolute;
+  z-index: 4;
+  left: 105px;
+  top: 78px;
+  display: flex;
+  gap: 8px;
+}
+.general-detail__tab {
+  width: 170px;
+  height: 60px;
+  border: 0;
+  color: #e8d2a4;
+  background: url("/game-assets/ui/general/button-green.png") center / 100% 100% no-repeat;
+  font-size: 22px;
+  font-weight: 700;
+}
+.general-detail__tab.is-active { color: #fff5c9; background-image: url("/game-assets/ui/general/button-yellow.png"); }
+.general-detail__body {
+  position: absolute;
+  left: 75px;
+  top: 145px;
+  width: 1130px;
+  height: 530px;
+  display: grid;
+  grid-template-columns: 365px 1fr;
+  gap: 25px;
+  overflow: hidden;
+}
+.general-detail__card-column,
+.general-detail__compose-current,
+.general-detail__attribute-card { display: flex; align-items: center; justify-content: center; }
+.general-card--compact { transform: scale(.72); transform-origin: center; flex: 0 0 350px; }
+.general-card--compact.is-selected::after {
+  content: ""; position: absolute; inset: 0; z-index: 8;
+  background: url("/game-assets/ui/general/selected.png") center / contain no-repeat;
+}
+.general-detail__info,
+.general-detail__attribute-controls {
+  min-width: 0;
+  overflow: auto;
+  padding: 24px 30px;
+  background: rgba(26, 15, 7, .68);
+  border: 2px solid rgba(177, 125, 57, .72);
+}
+.general-detail__summary-row,
+.general-detail__attribute-row,
+.general-detail__allocation-row,
+.skill-info-panel__meta > div {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 18px;
+  background: url("/game-assets/ui/general/attribute-row.png") center / 100% 100% no-repeat;
+  font-size: 21px;
+}
+.general-detail__attributes { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-top: 16px; }
+.general-detail__attribute-row { grid-template-columns: 105px 1fr; font-size: 18px; }
+.general-detail__skills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 18px; }
+.general-detail__skill {
+  min-height: 120px; display: grid; grid-template-columns: 78px 1fr; grid-template-rows: 1fr 1fr;
+  align-items: center; padding: 12px; color: #f7e5b6; border: 1px solid #9f6b31;
+  background: rgba(42, 24, 9, .76); text-align: left;
+}
+.general-detail__skill img { grid-row: 1 / 3; width: 72px; height: 72px; object-fit: contain; }
+.general-detail__skill span { font-size: 18px; font-weight: 700; }
+.general-detail__skill small { color: #dbc28d; }
+.general-detail__skill-description { margin-top: 12px; padding: 14px; color: #ead7aa; background: rgba(255, 243, 211, .1); line-height: 1.5; }
+.general-detail__candidate-list { display: grid; grid-template-columns: repeat(3, 240px); align-content: start; overflow: auto; }
+.general-detail__candidate-list .general-card--compact { transform: scale(.63); transform-origin: top left; margin-right: -130px; margin-bottom: -172px; }
+.general-detail__compose-footer { position: absolute; right: 0; bottom: 0; display: flex; align-items: center; gap: 25px; }
+.general-detail__available { margin-bottom: 20px; color: #ffe098; font-size: 25px; font-weight: 700; }
+.general-detail__allocation-row { grid-template-columns: 190px 58px 90px 58px; gap: 8px; margin-bottom: 7px; }
+.general-detail__plus, .general-detail__minus { width: 52px; height: 52px; border: 0; background: center / contain no-repeat; }
+.general-detail__plus { background-image: url("/game-assets/ui/general/plus.png"); }
+.general-detail__minus { background-image: url("/game-assets/ui/general/minus.png"); }
+
+.skill-list-panel__content,
+.general-roster-panel__content,
+.general-convert-panel__content,
+.draw-result-panel__content {
+  position: absolute; left: 90px; top: 100px; width: 1100px; height: 560px; overflow: auto;
+}
+.skill-list-panel__content { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 12px; }
+.skill-list-panel__item {
+  min-height: 145px; display: grid; grid-template-columns: 112px 1fr; align-items: center;
+  padding: 15px; color: #f7e6bc; border: 2px solid rgba(171, 119, 53, .72); background: rgba(29, 17, 8, .78); text-align: left;
+}
+.skill-list-panel__item img { width: 100px; height: 100px; object-fit: contain; }
+.skill-list-panel__item span { display: flex; flex-direction: column; gap: 8px; }
+.skill-list-panel__item strong { font-size: 24px; }
+.skill-list-panel__item small { color: #d9c18c; }
+.skill-list-panel__item em { color: #f0dfb5; font-style: normal; line-height: 1.45; }
+.skill-info-panel { z-index: 55; }
+.skill-info-panel__stage { width: 800px; height: 600px; background-image: linear-gradient(rgba(16,9,4,.22),rgba(16,9,4,.48)), url("/game-assets/ui/general/detail-panel.png"); background-size: 100% 100%; }
+.skill-info-panel__stage .general-system-panel__close { right: 22px; top: 20px; }
+.skill-info-panel__icon { position: absolute; left: 75px; top: 85px; width: 115px; height: 115px; object-fit: contain; }
+.skill-info-panel__stage > h2 { position: absolute; left: 215px; top: 88px; margin: 0; color: #ffe4a0; font-size: 34px; }
+.skill-info-panel__meta { position: absolute; left: 210px; top: 145px; width: 510px; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.skill-info-panel__meta > div { grid-template-columns: 90px 1fr; min-height: 42px; font-size: 17px; }
+.skill-info-panel__description { position: absolute; left: 70px; width: 660px; padding: 12px 18px; background: rgba(27,15,7,.7); border: 1px solid #a87737; }
+.skill-info-panel__description:nth-of-type(1) { top: 285px; }
+.skill-info-panel__description:nth-of-type(2) { top: 395px; }
+.skill-info-panel__description h3 { margin: 0 0 8px; color: #ffe099; }
+.skill-info-panel__description p { margin: 0; line-height: 1.45; }
+.skill-info-panel__actions { position: absolute; right: 75px; bottom: 35px; display: flex; gap: 12px; }
+
+.general-roster-panel__content,
+.draw-result-panel__content { display: grid; grid-template-columns: repeat(3, 350px); grid-auto-rows: 480px; }
+.general-roster-panel__item { position: relative; }
+.general-roster-panel__item > strong { position: absolute; z-index: 9; right: 24px; bottom: 28px; padding: 6px 12px; color: #ffe2a0; background: rgba(33,18,7,.78); }
+.general-roster-panel__item.is-locked .general-card { filter: grayscale(1) brightness(.45); }
+.general-convert-panel__content { display: grid; grid-template-columns: repeat(4, 260px); align-content: start; }
+.general-convert-panel__content .general-card--compact { transform: scale(.68); transform-origin: top left; margin-right: -112px; margin-bottom: -154px; }
+.general-convert-panel__footer { position: absolute; right: 75px; bottom: 30px; display: flex; align-items: center; gap: 25px; font-size: 22px; }
+.general-draw-panel__card { position: absolute; left: 430px; top: 105px; width: 420px; height: 420px; object-fit: contain; }
+.general-draw-panel__gold { position: absolute; left: 515px; top: 520px; width: 250px; text-align: center; font-size: 26px; }
+.general-draw-panel__actions { position: absolute; left: 390px; bottom: 35px; display: flex; gap: 30px; }
+
+@media (max-width: 760px) {
+  .general-system-panel__stage, .skill-info-panel__stage { transform: translate(-50%, -50%) scale(var(--legacy-panel-scale)); }
+}

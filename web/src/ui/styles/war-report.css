@@ -1,0 +1,35 @@
+.war-report { --war-report-scale: 1; position: fixed; inset: 0; z-index: 54; background: rgba(8,5,2,.75); pointer-events: auto; }
+.war-report__stage { position: absolute; left: 50%; top: 50%; width: 1280px; height: 720px; overflow: hidden; color: #f2dfb1; background: linear-gradient(rgba(18,10,4,.08),rgba(18,10,4,.22)), url("/game-assets/ui/war/background.png") center/cover no-repeat; transform: translate(-50%,-50%) scale(var(--war-report-scale)); transform-origin: center; text-shadow: 0 2px 2px #1a0d05; }
+.war-report__stage > h2 { position: absolute; left: 390px; top: 16px; width: 500px; margin: 0; color: #ffe7a8; text-align: center; font-size: 34px; }
+.war-report__close { position: absolute; z-index: 5; left: 1170px; top: 35px; width: 72px; height: 72px; border: 0; background: url("/game-assets/ui/general/close.png") center/contain no-repeat; }
+.war-report__read-all { position: absolute; z-index: 4; left: 1012px; top: 42px; min-width: 150px; height: 58px; border: 0; color: #ffe9bd; background: url("/game-assets/ui/general/button-green.png") center/100% 100% no-repeat; font-size: 20px; font-weight: 700; }
+.war-report__list { position: absolute; left: 100px; top: 100px; width: 1080px; height: 540px; overflow: auto; padding: 4px 8px 30px; scrollbar-color: #9a6a32 rgba(25,14,6,.45); }
+.war-report__item { position: relative; width: 1040px; height: 132px; margin: 0 auto 12px; border: 1px solid #9e7139; background: rgba(33,18,7,.86); box-shadow: inset 0 0 22px rgba(234,181,88,.08), 0 3px 8px rgba(0,0,0,.35); cursor: pointer; }
+.war-report__item.is-read { filter: saturate(.62); opacity: .72; }
+.war-report__team { position: absolute; top: 14px; display: flex; gap: 6px; width: 275px; height: 84px; }
+.war-report__team.is-attack { left: 30px; }
+.war-report__team.is-defense { right: 30px; flex-direction: row-reverse; }
+.war-report__general { position: relative; display: block; width: 80px; height: 84px; overflow: hidden; border: 1px solid #8b5d2c; background: #2c190c; }
+.war-report__general img { width: 100%; height: 100%; object-fit: cover; object-position: center 16%; }
+.war-report__general small { position: absolute; left: 2px; right: 2px; bottom: 1px; color: #ffefbd; background: rgba(19,10,5,.78); text-align: center; }
+.war-report__general.is-empty { opacity: .3; }
+.war-report__result { position: absolute; left: 456px; top: 30px; width: 128px; height: 60px; border: 0; color: #ffe8ac; background: url("/game-assets/ui/general/button-yellow.png") center/100% 100% no-repeat; font-size: 28px; font-weight: 800; }
+.war-report__result.is-win { color: #fff1a6; }
+.war-report__result.is-lose { filter: sepia(.45) hue-rotate(315deg) saturate(1.5); }
+.war-report__side-label { position: absolute; top: 101px; width: 100px; text-align: center; font-size: 18px; }
+.war-report__side-label.is-attack { left: 115px; color: #ff8580; }
+.war-report__side-label.is-defense { right: 115px; color: #8de493; }
+.war-report__time { position: absolute; left: 390px; top: 99px; width: 260px; text-align: center; color: #d9c295; }
+.war-report__position { position: absolute; right: 5px; top: 98px; width: 100px; border: 0; color: #ffe5a9; background: transparent; font-size: 17px; text-decoration: underline; }
+.war-report__footer { position: absolute; left: 0; right: 0; bottom: 5px; margin: 0; text-align: center; color: #c8ad7a; font-size: 18px; }
+.war-report__empty { padding-top: 180px; text-align: center; font-size: 28px; }
+.war-report--detail .war-report__read-all { left: 930px; }
+.war-report__detail-content { position: absolute; left: 120px; top: 100px; width: 1040px; height: 545px; padding: 10px 22px 42px; overflow: auto; background: rgba(25,13,5,.69); border: 1px solid rgba(169,116,53,.7); }
+.war-report__round { margin-bottom: 14px; padding: 12px 18px; border: 1px solid rgba(157,106,47,.58); background: rgba(42,23,9,.76); }
+.war-report__round h3 { margin: 0 0 9px; color: #f5d98e; text-align: center; font-size: 22px; }
+.war-report__battle-line { margin: 6px 0; line-height: 1.55; font-size: 19px; }
+.war-report__battle-line .is-attack { color: #ff716a; }
+.war-report__battle-line .is-defense { color: #76e08b; }
+.war-report__battle-line .is-skill { color: #ff9a41; }
+.war-report__battle-line .is-loss { color: #f4cb43; }
+.war-report__final { margin: 20px 0 0; padding: 18px; color: #ffe29a; border: 1px solid #b77d39; background: rgba(89,39,12,.75); text-align: center; font-size: 23px; font-weight: 700; }
