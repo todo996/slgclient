@@ -1,6 +1,7 @@
 import { EditBox, Label, Node, RichText } from 'cc';
 import { gameTermTranslations } from './GameTerms';
 import { generalNameTranslations } from './GeneralNames';
+import { runtimeTermTranslations } from './RuntimeTerms';
 
 /**
  * Phông hệ thống hỗ trợ đầy đủ dấu tiếng Việt trên trình duyệt.
@@ -11,6 +12,7 @@ export const VIETNAMESE_FONT_FAMILY = 'Arial';
 const viDictionary: Record<string, string> = {
     ...gameTermTranslations,
     ...generalNameTranslations,
+    ...runtimeTermTranslations,
     '账号密码有误': 'Tài khoản hoặc mật khẩu không hợp lệ.',
     '请输入昵称': 'Nhập tên nhân vật',
     '加载中': 'Đang tải...',
@@ -84,7 +86,7 @@ export function translateText(value: string): string {
     }
 
     const exact = viDictionary[value];
-    if (exact) {
+    if (exact !== undefined) {
         return exact;
     }
 
