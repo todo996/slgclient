@@ -101,8 +101,8 @@ export class MapScene extends Phaser.Scene {
       worldX,
       worldY,
       true,
+      undefined,
       this.cameras.main,
-      this.groundLayer,
     );
     if (!tilePoint) return;
 
