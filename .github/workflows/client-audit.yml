@@ -1,4 +1,4 @@
-name: Kiểm tra client và Việt hoá
+name: Kiểm tra client, PWA và Việt hoá
 
 on:
   push:
@@ -25,8 +25,11 @@ jobs:
       - name: Cài TypeScript dùng cho kiểm tra cú pháp
         run: npm install --no-save --no-package-lock typescript@5.2.2
 
-      - name: Kiểm tra cấu hình Vercel
-        run: node --check scripts/prepare-vercel.mjs
+      - name: Kiểm tra cấu hình Vercel và PWA
+        run: |
+          node --check scripts/prepare-vercel.mjs
+          node --check scripts/test-pwa-build.mjs
+          npm run test:pwa
 
       - name: Kiểm tra công cụ Việt hoá
         run: node --check scripts/audit-vietnamese.mjs
