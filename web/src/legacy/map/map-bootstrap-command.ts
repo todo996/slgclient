@@ -113,6 +113,7 @@ export class MapBootstrapCommand {
   ): void => {
     if (data.code === 0) {
       this.positionTags = data.msg ?? {};
+      EventMgr.emit(LogicEvent.updateTag, this.positionTags);
     }
   };
 

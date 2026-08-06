@@ -9,6 +9,8 @@ import { MapEntityStore } from "../../legacy/map/map-entity-store";
 import { MapScanController } from "../../legacy/map/map-scan-controller";
 import { NetManager } from "../../legacy/network/socket/net-manager";
 import type { MapBootstrapSnapshot } from "../../legacy/map/map-bootstrap-command";
+import { LogicEvent } from "../../legacy/common/logic-event";
+import { EventMgr } from "../../legacy/events/event-manager";
 
 const WORLD_MAP_KEY = "world-map";
 const MAP_RESOURCE_CONFIG_KEY = "map-resource-config";
@@ -99,6 +101,7 @@ export class MapScene extends Phaser.Scene {
     this.syncMapCenter();
 
     this.game.events.on(MAP_READY_EVENT, this.onMapBootstrapReady, this);
+    EventMgr.on(LogicEvent.scrollToMap, this.scrollToCell, this);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.shutdown, this);
   }
 
@@ -196,6 +199,7 @@ export class MapScene extends Phaser.Scene {
     if (cellId === this.lastCenterCellId) return;
 
     this.lastCenterCellId = cellId;
+    EventMgr.emit(LogicEvent.mapCenterChange, cell);
     this.resourceLayer.updateForCenter(cell);
     if (this.mapBootstrapReady) this.scanController?.updateForCenter(cell);
   }
@@ -244,6 +248,17 @@ export class MapScene extends Phaser.Scene {
     });
   };
 
+
+  private readonly scrollToCell = (x: number, y: number): void => {
+    if (!this.coordinate || !this.map) return;
+    const cell = { x: Math.floor(Number(x)), y: Math.floor(Number(y)) };
+    if (!this.coordinate.isValidCell(cell)) return;
+    const world = this.coordinate.cellToWorld(cell);
+    this.cameras.main.centerOn(world.x, world.y);
+    this.lastCenterCellId = -1;
+    this.syncMapCenter();
+  };
+
   private readonly onMapBootstrapReady = (
     snapshot?: MapBootstrapSnapshot,
   ): void => {
@@ -258,6 +273,7 @@ export class MapScene extends Phaser.Scene {
 
   private readonly shutdown = (): void => {
     this.game.events.off(MAP_READY_EVENT, this.onMapBootstrapReady, this);
+    EventMgr.targetOff(this);
     this.resourceLayer?.destroy();
     this.scanController?.destroy();
     this.entityLayer?.destroy();

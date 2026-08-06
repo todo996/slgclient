@@ -12,6 +12,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import plistlib
+import re
 import shutil
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -73,6 +75,69 @@ def parse_tileset(reference: ET.Element, source_dir: Path, output_dir: Path) -> 
 
     return result
 
+
+
+def parse_pair(value: str, expected: int = 2) -> tuple[int, ...]:
+    values = tuple(int(number) for number in re.findall(r"-?\d+", value))
+    if len(values) != expected:
+        raise ValueError(f"Không đọc được giá trị TexturePacker: {value}")
+    return values
+
+
+def convert_plist_atlas(
+    plist_path: Path,
+    image_path: Path,
+    output_json: Path,
+    output_image: Path,
+) -> None:
+    with plist_path.open("rb") as stream:
+        atlas = plistlib.load(stream)
+
+    frames: dict[str, dict] = {}
+    for file_name, source in atlas.get("frames", {}).items():
+        x, y, width, height = parse_pair(source["textureRect"], 4)
+        source_width, source_height = parse_pair(source["spriteSourceSize"])
+        sprite_width, sprite_height = parse_pair(source["spriteSize"])
+        offset_x, offset_y = parse_pair(source.get("spriteOffset", "{0,0}"))
+        trimmed = (sprite_width, sprite_height) != (source_width, source_height)
+        source_x = round((source_width - sprite_width) / 2 + offset_x)
+        source_y = round((source_height - sprite_height) / 2 - offset_y)
+        frame_name = Path(file_name).stem
+
+        frames[frame_name] = {
+            "frame": {"x": x, "y": y, "w": width, "h": height},
+            "rotated": bool(source.get("textureRotated", False)),
+            "trimmed": trimmed,
+            "spriteSourceSize": {
+                "x": source_x,
+                "y": source_y,
+                "w": sprite_width,
+                "h": sprite_height,
+            },
+            "sourceSize": {"w": source_width, "h": source_height},
+        }
+
+    metadata = atlas.get("metadata", {})
+    texture_width, texture_height = parse_pair(metadata["size"])
+    output_json.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(image_path, output_image)
+    output_json.write_text(
+        json.dumps(
+            {
+                "frames": frames,
+                "meta": {
+                    "app": "Cocos TexturePacker adapter",
+                    "format": metadata.get("pixelFormat", "RGBA8888"),
+                    "image": output_image.name,
+                    "scale": "1",
+                    "size": {"w": texture_width, "h": texture_height},
+                },
+            },
+            ensure_ascii=False,
+            separators=(",", ":"),
+        ),
+        encoding="utf-8",
+    )
 
 def convert(source: Path, destination: Path) -> None:
     destination.parent.mkdir(parents=True, exist_ok=True)
@@ -152,6 +217,20 @@ def copy_runtime_assets(project_root: Path, public_root: Path) -> None:
             public_root / "ui/auth/choice.png",
         project_root / "assets/texure/ui/pet_hx_select_2.png":
             public_root / "ui/auth/choice-selected.png",
+        project_root / "assets/texure/ui/bg_vipshop_top.png":
+            public_root / "ui/map-hud/top.png",
+        project_root / "assets/texure/ui/btn/cr_btn_back.png":
+            public_root / "ui/map-hud/back.png",
+        project_root / "assets/texure/ui/bg_team_item4.png":
+            public_root / "ui/map-hud/resource-cell.png",
+        project_root / "assets/texure/ui/btn/btn_pw_green.png":
+            public_root / "ui/map-hud/button-green.png",
+        project_root / "assets/texure/ui/btn/btn_pw_yellow.png":
+            public_root / "ui/map-hud/tab-yellow.png",
+        project_root / "assets/texure/ui/btn/btn_pw_red.png":
+            public_root / "ui/map-hud/tab-red.png",
+        project_root / "assets/texure/ui/img_gem_21.png":
+            public_root / "ui/map-hud/notice.png",
     }
 
     for source, destination in copies.items():
@@ -159,6 +238,16 @@ def copy_runtime_assets(project_root: Path, public_root: Path) -> None:
             raise FileNotFoundError(f"Thiếu asset Cocos: {source}")
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, destination)
+
+    world_source = project_root / "assets/resources/world"
+    atlas_output = public_root / "world/atlases"
+    for atlas_name in ("map_tiles", "map_res"):
+        convert_plist_atlas(
+            world_source / f"{atlas_name}.plist",
+            world_source / f"{atlas_name}.png",
+            atlas_output / f"{atlas_name}.json",
+            atlas_output / f"{atlas_name}.png",
+        )
 
 
 def main() -> None:

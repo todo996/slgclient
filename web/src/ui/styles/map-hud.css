@@ -1,0 +1,243 @@
+.map-hud-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.map-hud-layer[hidden] { display: none; }
+
+.map-hud {
+  position: absolute;
+  inset: 0;
+  --map-hud-scale: 1;
+}
+
+.map-hud__stage {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1280px;
+  height: 720px;
+  transform: translate(-50%, -50%) scale(var(--map-hud-scale));
+  transform-origin: center;
+  color: #fff;
+  font-family: Arial, "Noto Sans", sans-serif;
+  text-shadow: 0 1px 2px #000;
+  pointer-events: none;
+}
+
+.map-hud button,
+.map-hud input { pointer-events: auto; }
+
+.map-hud__top {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 86px;
+  background: url("/game-assets/ui/map-hud/top.png") center / 1280px 86px no-repeat;
+}
+
+.map-hud__back {
+  position: absolute;
+  left: 10px;
+  top: 0;
+  width: 85px;
+  height: 79px;
+  padding: 0;
+  background: url("/game-assets/ui/map-hud/back.png") center / 100% 100% no-repeat;
+  border: 0;
+}
+
+.map-hud__resources {
+  position: absolute;
+  left: 480px;
+  top: 0;
+  width: 800px;
+  height: 85px;
+  display: grid;
+  grid-template-columns: repeat(5, 160px);
+  grid-template-rows: repeat(2, 42px);
+}
+
+.map-hud__resource {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 0 5px;
+  background: url("/game-assets/ui/map-hud/resource-cell.png") center / 160px 42px no-repeat;
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.map-hud__resource strong { color: #f8dd96; font-weight: 700; }
+
+.map-hud__identity {
+  position: absolute;
+  left: 118px;
+  top: 10px;
+  width: 200px;
+  display: grid;
+  gap: 18px;
+  font-size: 15px;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.map-hud__menu {
+  position: absolute;
+  left: 5px;
+  top: 93px;
+  width: 130px;
+  height: 608px;
+}
+
+.map-hud__menu-button,
+.map-hud__setting {
+  position: absolute;
+  width: 120px;
+  height: 67.2px;
+  padding: 0 9px 4px;
+  color: #f7e6ba;
+  background: url("/game-assets/ui/map-hud/button-green.png") center / 100% 100% no-repeat;
+  border: 0;
+  font-size: 21px;
+  font-weight: 700;
+  text-shadow: 0 2px 2px #1f1208;
+}
+
+.map-hud__menu-button:nth-child(1) { top: 0; }
+.map-hud__menu-button:nth-child(2) { top: 77.2px; }
+.map-hud__menu-button:nth-child(3) { top: 154.4px; }
+.map-hud__menu-button:nth-child(4) { top: 231.6px; }
+.map-hud__menu-button:nth-child(5) { top: 308.8px; }
+.map-hud__menu-button:nth-child(6) { top: 386px; }
+.map-hud__menu-button:nth-child(7) { top: 463.2px; }
+.map-hud__menu-button:nth-child(8) { top: 540.4px; }
+
+.map-hud__notice {
+  position: absolute;
+  right: -2px;
+  top: -1px;
+  width: 28px;
+  height: 28px;
+  background: url("/game-assets/ui/map-hud/notice.png") center / contain no-repeat;
+}
+
+.map-hud__right {
+  position: absolute;
+  left: 1040px;
+  top: 155px;
+  width: 240px;
+  height: 290px;
+}
+
+.map-hud__tabs {
+  height: 40px;
+  display: grid;
+  grid-template-columns: repeat(3, 80px);
+}
+
+.map-hud__tab {
+  height: 40px;
+  padding: 0;
+  color: #3d2818;
+  background: url("/game-assets/ui/map-hud/tab-yellow.png") center / 100% 100% no-repeat;
+  border: 0;
+  font-size: 16px;
+  font-weight: 700;
+  text-shadow: 0 1px rgba(255,255,255,.35);
+}
+
+.map-hud__tab[aria-selected="true"] {
+  color: #f8e7bc;
+  background-image: url("/game-assets/ui/map-hud/tab-red.png");
+  text-shadow: 0 1px 2px #32110b;
+}
+
+.map-hud__list {
+  width: 240px;
+  max-height: 250px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.map-hud__list-item {
+  width: 240px;
+  min-height: 40px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  color: #3d2818;
+  background: url("/game-assets/ui/map-hud/tab-yellow.png") center / 100% 100% no-repeat;
+  border: 0;
+  font-size: 15px;
+  text-align: left;
+  text-shadow: 0 1px rgba(255,255,255,.35);
+}
+
+.map-hud__list-item span:last-of-type { text-align: right; }
+.map-hud__army-item small { display: none; grid-column: 1 / -1; }
+.map-hud__army-item.is-expanded small { display: block; }
+
+.map-hud__jump {
+  position: absolute;
+  left: 1016px;
+  top: 560px;
+  width: 264px;
+  height: 80px;
+  display: grid;
+  grid-template-columns: 22px 46px 22px 46px 80px;
+  align-items: center;
+  justify-content: end;
+  gap: 0;
+  font-size: 18px;
+}
+
+.map-hud__coord {
+  width: 46px;
+  height: 40px;
+  padding: 3px;
+  color: #2f2015;
+  background: rgba(244, 224, 178, .94);
+  border: 1px solid #75451f;
+  text-align: center;
+  text-shadow: none;
+}
+
+.map-hud__jump-button {
+  width: 80px;
+  height: 40px;
+  padding: 0;
+  color: #f8e7bc;
+  background: url("/game-assets/ui/map-hud/tab-red.png") center / 100% 100% no-repeat;
+  border: 0;
+  font-size: 17px;
+  font-weight: 700;
+  text-shadow: 0 1px 2px #32110b;
+}
+
+.map-hud__setting {
+  left: 1152px;
+  top: 642px;
+  width: 118px;
+  height: 68px;
+  font-size: 19px;
+}
+
+.runtime-status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (orientation: portrait) {
+  .map-hud__stage { transform: translate(-50%, -50%) scale(var(--map-hud-scale)); }
+}

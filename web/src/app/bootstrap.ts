@@ -22,6 +22,8 @@ import type { AppShell } from "../ui/create-app-shell";
 import { createRolePanel } from "../ui/panels/create-role-panel";
 import { createLoginPanel } from "../ui/panels/login-panel";
 import { UIManager } from "../ui/ui-manager";
+import { MapHud } from "../ui/map-hud";
+import { MapUiCommand } from "../legacy/map/map-ui-command";
 import { loadRuntimeConfig } from "./runtime-config";
 
 type ServerResponse = {
@@ -32,6 +34,7 @@ export class Bootstrap {
   private gameRuntime: GameRuntime | null = null;
   private readonly uiManager: UIManager;
   private retryTimes = 0;
+  private mapHud: MapHud | null = null;
 
   constructor(private readonly shell: AppShell) {
     this.uiManager = new UIManager(shell.panelRoot);
@@ -50,6 +53,7 @@ export class Bootstrap {
     this.registerEvents();
     LoginCommand.getInstance();
     MapBootstrapCommand.getInstance();
+    MapUiCommand.getInstance();
 
     HttpManager.getInstance().setWebUrl(
       runtimeConfig.httpUrl,
@@ -157,6 +161,13 @@ export class Bootstrap {
     this.shell.setHudVisible(true);
     this.shell.setPhase("Bản đồ thiên hạ");
     this.uiManager.closeAll();
+    if (!this.mapHud) {
+      this.mapHud = new MapHud(
+        this.shell.hudRoot,
+        () => LoginCommand.getInstance().accountLogout(),
+      );
+    }
+    if (snapshot) this.mapHud.setSnapshot(snapshot);
     this.gameRuntime?.game.events.emit(
       "legacy-map-bootstrap-ready",
       snapshot,
@@ -253,6 +264,9 @@ export class Bootstrap {
     EventMgr.targetOff(this);
     LoginCommand.destroy();
     MapBootstrapCommand.destroy();
+    MapUiCommand.destroy();
+    this.mapHud?.destroy();
+    this.mapHud = null;
     NetManager.getInstance().destroy();
     this.gameRuntime?.destroy();
     this.gameRuntime = null;

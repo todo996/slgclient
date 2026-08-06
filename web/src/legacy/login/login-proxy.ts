@@ -61,6 +61,10 @@ export class LoginProxy {
     return this.roleData;
   }
 
+  setRoleResData(data: unknown): void {
+    this.roleResData = data;
+  }
+
   getRoleResData(): unknown {
     return this.roleResData;
   }
