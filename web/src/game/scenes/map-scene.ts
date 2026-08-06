@@ -5,6 +5,7 @@ import { MapInputController } from "../map/map-input-controller";
 import { MapResourceCatalog } from "../map/map-resource-catalog";
 import { MapResourceLayer } from "../map/map-resource-layer";
 import { MapEntityLayer } from "../map/map-entity-layer";
+import { MAP_TILE_CULL_PADDING, getMapZoom } from "../map/map-responsive";
 import { MapEntityStore } from "../../legacy/map/map-entity-store";
 import { MapScanController } from "../../legacy/map/map-scan-controller";
 import { NetManager } from "../../legacy/network/socket/net-manager";
@@ -82,6 +83,8 @@ export class MapScene extends Phaser.Scene {
       "/game-assets/world/atlases/map_qibing.json",
     );
     this.load.image("system-city", "/game-assets/world/sys_city.png");
+    this.load.image("role-city", "/game-assets/world/role_city.png");
+    this.load.image("fortress", "/game-assets/world/fortress.png");
     this.load.image("army-arrow", "/game-assets/world/army_arrow.png");
     this.load.json(
       "army-animation-manifest",
@@ -123,14 +126,11 @@ export class MapScene extends Phaser.Scene {
       const layer = map.createLayer(layerName, tilesets, 0, 0);
       if (!layer) throw new Error(`Không tạo được layer ${layerName}`);
       layer.setDepth(index);
-      if (layerName === "base") {
-        // Safari/iPhone có thể loại nhầm tile isometric khi camera zoom/resize.
-        // Nền chỉ có 40.000 ô nên tắt culling để không xuất hiện lỗ đen.
-        layer.setSkipCull(true);
-        this.groundLayer = layer;
-      } else {
-        layer.setCullPadding(16, 16);
-      }
+      // Không render toàn bộ 40.000 tile trong một batch WebGL. Safari/iPhone
+      // có thể vượt giới hạn index buffer và bỏ mất từng mảng tile. Giữ culling
+      // của Phaser, nhưng nới vùng đệm cho phép chiếu isometric 200x100.
+      layer.setCullPadding(MAP_TILE_CULL_PADDING, MAP_TILE_CULL_PADDING);
+      if (layerName === "base") this.groundLayer = layer;
     }
 
     this.map = map;
@@ -186,7 +186,8 @@ export class MapScene extends Phaser.Scene {
     const camera = this.cameras.main;
     camera.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
     this.applyResponsiveZoom(this.scale.width, this.scale.height);
-    this.scale.on(Phaser.Scale.Events.RESIZE, this.handleResize, this);
+    window.addEventListener("resize", this.handleResize, { passive: true });
+    window.addEventListener("orientationchange", this.handleResize, { passive: true });
 
     const center = this.coordinate.cellToWorld({
       x: Math.floor(this.map.width / 2),
@@ -196,16 +197,11 @@ export class MapScene extends Phaser.Scene {
   }
 
   private applyResponsiveZoom(width: number, height: number): void {
-    const shortestSide = Math.max(1, Math.min(width, height));
-    const divisor = height > width ? 900 : 760;
-    const zoom = Phaser.Math.Clamp(shortestSide / divisor, 0.42, 0.62);
-    this.cameras.main.setZoom(zoom);
+    this.cameras.main.setZoom(getMapZoom({ width, height }));
   }
 
-  private readonly handleResize = (
-    gameSize: Phaser.Structs.Size,
-  ): void => {
-    this.applyResponsiveZoom(gameSize.width, gameSize.height);
+  private readonly handleResize = (): void => {
+    this.applyResponsiveZoom(this.scale.width, this.scale.height);
     this.lastCenterCellId = -1;
     this.syncMapCenter();
   };
@@ -271,6 +267,7 @@ export class MapScene extends Phaser.Scene {
     });
   };
 
+
   private readonly scrollToCell = (x: number, y: number): void => {
     if (!this.coordinate || !this.map) return;
     const cell = { x: Math.floor(Number(x)), y: Math.floor(Number(y)) };
@@ -295,7 +292,8 @@ export class MapScene extends Phaser.Scene {
 
   private readonly shutdown = (): void => {
     this.game.events.off(MAP_READY_EVENT, this.onMapBootstrapReady, this);
-    this.scale.off(Phaser.Scale.Events.RESIZE, this.handleResize, this);
+    window.removeEventListener("resize", this.handleResize);
+    window.removeEventListener("orientationchange", this.handleResize);
     EventMgr.targetOff(this);
     this.resourceLayer?.destroy();
     this.scanController?.destroy();

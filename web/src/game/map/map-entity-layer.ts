@@ -24,9 +24,9 @@ import {
 import { EventMgr } from "../../legacy/events/event-manager.ts";
 import { MapRuntimeEvent } from "../../legacy/map/map-scan-controller.ts";
 import { DateUtil } from "../../legacy/utils/date-util.ts";
+import { ARMY_ARROW_PREFAB, ROLE_CITY_PREFAB } from "./map-responsive.ts";
 
 const RELATION_ATLAS = "map-frame-color";
-const BUILD_ATLAS = "component-outside";
 const ARMY_ATLAS = "map-qibing";
 const ARMY_ARROW = "army-arrow";
 
@@ -203,14 +203,21 @@ export class MapEntityLayer {
 
     this.removeCity(city.cellId);
     const world = this.coordinate.cellToWorld(city);
-    const relation = createRelationView(this.scene, 580, 308);
-    // component_998 là frame xoay trong atlas Cocos và bị Safari/WebGL kéo dọc.
-    // Dùng texture thành độc lập để bảo đảm đúng tỉ lệ trên mọi renderer.
+    const relation = createRelationView(
+      this.scene,
+      ROLE_CITY_PREFAB.relationWidth,
+      ROLE_CITY_PREFAB.relationHeight,
+    );
+    // Ảnh này được tách nguyên pixel từ component_998 của atlas Cocos và đặt
+    // lại vào canvas nguồn 400x250, vì Safari làm sai frame atlas rotated.
     const cityImage = this.scene.add
-      .image(-5, -28, "system-city")
-      .setDisplaySize(430, 215);
+      .image(ROLE_CITY_PREFAB.spriteX, ROLE_CITY_PREFAB.spriteY, "role-city")
+      .setDisplaySize(
+        ROLE_CITY_PREFAB.spriteWidth * ROLE_CITY_PREFAB.spriteScale,
+        ROLE_CITY_PREFAB.spriteHeight * ROLE_CITY_PREFAB.spriteScale,
+      );
     const name = this.scene.add
-      .text(0, -43.628, city.name, {
+      .text(0, ROLE_CITY_PREFAB.labelY, city.name, {
         color: "#ffffff",
         fontFamily: "Noto Serif, serif",
         fontSize: "26px",
@@ -255,6 +262,7 @@ export class MapEntityLayer {
       const cityImage = this.scene.add
         .image(0, -15, "system-city")
         .setDisplaySize(800, 400);
+      // Thứ tự con giữ theo SysCity.prefab: down, up, cityicon.
       const container = this.scene.add.container(world.x, world.y, [
         relation.down,
         relation.up,
@@ -266,9 +274,8 @@ export class MapEntityLayer {
       this.applyRelation(relation, build);
       view = { container, relation };
     } else if (kind === "fortress") {
-      // component_120 không xoay trong atlas, tránh lỗi frame dọc của component_119.
       const image = this.scene.add
-        .image(0, -22, BUILD_ATLAS, "component_120")
+        .image(0, -22, "fortress")
         .setDisplaySize(320, 200);
       const title = this.scene.add
         .text(0, -62, this.getFortressName(build), {
@@ -352,7 +359,11 @@ export class MapEntityLayer {
       const arrow = this.scene.add
         .image(0, 0, ARMY_ARROW)
         .setOrigin(0.5, 1)
-        .setDisplaySize(20, 36);
+        .setDisplaySize(
+          ARMY_ARROW_PREFAB.width,
+          ARMY_ARROW_PREFAB.minimumHeight,
+        );
+      (arrow as unknown as { alpha: number }).alpha = ARMY_ARROW_PREFAB.alpha;
       view = { data: army, sprite, arrow, animationKey: "" };
       this.armyViews.set(army.id, view);
     }
@@ -425,7 +436,10 @@ export class MapEntityLayer {
       view.arrow
         .setPosition(current.x, current.y)
         .setAngle((Math.atan2(deltaY, deltaX) * 180) / Math.PI + 90)
-        .setDisplaySize(20, length)
+        .setDisplaySize(
+          ARMY_ARROW_PREFAB.width,
+          Math.max(ARMY_ARROW_PREFAB.minimumHeight, length),
+        )
         .setDepth(ARMY_DEPTH - 1 + current.y);
     }
   }

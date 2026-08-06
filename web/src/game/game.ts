@@ -20,11 +20,11 @@ export function createGame(options: CreateGameOptions): GameRuntime {
   const game = new Phaser.Game({
     type: Phaser.AUTO,
     parent: options.parent,
-    backgroundColor: "#171713",
+    backgroundColor: "#26341d",
     render: {
       antialias: true,
       pixelArt: false,
-      roundPixels: false,
+      roundPixels: true,
     },
     scale: {
       mode: Phaser.Scale.RESIZE,
@@ -34,21 +34,22 @@ export function createGame(options: CreateGameOptions): GameRuntime {
     },
     input: {
       activePointers: 3,
-      touch: {
-        capture: true,
-      },
+      touch: { capture: true },
     },
     scene: [BootScene, MapScene],
   });
 
+  const scaleManager = (game as unknown as {
+    scale: { width: number; height: number; resize: (width: number, height: number) => void };
+  }).scale;
   let resizeFrame = 0;
   const syncViewport = (): void => {
     window.cancelAnimationFrame(resizeFrame);
     resizeFrame = window.requestAnimationFrame(() => {
       const width = Math.max(1, Math.round(parent.clientWidth));
       const height = Math.max(1, Math.round(parent.clientHeight));
-      if (game.scale.width !== width || game.scale.height !== height) {
-        game.scale.resize(width, height);
+      if (scaleManager.width !== width || scaleManager.height !== height) {
+        scaleManager.resize(width, height);
       }
     });
   };
