@@ -16,7 +16,7 @@ export default class ArmySelectNodeLogic extends Component {
     armyContainer: Node = null;
     @property(Prefab)
     itemPrefab: Prefab = null;
-    
+
     protected onLoad(): void {
         EventMgr.on(LogicEvent.closeArmyAelectUi, this.onClickBack, this);
     }

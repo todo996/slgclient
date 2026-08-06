@@ -26,7 +26,7 @@ export default class LoginScene extends Component {
         this.openLogin();
         EventMgr.on(LogicEvent.createRole, this.onCreate, this);
         EventMgr.on(LogicEvent.enterServerComplete, this.enterServer, this);
-        
+
     }
 
     protected onDestroy(): void {
@@ -46,7 +46,7 @@ export default class LoginScene extends Component {
     }
 
     protected onCreate(): void {
- 
+
         if (this._createNode == null) {
             this._createNode = instantiate(this.createPrefab);
             this._createNode.parent = this.node;
@@ -62,14 +62,14 @@ export default class LoginScene extends Component {
     }
 
     protected onClickEnter(): void {
-        //未登录 就弹登录界面
+        //未Đăng nhập 就弹Đăng nhập界面
         AudioManager.instance.playClick();
         var loginData = LoginCommand.getInstance().proxy.getLoginData();
         if (loginData == null) {
             this.openLogin();
             return;
         }
-        //登录完成进入服务器
+        //Đăng nhập完成Vào服务器
         LoginCommand.getInstance().role_enterServer(LoginCommand.getInstance().proxy.getSession());
     }
 }

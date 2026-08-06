@@ -35,7 +35,7 @@ export default class Dialog extends Component {
 
     public show(text: string, type: number): void {
 
-        
+
 
        this.text.string = text;
        if(type == DialogType.Default){

@@ -27,13 +27,13 @@ export default class UnionMainLogic extends Component {
     applyBtn: Button | null = null;
     @property(Node)
     applyRedDot: Node | null = null;
-    
+
     onLoad () {
         EventMgr.on(LogicEvent.unionNotice,this.onUnionNotice,this);
         EventMgr.on(LogicEvent.unionInfo,this.onInfo, this);
         EventMgr.on(LogicEvent.updateUnionApply, this.onUnionApply, this);
     }
-    
+
     protected onDestroy():void{
         EventMgr.targetOff(this);
     }
@@ -48,17 +48,17 @@ export default class UnionMainLogic extends Component {
         this.applyRedDot.active = cnt > 0;
     }
     onInfo(){
-        
+
         let city:MapCityData = MapCommand.getInstance().cityProxy.getMyMainCity();
         let unionData:Union = UnionCommand.getInstance().proxy.getUnion(city.unionId);
-        this.nameLab.string = "联盟:" + unionData.name;
+        this.nameLab.string = "Liên minh:" + unionData.name;
         console.log("unionData:", unionData);
         if (unionData.notice == ""){
-            this.noticeLab.string = "暂无公告";
+            this.noticeLab.string = "Chưa có thông báo";
         }else{
             this.noticeLab.string = unionData.notice;
         }
-        this.mengZhuLab.string = "盟主:" + unionData.getChairman().name
+        this.mengZhuLab.string = "Minh chủ:" + unionData.getChairman().name
         this.editNode.active = false;
 
         let ok = unionData.isMajor(city.rid);
@@ -67,12 +67,12 @@ export default class UnionMainLogic extends Component {
     }
     onUnionNotice(data){
         if (data.text == ""){
-            this.noticeLab.string = "暂无公告";
+            this.noticeLab.string = "Chưa có thông báo";
         }else{
             this.noticeLab.string = data.text;
         }
     }
-    
+
     onUnionApply(){
         this.updateRedDot();
     }
@@ -93,7 +93,7 @@ export default class UnionMainLogic extends Component {
         this.editNode.active = true;
         this.modifyBtn.node.active = false;
     }
-    
+
     onCancel(){
         AudioManager.instance.playClick();
         this.noticeLab.node.active = true;

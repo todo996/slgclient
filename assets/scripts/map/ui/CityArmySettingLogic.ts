@@ -59,7 +59,7 @@ export default class CityArmySettingLogic extends Component {
     protected _gengeralLogics: CityGeneralItemLogic[] = [];
     protected _soldiers: number[] = null;
     protected _totalSoldiers: number[] = null;
-    protected _curConscripts: number[] = null;//当前征兵数
+    protected _curConscripts: number[] = null;//当前Chiêu mộ数
 
     protected _conTimes: number[] = null;
     protected _conCnts: number[] = null;
@@ -106,7 +106,7 @@ export default class CityArmySettingLogic extends Component {
     }
 
     protected onShowAdditionTip(): void {
-        if (this._data && this.labelAddition.string != "无") {
+        if (this._data && this.labelAddition.string != "Không") {
             this.additionTipNode.active = true;
         }
     }
@@ -153,7 +153,7 @@ export default class CityArmySettingLogic extends Component {
                 generalData = null;
                 isUnlock = true;
                 if (i == 2) {
-                    //只有第二个副将才需要判断是否解锁
+                    //只有Hiệp 二个Phó tướng才需要判断是否解锁
                     isUnlock = this._addition.vanguardCnt >= this._order;
                 }
                 if (this._data && this._data.generals[i] > 0) {
@@ -185,7 +185,7 @@ export default class CityArmySettingLogic extends Component {
                         this.sliders[i].progress = 0;
                         this.editBoxs[i].enabled = can;
                     }else if(this._data && this._data.cmd > ArmyCmd.Idle || totalValue <= 0) {
-                        //不可征兵
+                        //不可Chiêu mộ
                         this.editBoxs[i].string = "0";
                         this.sliders[i].progress = 0;
                         this.editBoxs[i].enabled = false;
@@ -205,10 +205,10 @@ export default class CityArmySettingLogic extends Component {
                 comp.setData(this._cityId, this._order, generalData, this._soldiers[i], this._totalSoldiers[i], this._conCnts[i], this._conTimes[i], isUnlock);
             }
         }
-        this.labelId.string = "部队" + this._order;
+        this.labelId.string = "Đội quân" + this._order;
         this.labelCost.string = totalCost + "/" + MapUICommand.getInstance().proxy.getMyCityCost(this._cityId);
         this.labelSoldierCnt.string = soldierCnt + "/" + totalSoldierCnt;
-        this.labelAddition.string = "无";
+        this.labelAddition.string = "Không";
         if (this._data) {
             let generals: GeneralData[] = ArmyCommand.getInstance().getArmyGenerals(this._data);
             let speed: number = ArmyCommand.getInstance().getArmySpeed(generals);
@@ -220,20 +220,20 @@ export default class CityArmySettingLogic extends Component {
             let camp: number = ArmyCommand.getInstance().getArmyCamp(generals);
             if (camp > 0) {
                 if (camp == GeneralCampType.Han && this._addition.han > 0) {
-                    this.labelAdditionTip.string = "汉阵营加成：" + this._addition.han;
-                    this.labelAddition.string = "阵营";
+                    this.labelAdditionTip.string = "Tăng cường thế lực Hán：" + this._addition.han;
+                    this.labelAddition.string = "Thế lực";
                 } else if (camp == GeneralCampType.Qun && this._addition.han > 0) {
-                    this.labelAdditionTip.string = "群阵营加成：" + this._addition.qun;
-                    this.labelAddition.string = "阵营";
+                    this.labelAdditionTip.string = "Tăng cường thế lực Quần Hùng：" + this._addition.qun;
+                    this.labelAddition.string = "Thế lực";
                 } else if (camp == GeneralCampType.Wei && this._addition.han > 0) {
-                    this.labelAdditionTip.string = "魏阵营加成：" + this._addition.wei;
-                    this.labelAddition.string = "阵营";
+                    this.labelAdditionTip.string = "Tăng cường thế lực Ngụy：" + this._addition.wei;
+                    this.labelAddition.string = "Thế lực";
                 } else if (camp == GeneralCampType.Shu && this._addition.han > 0) {
-                    this.labelAdditionTip.string = "蜀阵营加成：" + this._addition.shu;
-                    this.labelAddition.string = "阵营";
+                    this.labelAdditionTip.string = "Tăng cường thế lực Thục：" + this._addition.shu;
+                    this.labelAddition.string = "Thế lực";
                 } else if (camp == GeneralCampType.Wu && this._addition.han > 0) {
-                    this.labelAdditionTip.string = "吴阵营加成：" + this._addition.wu;
-                    this.labelAddition.string = "阵营";
+                    this.labelAdditionTip.string = "Tăng cường thế lực Ngô：" + this._addition.wu;
+                    this.labelAddition.string = "Thế lực";
                 }
             }
         } else {
@@ -265,10 +265,10 @@ export default class CityArmySettingLogic extends Component {
         if (totalCnt > 0) {
             var myRoleRes = LoginCommand.getInstance().proxy.getRoleResData();
             var baseCost: Conscript = MapUICommand.getInstance().proxy.getConscriptBaseCost();
-            let str: string = "消耗:  " + "金币:" + totalCnt * baseCost.cost_gold + "/" + myRoleRes.gold;
-            str += " 木材:" + totalCnt * baseCost.cost_wood + "/" + myRoleRes.wood;
-            str += " 金属:" + totalCnt * baseCost.cost_iron + "/" + myRoleRes.iron;
-            str += " 谷物:" + totalCnt * baseCost.cost_grain + "/" + myRoleRes.grain;
+            let str: string = "Tiêu hao:  " + "Vàng:" + totalCnt * baseCost.cost_gold + "/" + myRoleRes.gold;
+            str += " Gỗ:" + totalCnt * baseCost.cost_wood + "/" + myRoleRes.wood;
+            str += " Sắt:" + totalCnt * baseCost.cost_iron + "/" + myRoleRes.iron;
+            str += " Lương thực:" + totalCnt * baseCost.cost_grain + "/" + myRoleRes.grain;
             this.labelResCost.string = str;
         } else {
             this.labelResCost.string = "";
@@ -297,7 +297,7 @@ export default class CityArmySettingLogic extends Component {
         if (this._data && this._data.cmd == ArmyCmd.Idle || this._data.cmd == ArmyCmd.Conscript) {
             for (let i: number = 0; i < this._totalSoldiers.length; i++) {
                 if(this._conCnts[i] > 0){
-                    //正在征兵的不能重复征兵
+                    //正在Chiêu mộ的不能重复Chiêu mộ
                     this.setCurConscriptForIndex(i, 0);
                 }else{
                     let maxCnt: number = this._totalSoldiers[i] - this._soldiers[i];
@@ -325,7 +325,7 @@ export default class CityArmySettingLogic extends Component {
         AudioManager.instance.playClick();
         this._curConscripts = [0, 0, 0];
         if (this._order == 1) {
-            //第一个就跳到最后一个
+            //Hiệp Một个就跳到最后Một个
             this.setData(this._cityId, this._addition.armyCnt);
         } else {
             this.setData(this._cityId, this._order - 1);
@@ -336,7 +336,7 @@ export default class CityArmySettingLogic extends Component {
         AudioManager.instance.playClick();
         this._curConscripts = [0, 0, 0];
         if (this._order == this._addition.armyCnt) {
-            //最后一个就跳到第一个
+            //最后Một个就跳到Hiệp Một个
             this.setData(this._cityId, 1);
         } else {
             this.setData(this._cityId, this._order + 1);

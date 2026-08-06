@@ -1,5 +1,5 @@
-// //技能大纲
-// //技能配置
+// //Kỹ năng大纲
+// //Kỹ năngThiết lập
 
 import { _decorator } from 'cc';
 export class trigger {
@@ -9,7 +9,7 @@ export class trigger {
 
 export class triggerType {
 	des: string
-	list:trigger[] 
+	list:trigger[]
 }
 
 export class effect {
@@ -20,7 +20,7 @@ export class effect {
 
 export class effectType  {
 	des: string
-	list:effect[] 
+	list:effect[]
 }
 
 export class target {
@@ -30,11 +30,11 @@ export class target {
 
 export class targetType {
 	des: string
-	list:target[] 
+	list:target[]
 }
 
 export class SkillOutline {
-	trigger_type: triggerType 
+	trigger_type: triggerType
 	effect_type: effectType
 	target_type: targetType
 }
@@ -42,7 +42,7 @@ export class SkillOutline {
 export class SkillLevel {
     probability: number     //发动概率
     effect_value:number[]   //效果值
-    effect_round: number[]  //效果持续回合数
+    effect_round: number[]  //效果Kéo dài  lượt数
 }
 
 export class SkillConf {
@@ -50,16 +50,16 @@ export class SkillConf {
 	name: string
     des: string
     trigger: number //发起类型
-    target: number  //目标类型
-    limit: number   //可以被武将装备上限
-    arms:number[]   //可以装备的兵种
-    include_effect: number[] //技能包括的效果
+    target: number  //Loại mục tiêu
+    limit: number   //可以被Võ tướng装备Trên限
+    arms:number[]   //可以装备的Binh chủng
+    include_effect: number[] //Kỹ năng包括的效果
     levels:SkillLevel[]
 }
 
 
 export enum SkillEffectType {
-	HurtRate = 1, //伤害率
+	HurtRate = 1, //Tỷ lệ sát thương
 	Force,
 	Defense,
 	Strategy,

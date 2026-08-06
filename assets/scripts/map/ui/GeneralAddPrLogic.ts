@@ -49,11 +49,11 @@ export default class GeneralAddPrLogic  extends Component {
         this._generalNode.parent = this.generalItemParent;
 
         this._nameObj = {
-            force:"武力",
-            strategy:"战略",
-            defense:"防御",
-            speed:"速度",
-            destroy:"破坏",
+            force:"Vũ lực",
+            strategy:"Chiến lược",
+            defense:"Phòng thủ",
+            speed:"Tốc độ",
+            destroy:"Công thành",
         };
 
         this._addPrArr = ["force","strategy","defense","speed","destroy"]
@@ -66,7 +66,7 @@ export default class GeneralAddPrLogic  extends Component {
         this._currData = curData;
         this._cfgData = cfgData;
         this.nameLab.string = this._cfgData.name;
-        
+
         var com = this._generalNode.getComponent(GeneralItemLogic);
         if(com){
             com.updateItem(this._currData, GeneralItemType.GeneralNoThing);
@@ -92,20 +92,20 @@ export default class GeneralAddPrLogic  extends Component {
         var children = this.srollLayout.node.children;
         var i = 0;
         for(var key in this._nameObj){
-            children[i].getChildByName("New Label").getComponent(Label).string = this._nameObj[key] +":" + 
+            children[i].getChildByName("New Label").getComponent(Label).string = this._nameObj[key] +":" +
             GeneralData.getPrStr(this._cfgData[key],this._addPrObj[key],this._currData.level,this._cfgData[key+"_grow"]);
 
             var node:Label = children[i].getChildByName("New Sprite").getChildByName("change Label").getComponent(Label);
             node.string = this._addPrObj[key]/this._step +''
             i++;
         }
-        
-        
+
+
 
         if(this._canUsePr == -1){
             this._canUsePr = Math.abs(this._currData.hasPrPoint - this._currData.usePrPoint);
         }
-        this.prLabel.string = "可用属性点:" + this._canUsePr/this._step + "/" + this._currData.hasPrPoint/this._step;
+        this.prLabel.string = "Điểm thuộc tính khả dụng:" + this._canUsePr/this._step + "/" + this._currData.hasPrPoint/this._step;
         this.addPr.active = this._currData.hasPrPoint > 0?true:false;
     }
 
@@ -128,12 +128,12 @@ export default class GeneralAddPrLogic  extends Component {
         if(!this.isCaneReduce() || num == 0){
             return
         }
-        
+
         num = num - this._step;
         num = num < 0?0:num;
         this._addPrObj[this._addPrArr[index]] = num;
         this._canUsePr += this._step
-       
+
         this.updateView();
     }
 
@@ -169,11 +169,11 @@ export default class GeneralAddPrLogic  extends Component {
     protected onClickAddPr():void{
         AudioManager.instance.playClick();
         GeneralCommand.getInstance().addPrGeneral(
-            this._currData.id, 
-            this._addPrObj.force, 
-            this._addPrObj.strategy, 
-            this._addPrObj.defense, 
-            this._addPrObj.speed, 
+            this._currData.id,
+            this._addPrObj.force,
+            this._addPrObj.strategy,
+            this._addPrObj.defense,
+            this._addPrObj.speed,
             this._addPrObj.destroy);
     }
 

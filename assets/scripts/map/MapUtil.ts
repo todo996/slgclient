@@ -10,18 +10,18 @@ export default class MapUtil {
     protected static _tileSize: Size = size(256, 128);;
     //地图大小 宽高需要相同
     protected static _mapSize: Size = size(20, 20);
-    //地图 (0, 0)点对应的像素坐标
+    //地图 (0, 0)点đối với应的像素Toạ độ
     protected static _zeroPixelPoint: Vec2 = v2(0, 0);
     //划分区域的格子大小
     protected static _areaCellSize: Size = null;
     protected static _areaSize: Size = null;
 
-    // 初始化地图配置
+    // 初始化地图Thiết lập
     public static initMapConfig(map: TiledMap): void {
         var uit = map.node.getComponent(UITransform);
 
         this._mapPixelSize = size(uit.width, uit.height);
-   
+
         this._mapOffsetPoint = v2(uit.width * uit.anchorX, uit.height * uit.anchorY);
         this._tileSize = map.getTileSize();
         this._mapSize = map.getMapSize();
@@ -50,12 +50,12 @@ export default class MapUtil {
         return this._mapSize;
     }
 
-    /**格子数量*/
+    /**格子Số lượng*/
     public static get mapCellCount(): number {
         return this._mapSize.width * this._mapSize.height;
     }
 
-    /**每个区域包含的格子数量*/
+    /**每个区域包含的格子Số lượng*/
     public static get areaCellSize(): Size {
         return this._areaCellSize;
     }
@@ -65,7 +65,7 @@ export default class MapUtil {
         return this._areaSize;
     }
 
-    /**区域数量*/
+    /**区域Số lượng*/
     public static get areaCount(): number {
         return this._areaSize.width * this._areaSize.height;
     }
@@ -75,7 +75,7 @@ export default class MapUtil {
         return x + y * this._mapSize.width;
     }
 
-    /**获取格子坐标*/
+    /**获取格子Toạ độ*/
     public static getCellPointById(id: number): Vec2 {
         return v2(id % this._mapSize.width, Math.floor(id / this._mapSize.width));
     }
@@ -85,7 +85,7 @@ export default class MapUtil {
         return x + y * this._areaSize.width;
     }
 
-    /**获取区域坐标*/
+    /**获取区域Toạ độ*/
     public static getAreaPointById(id: number): Vec2 {
         return v2(id % this._areaSize.width, Math.floor(id / this._areaSize.width));
     }
@@ -121,14 +121,14 @@ export default class MapUtil {
             dis = 1;
         }
 
-        //上
+        //Trên
         for (let tx = x-dis; tx <= x+dis; tx++) {
             var ty:number = y + dis;
             var id = MapUtil.getIdByCellPoint(tx, ty);
             ids.push(id);
         }
 
-        //下
+        //Dưới
         for (let tx = x-dis; tx <= x+dis; tx++) {
             var ty:number = y - dis;
             var id = MapUtil.getIdByCellPoint(tx, ty);
@@ -230,30 +230,30 @@ export default class MapUtil {
         return false;
     }
 
-    // 世界像素坐标转地图坐标
+    // Thế giới像素Toạ độ转地图Toạ độ
     public static worldPixelToMapCellPoint(point: Vec2): Vec2 {
-        //  转换原理 
-        //  tiledMap 45度地图是已上方为(0,0)点 以左上方边界为y轴 右上方边界为x轴的坐标系
-        //  所以只需要将点击坐标点的平行映射到地图坐标系的边界上 求解出映射点的像素坐标 / 格子大小 即可计算出对饮的 格子坐标
+        //  Chuyển đổi原理
+        //  tiledMap 45度地图是已Trên方为(0,0)点 以左Trên方边界为y轴 右Trên方边界为x轴的Toạ độ系
+        //  所以只需要Tướng点击Toạ độ点的平行映射到地图Toạ độ系的边界Trên 求解出映射点的像素Toạ độ / 格子大小 即可计算出đối với饮的 格子Toạ độ
         let x: number = Math.floor(0.5 * this._mapSize.height + point.x / this._tileSize.width - point.y / this._tileSize.height);
         let y: number = Math.floor(1.5 * this._mapSize.width - point.x / this._tileSize.width - point.y / this._tileSize.height);
         return v2(x, y);
     }
 
-    //地图坐标(格子的中心点)转世界像素坐标
+    //地图Toạ độ(格子的中心点)转Thế giới像素Toạ độ
     public static mapCellToWorldPixelPoint(point: Vec2): Vec2 {
         let pixelX: number = this._zeroPixelPoint.x - (point.y - point.x) * this._tileSize.width * 0.5;
         let pixelY: number = this._zeroPixelPoint.y - (point.x + point.y) * this._tileSize.height * 0.5;
         return v2(pixelX, pixelY);
     }
 
-    // 地图坐标转地图像素坐标
+    // 地图Toạ độ转地图像素Toạ độ
     public static mapCellToPixelPoint(point: Vec2): Vec2 {
         let worldPoint: Vec2 = this.mapCellToWorldPixelPoint(point);
         return worldPoint.subtract(this._mapOffsetPoint);
     }
 
-    //地图像素转地图坐标
+    //地图像素转地图Toạ độ
     public static mapPixelToCellPoint(point: Vec2): Vec2 {
         let temp = point.clone();
         let worldPoint: Vec2 = temp.add(this._mapOffsetPoint);
@@ -263,7 +263,7 @@ export default class MapUtil {
     public static armyIsInView(x:number, y:number): boolean {
         let buildProxy = MapCommand.getInstance().buildProxy;
         let cityProxy = MapCommand.getInstance().cityProxy;
-        
+
         let myId = cityProxy.getMyPlayerId();
         let myUnionId = cityProxy.myUnionId;
         // let parentId = cityProxy.myParentId;

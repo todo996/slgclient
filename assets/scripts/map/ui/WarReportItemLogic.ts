@@ -52,15 +52,15 @@ export default class WarReportItemLogic extends Component {
 
         var isRead = MapUICommand.getInstance().proxy.isRead(this._curData.id);
         this.readBg.active = isRead;
-       
+
         this.setTeams(this.ackNode,this._curData.beg_attack_general);
         this.setTeams(this.defNode,this._curData.beg_defense_general);
 
         var roleData:Role = LoginCommand.getInstance().proxy.getRoleData();
         this.isMeWin(this._curData.attack_rid)
-        
-        this.leftLabel.string = roleData.rid == this._curData.attack_rid?"我":"敌";
-        this.rightLabel.string = roleData.rid == this._curData.defense_rid?"我":"敌"
+
+        this.leftLabel.string = roleData.rid == this._curData.attack_rid?"Ta":"Địch";
+        this.rightLabel.string = roleData.rid == this._curData.defense_rid?"Ta":"Địch"
 
         this.timeLabel.string = DateUtil.converTimeStr(this._curData.ctime, "YYYY-MM-DD hh:mm:ss");
 
@@ -70,7 +70,7 @@ export default class WarReportItemLogic extends Component {
     protected isMeWin(rid:number = 0):void{
         var roleData:Role = LoginCommand.getInstance().proxy.getRoleData();
         this.winNode.active = this.loseNode.active = false;
-        
+
         if(roleData.rid == rid){
             if(this._curData.result == 0){
                 this.loseNode.active = true;
@@ -118,7 +118,7 @@ export default class WarReportItemLogic extends Component {
         }
 
         EventMgr.emit(LogicEvent.clickWarReport, this._curData);
-       
+
     }
 
     protected onClickPos(){

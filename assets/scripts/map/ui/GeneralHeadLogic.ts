@@ -4,14 +4,14 @@ import GeneralCommand from "../../general/GeneralCommand";
 
 @ccclass('GeneralHeadLogic')
 export default class GeneralHeadLogic extends Component {
-    
+
     public setHeadId(id:number) {
 
         var sp = this.node.getComponent(Sprite);
         if (sp){
             //sp.spriteFrame = null;
         }
-        
+
         var frame = GeneralCommand.getInstance().proxy.getGeneralTex(id);
         if(frame){
             if(sp){
@@ -20,7 +20,7 @@ export default class GeneralHeadLogic extends Component {
         }else{
 
             console.log("load setHeadId:", id);
-            resources.load("./generalpic/card_" + id + "/spriteFrame", SpriteFrame, 
+            resources.load("./generalpic/card_" + id + "/spriteFrame", SpriteFrame,
                 (finish: number, total: number) => {
                 },
                 (error: Error, asset: any) => {

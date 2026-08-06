@@ -15,7 +15,7 @@ export class HttpManager {
     public setWebUrl(url:string):void{
         if(this._url == "" || this._url != url){
             this._url = url;
-        } 
+        }
     }
 
 

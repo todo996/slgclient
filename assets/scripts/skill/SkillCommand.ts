@@ -40,7 +40,7 @@ export default class SkillCommand {
         };
         NetManager.getInstance().send(sendData);
     }
-    
+
     protected onSkillList(data: any): void {
         console.log("onSkillList", data);
         if (data.code == 0) {

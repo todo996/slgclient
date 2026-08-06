@@ -34,7 +34,7 @@ export default class UnionMemberLogic extends Component {
         EventMgr.on(LogicEvent.unionAppoint,this.getMember,this);
         EventMgr.on(LogicEvent.unionAbdicate,this.getMember,this);
         EventMgr.on(LogicEvent.clickUnionMemberItem,this.onClickItem,this);
-        
+
 
     }
 

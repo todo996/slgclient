@@ -1,111 +1,88 @@
 import { sys } from "cc";
 
-export class LocalCache{
+type CacheStore = Record<string, any>;
+
+export class LocalCache {
     public static userListKey = "userListKey";
 
-
-    public static setPersonMemory(keyStr, Value):void {
-        //log("setPersonMemory:" + keyStr + ", " + Value);
-    
-        if (keyStr === undefined || keyStr === null || keyStr === "") {
+    public static setPersonMemory(key: string, value: any): void {
+        if (!key) {
             return;
         }
-    
-        if (Value === undefined || Value === null || Value === "") {
-            Value = false;
-        }
-    
-        var jsonContent = LocalCache.getListForJson();
-        if (jsonContent === undefined || jsonContent === null || jsonContent === "") {
-            jsonContent = {};
-        }
-        jsonContent[keyStr] = Value;
-    
-        var jsonstring = JSON.stringify(jsonContent);
-        sys.localStorage.setItem(LocalCache.userListKey, jsonstring);
-    };
 
-
-
-    
-    public static getPersonMemory(keyStr, defaultValue):any {
-        //log("getPersonMemory:" + keyStr + ", " + defaultValue);
-    
-        //key不存在就gg了
-        if (keyStr === undefined || keyStr === null || keyStr === "") {
-            return;
-        }
-    
-        //获取本地已经保存的
-        var jsonContent = LocalCache.getListForJson();
-        if (jsonContent === null || jsonContent === undefined || jsonContent === "") {
-            jsonContent = {};
-        }
-    
-        
-        //如果本身值存在就返回本身
-        if (jsonContent[keyStr] !== null && jsonContent[keyStr] !== undefined && jsonContent[keyStr] !== "") {
-            return jsonContent[keyStr];
-        } else//如果本身不存在就判断默认是否存在
-        {
-            //默认也不存在 返回false
-            if (defaultValue === undefined || defaultValue === null || defaultValue === "") {
-                return false;
-            } else {
-                //默认存在  设置默认保存并且返回默认值
-                jsonContent[keyStr] = defaultValue;
-                var jsonstring = JSON.stringify(jsonContent);
-                sys.localStorage.setItem(LocalCache.userListKey, jsonstring);
-                return jsonContent[keyStr];
-            }
-        }
-    
+        const store = LocalCache.getListForJson();
+        store[key] = value;
+        sys.localStorage.setItem(LocalCache.userListKey, JSON.stringify(store));
     }
 
+    public static getPersonMemory(key: string, defaultValue: any): any {
+        if (!key) {
+            return defaultValue;
+        }
 
-    public static getListForJson():any {
-        var jsondata = sys.localStorage.getItem(LocalCache.userListKey);
-        if (0 == Number(jsondata) || jsondata == undefined)
-            return;
-    
-        var jsonArray = JSON.parse(jsondata);
-        return jsonArray;
-    };
-
-
-    public static getUuid():any{
-        return LocalCache.getPersonMemory("deviceuuid", "");
+        const store = LocalCache.getListForJson();
+        return Object.prototype.hasOwnProperty.call(store, key)
+            ? store[key]
+            : defaultValue;
     }
-    
-    public static setUuid(uuid):void {
+
+    public static getListForJson(): CacheStore {
+        const raw = sys.localStorage.getItem(LocalCache.userListKey);
+        if (!raw) {
+            return {};
+        }
+
+        try {
+            const parsed = JSON.parse(raw);
+            return parsed && typeof parsed === "object" ? parsed : {};
+        } catch (_error) {
+            sys.localStorage.removeItem(LocalCache.userListKey);
+            return {};
+        }
+    }
+
+    public static getUuid(): string {
+        return LocalCache.getPersonMemory("deviceuuid", "") || "";
+    }
+
+    public static setUuid(uuid: string): void {
         LocalCache.setPersonMemory("deviceuuid", uuid);
-    };
-
-
-    public static setLoginValidation(data:any):void{
-        LocalCache.setPersonMemory("loginvalidation", data);
     }
 
-    public static getLoginValidation():any{
-        return LocalCache.getPersonMemory("loginvalidation", "");
+    public static setLoginValidation(data: { username: string }): void {
+        LocalCache.setPersonMemory("loginvalidation", {
+            username: data?.username || "",
+        });
     }
 
-    public static getMusic() {
-        return LocalCache.getPersonMemory("music", false);
+    public static getLoginValidation(): { username: string } | null {
+        const data = LocalCache.getPersonMemory("loginvalidation", null);
+        if (!data || typeof data !== "object") {
+            return null;
+        }
+
+        // Phiên bản cũ từng lưu cả mật khẩu. Ghi lại dữ liệu đã làm sạch để
+        // trường password bị xoá khỏi localStorage ngay lần chạy đầu tiên.
+        const sanitized = {
+            username: typeof data.username === "string" ? data.username : "",
+        };
+        LocalCache.setLoginValidation(sanitized);
+        return sanitized;
     }
 
-    public static setMusic(state:Boolean) {
-        return LocalCache.setPersonMemory("music", state);
+    public static getMusic(): boolean {
+        return Boolean(LocalCache.getPersonMemory("music", false));
     }
 
-    public static getSound() {
-        return LocalCache.getPersonMemory("sound", false);
+    public static setMusic(state: boolean): void {
+        LocalCache.setPersonMemory("music", state);
     }
 
-    public static setSound(state:Boolean) {
-        return LocalCache.setPersonMemory("sound", state);
+    public static getSound(): boolean {
+        return Boolean(LocalCache.getPersonMemory("sound", false));
     }
 
-
-
+    public static setSound(state: boolean): void {
+        LocalCache.setPersonMemory("sound", state);
+    }
 }

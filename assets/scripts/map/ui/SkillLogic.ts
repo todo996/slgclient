@@ -20,9 +20,9 @@ export default class SkillLogic extends Component {
     _skillPos : number = -1;
 
 
-   
+
     protected onEnable():void{
-       
+
         EventMgr.on(LogicEvent.skillListInfo, this.onSkillList, this);
         SkillCommand.getInstance().qrySkillList();
     }
@@ -32,7 +32,7 @@ export default class SkillLogic extends Component {
     }
 
     protected onSkillList(){
-    
+
         var skills = SkillCommand.getInstance().proxy.skills;
         var skillConfs = SkillCommand.getInstance().proxy.skillConfs;
 
@@ -73,7 +73,7 @@ export default class SkillLogic extends Component {
     }
 
 
-    /** type:0普通展示、type:1 学习、2:武将查看 **/
+    /** type:0普通展示、type:1 Học、2:Võ tướng查看 **/
     public setData(type:number, general:GeneralData, skillPos: number) {
         this._type = type;
         this._general = general;

@@ -14,7 +14,7 @@ export class NetManager {
         this._netNode = new NetNode();
         this._netNode.init();
     }
-    
+
     public connect(options: NetConnectOptions) :void{
         this._netNode.connect(options);
     }
@@ -23,7 +23,7 @@ export class NetManager {
         if(send_data.seq == undefined){
             send_data.seq = 0;
         }
-        
+
         return this._netNode.send(send_data,otherData,force);
     }
 

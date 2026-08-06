@@ -1718,7 +1718,7 @@ class PKCS7 {
  * @suppress {checkTypes} checked by tsc
  */
 class ZeroPadding {
-   
+
     static pad(data, blockSize) {
         // Shortcut
         const /** @type {?} */ blockSizeBytes = blockSize * 4;
@@ -1733,10 +1733,10 @@ class ZeroPadding {
         // Add padding
         data.concat(padding);
     }
-    
+
 
     static unpad(data) {
-        
+
         // console.log("unpad 1:", data.clone());
         for (let i = data.words.length - 1; i>=0; i--) {
             if(data.words[i] != 0){
@@ -1745,7 +1745,7 @@ class ZeroPadding {
                 return
             }
         }
-        
+
     }
 }
 

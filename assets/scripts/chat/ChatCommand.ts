@@ -117,5 +117,5 @@ export default class ChatCommand {
         NetManager.getInstance().send(sendData);
     }
 
-    
+
 }

@@ -16,7 +16,7 @@ export default class CreateLogic extends Component {
 
     @property(Toggle)
     manToggle: Toggle = null;
-    
+
 
     protected onLoad():void{
         EventMgr.on(ServerConfig.role_create, this.create, this);

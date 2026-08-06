@@ -22,7 +22,7 @@ export default class DrawLogic extends Component {
 
     @property(Label)
     cntLab: Label = null;
-    
+
 
     protected onEnable():void{
         EventMgr.on(LogicEvent.upateMyRoleRes, this.updateRoleRes, this);
@@ -44,8 +44,8 @@ export default class DrawLogic extends Component {
     protected updateRoleRes():void{
         let commonCfg: GeneralCommonConfig = GeneralCommand.getInstance().proxy.getCommonCfg();
         var roleResData = LoginCommand.getInstance().proxy.getRoleResData();
-        this.labelOnce.string = "消耗:"+commonCfg.draw_general_cost +"/"+ roleResData.gold;
-        this.labelTen.string = "消耗:"+commonCfg.draw_general_cost * 10 +"/"+ roleResData.gold;
+        this.labelOnce.string = "Tiêu hao:"+commonCfg.draw_general_cost +"/"+ roleResData.gold;
+        this.labelTen.string = "Tiêu hao:"+commonCfg.draw_general_cost * 10 +"/"+ roleResData.gold;
 
         var basic = MapUICommand.getInstance().proxy.getBasicGeneral();
         var cnt = GeneralCommand.getInstance().proxy.getMyActiveGeneralCnt();
@@ -67,5 +67,5 @@ export default class DrawLogic extends Component {
         EventMgr.emit(LogicEvent.showWaiting);
     }
 
- 
+
 }

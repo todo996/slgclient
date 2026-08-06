@@ -36,7 +36,7 @@ export default class GeneralCommand {
         EventMgr.on(ServerConfig.general_upSkill, this.onUpSkill, this);
         EventMgr.on(ServerConfig.general_downSkill, this.onDownSkill, this);
         EventMgr.on(ServerConfig.general_lvSkill, this.onLvSkill, this);
-        
+
 
     }
 
@@ -52,7 +52,7 @@ export default class GeneralCommand {
         return this._proxy;
     }
 
-    /**我的将领列表*/
+    /**Ta的Tướng列表*/
     protected onMyGenerals(data: any): void {
         console.log("onMyGeneralsonMyGenerals ", data);
         if (data.code == 0) {
@@ -108,21 +108,21 @@ export default class GeneralCommand {
 
     protected onUpSkill(data:any):void{
         console.log("onUpSkill ", data);
-        
+
     }
 
-    
+
     protected onDownSkill(data:any):void{
         console.log("onDownSkill ", data);
-       
+
     }
 
     protected onLvSkill(data:any):void{
         console.log("onLvSkill ", data);
     }
-    
 
-    /**我的角色属性*/
+
+    /**Ta的Nhân vật属性*/
     public updateMyProperty(datas: any[]): void {
         this._proxy.updateMyGenerals(datas);
         EventMgr.emit(LogicEvent.updateMyGenerals);
@@ -139,8 +139,8 @@ export default class GeneralCommand {
 
 
     /**
-     * 抽卡
-     * @param drawTimes 
+     * Chiêu mộ tướng
+     * @param drawTimes
      */
     public drawGenerals(drawTimes:number = 1): void {
         let sendData: any = {
@@ -155,9 +155,9 @@ export default class GeneralCommand {
 
 
     /**
-     * 
-     * @param compId 
-     * @param gIds 
+     *
+     * @param compId
+     * @param gIds
      */
     public composeGeneral(compId:number = 1,gIds:number[] = []): void {
         let sendData: any = {
@@ -222,7 +222,7 @@ export default class GeneralCommand {
         NetManager.getInstance().send(sendData);
     }
 
- 
+
     public lvSkill(gId:number, pos:number) {
         let sendData: any = {
             name: ServerConfig.general_lvSkill,

@@ -14,7 +14,7 @@ export default class ChatProxy {
 
     private _worldMsgList:ChatMsg[] = [];
     private _unionMsgList:ChatMsg[] = [];
-    
+
     public clearData(): void {
 
     }

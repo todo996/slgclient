@@ -62,7 +62,7 @@ export default class ArmySelectItemLogic extends Component {
             ArmyCommand.getInstance().generalAssignArmy(this._data.id, this._cmd, this._toX, this._toY);
             EventMgr.emit(LogicEvent.closeArmyAelectUi);
         } else {
-            console.log("军队忙");
+            console.log("Đội quân đang bận");
         }
     }
 
@@ -77,25 +77,25 @@ export default class ArmySelectItemLogic extends Component {
             let totalSoldierCnt: number = ArmyCommand.getInstance().getArmyTotalSoldierCntByGenerals(generals);
 
             if (this._data.cmd == ArmyCmd.Conscript) {
-                //体力不足
+                //Không đủ thể lực
                 this.tipNode.active = true;
-                this.labelTip.string = "征兵中...";
+                this.labelTip.string = "Đang chiêu mộ...";
             }else if (power < commonCfg.recovery_physical_power) {
-                //体力不足
+                //Không đủ thể lực
                 this.tipNode.active = true;
-                this.labelTip.string = "体力不足";
+                this.labelTip.string = "Không đủ thể lực";
             } else if (this._data.soldiers[0] <= 0) {
-                //兵力不足
+                //Binh lực不足
                 this.tipNode.active = true;
-                this.labelTip.string = "主将兵力不足";
+                this.labelTip.string = "Chủ tướng không đủ binh lực";
             } else if (this._data.state > 0) {
-                //行军中
+                //Đang hành quân
                 this.tipNode.active = true;
-                this.labelTip.string = "行军中...";
+                this.labelTip.string = "Đang hành quân...";
             } else if (this._data.cmd == ArmyCmd.Reclaim) {
-                //屯田中
+                //Đang đồn điền
                 this.tipNode.active = true;
-                this.labelTip.string = "屯田中...";
+                this.labelTip.string = "Đang đồn điền...";
             } else {
                 this.tipNode.active = false;
             }

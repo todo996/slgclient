@@ -30,7 +30,7 @@ export default class TransformLogic extends Component {
     @property(Label)
     rateLabel:Label = null;
 
-    
+
     @property(Slider)
     trSlider:Slider = null;
 
@@ -42,12 +42,12 @@ export default class TransformLogic extends Component {
     protected _toChange:number = 0;
 
     protected onLoad():void{
-        
+
         this._nameObj = {
-            wood: "木材x",
-            iron: "金属x",
-            stone: "石材x",
-            grain: "谷物x",
+            wood: "Gỗx",
+            iron: "Sắtx",
+            stone: "Đáx",
+            grain: "Lương thựcx",
         };
 
         this._keyArr = ["wood","iron","stone","grain"]
@@ -65,7 +65,7 @@ export default class TransformLogic extends Component {
     public initView():void{
         this.updateView();
         this.updateBtn();
-        
+
     }
 
     protected updateView():void{
@@ -104,7 +104,7 @@ export default class TransformLogic extends Component {
             var roleRes = LoginCommand.getInstance().proxy.getRoleResData();
             var from_key = this._keyArr[from_index];
             this._fromChange = Math.round(roleRes[from_key] * this.trSlider.progress)
-            
+
             var rate = this.getRate()
             this._toChange = Math.round(this._fromChange * rate / 100)
             this.trLabel.string = this._fromChange  + "/" + this._toChange

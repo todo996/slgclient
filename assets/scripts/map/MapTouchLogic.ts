@@ -34,10 +34,10 @@ export default class MapTouchLogic extends Component {
     }
 
     protected onTouchMap(mapPoint: Vec2, clickPixelPoint: Vec2): void {
-        console.log("点击区域 (" + mapPoint.x + "," + mapPoint.y + ")");
+        console.log("Đã chọn khu vực (" + mapPoint.x + "," + mapPoint.y + ")");
         this.removeClickUINode();
         if (MapUtil.isVaildCellPoint(mapPoint) == false) {
-            console.log("点击到无效区域");
+            console.log("Đã chọn khu vực không hợp lệ");
             return;
         }
 
@@ -53,8 +53,8 @@ export default class MapTouchLogic extends Component {
         let buildData: MapBuildData = this._cmd.buildProxy.getBuild(cellId);
         if (buildData != null) {
             if(buildData.isSysCity() == false){
-                //代表点击被占领的区域
-                console.log("点击被占领的区域", buildData);
+                //代表Đã chọn khu vực đã bị chiếm
+                console.log("Đã chọn khu vực đã bị chiếm", buildData);
                 this.showClickUINode(buildData, clickPixelPoint);
                 return;
             }
@@ -73,14 +73,14 @@ export default class MapTouchLogic extends Component {
                 }else{
                     this.showClickUINode(temp, clickPixelPoint);
                 }
-                console.log("点击野外城池", temp);
+                console.log("Đã chọn thành trì ngoài bản đồ", temp);
             }else{
                 this.showClickUINode(resData, clickPixelPoint);
-                console.log("点击野外区域", resData);
+                console.log("Đã chọn khu vực ngoài thành", resData);
             }
-           
+
         } else {
-            console.log("点击山脉河流区域");
+            console.log("Đã chọn khu vực núi hoặc sông");
         }
     }
 

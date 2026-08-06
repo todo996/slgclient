@@ -81,6 +81,6 @@ export class LogicEvent {
     public static unionAbdicate:string = "union_abdicate";
     public static clickUnionMemberItem:string = "clickUnionMemberItem";
     public static updateUnionList:string = "update_union_list";
-   
-    
+
+
 }

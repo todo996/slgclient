@@ -66,7 +66,7 @@ export default class FacilityListLogic extends Component {
                 }
             });
             if (this._curSelectType == -1) {
-                this.setCurSelectType(0);//默认选中主城
+                this.setCurSelectType(0);//默认选中Thành chính
             }
         }
 
@@ -86,7 +86,7 @@ export default class FacilityListLogic extends Component {
                 let cfg: FacilityConfig = MapUICommand.getInstance().proxy.getFacilityCfgByType(logic.data.type);
                 for (let i: number = 0; i < cfg.conditions.length; i++) {
                     if (cfg.conditions[i].type == data.type) {
-                        //涉及到了解锁条件
+                        //涉及到了Điều kiện mở khóa
                         let data: Facility = MapUICommand.getInstance().proxy.getMyFacilityByType(this._curCityId, logic.data.type);
                         let isUnlock: boolean = MapUICommand.getInstance().proxy.isFacilityUnlock(this._curCityId, logic.data.type);
                         logic.setData(this._curCityId, data, cfg, isUnlock);

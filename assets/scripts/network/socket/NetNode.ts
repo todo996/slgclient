@@ -12,7 +12,7 @@ export enum NetTipsType {
 }
 
 export enum NetNodeState {
-    Closed,                     // 已关闭
+    Closed,                     // 已Đóng
     Connecting,                 // 连接中
     Checking,                   // 验证中
     Working,                    // 可传输数据
@@ -20,18 +20,18 @@ export enum NetNodeState {
 
 
 export enum NetNodeType {
-    BaseServer,                     //主要服务器
-    ChatServer,                     //聊天服务器
+    BaseServer,                     //Chủ要服务器
+    ChatServer,                     //Trò chuyện服务器
 }
- 
+
 
 const recvMessage = "recvMessage";
 
 export interface NetConnectOptions {
     host?: string,              // 地址
     port?: number,              // 端口
-    url?: string,               // url，与地址+端口二选一
-    autoReconnect?: number,     // -1 永久重连，0不自动重连，其他正整数为自动重试次数
+    url?: string,               // url，与地址+端口二选Một
+    autoReconnect?: number,     // -1 永久重连，0不自动重连，其他正整数为自动Thử lại次数
     type?:NetNodeType,          //服务器类型
 }
 
@@ -39,8 +39,8 @@ export class NetNode {
     protected _connectOptions: NetConnectOptions = null;
     protected _autoReconnect: number = 0;
     protected _autoReconnectMax: number = 3;
-    protected _state: NetNodeState = NetNodeState.Closed;                   // 节点当前状态
-    protected _socket: WebSock = null;                                      // Socket对象（可能是原生socket、websocket、wx.socket...)
+    protected _state: NetNodeState = NetNodeState.Closed;                   // 节点当前Trạng thái
+    protected _socket: WebSock = null;                                      // Socketđối với象（可能是原生socket、websocket、wx.socket...)
     protected _timer:NetTimer = null;
 
 
@@ -62,7 +62,7 @@ export class NetNode {
         this._timer = new NetTimer();
         this.initTimer();
         this._invokePool = [];
-        
+
     }
 
     public connect(options: NetConnectOptions): boolean {
@@ -87,7 +87,7 @@ export class NetNode {
 
     /**
      * 更换线路
-     * @param options 
+     * @param options
      */
     public changeConect(options: NetConnectOptions){
         if(options == this._connectOptions){
@@ -116,25 +116,25 @@ export class NetNode {
         this._state = NetNodeState.Working;
 
         // if(this._connectOptions.type == NetNodeType.BaseServer){
-            
+
         // }else{
         //     this.onChecked();
         // }
 
         EventMgr.emit(NetEvent.ServerCheckLogin);
-        
+
     }
 
 
     protected initTimer(){
         this._timer.init();
-        
+
         EventMgr.on(NetEvent.ServerTimeOut, this.onTimeOut, this);
     }
 
     protected onTimeOut(msg:any){
         console.log("NetNode onTimeOut!",msg)
-        //超时删除 请求队列
+        //超时删除 请求Đội列
         for (var i = 0; i < this._requests.length;i++) {
             let req = this._requests[i];
             if(msg.name == req.rspName && msg.seq == req.seq){
@@ -144,7 +144,7 @@ export class NetNode {
                 i--;
 
                 EventMgr.emit(recvMessage, msg, req);
-            }       
+            }
         }
 
     }
@@ -172,11 +172,11 @@ export class NetNode {
         // EventMgr.emit(NetEvent.ServerConnected);
     }
 
-    // 连接验证成功，进入工作状态
+    // 连接验证成功，Vào工作Trạng thái
     protected onChecked() {
         console.log("NetNode onChecked!")
-        
-        // 关闭连接或重连中的状态显示
+
+        // Đóng连接或重连中的Trạng thái显示
         this.updateNetTips(NetTipsType.Connecting, false);
         this.updateNetTips(NetTipsType.ReConnecting, false);
 
@@ -188,14 +188,14 @@ export class NetNode {
                 }
 
             }
-            // 如果还有等待返回的请求，启动网络请求层
+            // 如果还有等待Quay lại的请求，启动网络请求层
         }
     }
 
-    // 接收到一个完整的消息包
+    // 接收到Một个完整的消息包
     protected onMessage(msg): void {
         // console.log(`NetNode onMessage msg ` ,msg);
-        
+
         if(msg){
 
              // 接受到数据，重新定时收数据计时器
@@ -209,20 +209,20 @@ export class NetNode {
                 for (var i = 0; i < this._requests.length;i++) {
                     let req = this._requests[i];
                     if(msg.name == req.rspName && msg.seq == req.seq && req.sended == true){
-                        
+
                         // console.log("req:", req);
                         this._requests.splice(i, 1);
                         i--;
-               
+
                         EventMgr.emit(recvMessage, msg, req);
                         EventMgr.emit(msg.name, msg, req.otherData);
                         this.destroyInvoke(req);
                         EventMgr.emit(NetEvent.ServerRequestSucess,msg);
-                    }       
+                    }
                 }
 
             }
-           
+
         }
     }
 
@@ -246,7 +246,7 @@ export class NetNode {
     protected restReq(){
         for (var i = 0; i < this._requests.length;i++) {
             let req = this._requests[i];
-            req.sended = false;            
+            req.sended = false;
         }
     }
 
@@ -258,7 +258,7 @@ export class NetNode {
         if (this.isAutoReconnect()) {
             this.updateNetTips(NetTipsType.ReConnecting, true);
 
-            
+
             this._socket.close();
             this._state = NetNodeState.Closed;
 
@@ -277,7 +277,7 @@ export class NetNode {
 
     }
 
-    // 只是关闭Socket套接字（仍然重用缓存与当前状态）
+    // 只是ĐóngSocket套接字（仍然重用缓存与当前Trạng thái）
     public closeSocket(code?: number, reason?: string) {
         this.clearTimer();
         this._requests.length = 0;
@@ -295,12 +295,12 @@ export class NetNode {
 
 
     public send(send_data:any,otherData:any,force: boolean = false) :Promise<any>{
-   
+
         let data = this.createInvoke();
         data.json = send_data;
         data.rspName = send_data.name;
         data.otherData = otherData;
-  
+
         let p = new Promise(function(resolve, reject){
             let self = this;
             let ok = (rsp, req)=>{
@@ -314,32 +314,32 @@ export class NetNode {
                     resolve(obj);
                 }
             }
-          
+
             EventMgr.on(recvMessage, ok, self);
-      
+
         });
-         
+
         this.sendPack(data,force);
         return p;
     }
 
-    // 发起请求，如果当前处于重连中，进入缓存列表等待重连完成后发送
+    // 发起请求，如果当前处于重连中，Vào缓存列表等待重连完成后Gửi
     public sendPack(obj: RequestObject, force: boolean = false) :boolean {
         if (this._state == NetNodeState.Working || force) {
             this.socketSend(obj);
             this._requests.push(obj);
-        } 
-        
+        }
+
         else if (this._state == NetNodeState.Checking ||
             this._state == NetNodeState.Connecting) {
             this._requests.push(obj);
-        } 
-        
+        }
+
         else if(this._state == NetNodeState.Closed){
             this.connect(this._connectOptions);
             this._requests.push(obj);
         }
-        
+
         else {
             console.error("NetNode request error! current state is " + this._state);
         }
@@ -348,8 +348,8 @@ export class NetNode {
 
 
     /**
-     * 打包发送
-     * @param obj 
+     * 打包Gửi
+     * @param obj
      */
     public socketSend(obj:RequestObject){
         obj.seq = obj.json.seq = this._seqId;
@@ -370,9 +370,9 @@ export class NetNode {
         obj.rspName = "heartbeat";
         obj.seq = 0;
         return obj;
-        
+
     }
-    
+
 
     /********************** 心跳、超时相关处理 *********************/
     protected cannelMsgTimer(data:any = null) {

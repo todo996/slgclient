@@ -40,7 +40,7 @@ export default class GeneralComposeLogic  extends Component {
     }
 
     protected onEnable():void{
-        EventMgr.on(LogicEvent.openGeneralSelect, this.selectItem, this); 
+        EventMgr.on(LogicEvent.openGeneralSelect, this.selectItem, this);
         this.updataView();
     }
 
@@ -70,7 +70,7 @@ export default class GeneralComposeLogic  extends Component {
         }
 
         this.nameLab.string = this._cfgData.name;
-        
+
         this.updateGeneral();
         this.updataView();
     }
@@ -87,7 +87,7 @@ export default class GeneralComposeLogic  extends Component {
 
         var comp = this.scrollView.node.getComponent(ListLogic);
         comp.setData(listTemp);
-        
+
     }
 
 

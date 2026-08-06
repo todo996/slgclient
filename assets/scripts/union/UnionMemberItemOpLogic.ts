@@ -20,10 +20,10 @@ export default class UnionMemberItemOpLogic extends Component {
     @property(Button)
     appointButton: Button = null;
 
-    
+
     @property(Button)
     unAppointButton: Button = null;
-    
+
 
     protected _menberData:Member = null;
 
@@ -39,7 +39,7 @@ export default class UnionMemberItemOpLogic extends Component {
         this.node.active = false;
         AudioManager.instance.playClick();
     }
-    
+
     public setData(data):void{
         this._menberData = data;
         let city:MapCityData = MapCommand.getInstance().cityProxy.getMyMainCity();
@@ -72,7 +72,7 @@ export default class UnionMemberItemOpLogic extends Component {
         }else{
             this.node.active = false;
         }
-       
+
     }
 
     protected kick():void{
@@ -81,7 +81,7 @@ export default class UnionMemberItemOpLogic extends Component {
         this.node.active = false;
     }
 
-    
+
     protected appoint():void{
         AudioManager.instance.playClick();
         UnionCommand.getInstance().unionAppoint(this._menberData.rid, 1);
@@ -99,6 +99,6 @@ export default class UnionMemberItemOpLogic extends Component {
         UnionCommand.getInstance().unionAbdicate(this._menberData.rid);
         this.node.active = false;
     }
-    
+
 
 }

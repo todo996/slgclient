@@ -20,7 +20,7 @@ export default class UnionLogic extends Component {
     memberNode:Node | null = null;
     @property(Node)
     applyNode:Node | null = null;
-    
+
     @property(Node)
     logNode:Node | null = null;
     @property(Label)
@@ -73,7 +73,7 @@ export default class UnionLogic extends Component {
     }
 
     protected openMyUnion():void{
-        
+
         this.visibleView();
         this.mainNode.active = true
     }

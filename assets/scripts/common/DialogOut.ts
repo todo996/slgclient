@@ -5,7 +5,7 @@ const { ccclass, property } = _decorator;
 
 @ccclass('DialogOut')
 export class DialogOut extends Component {
-    
+
     onEnable(){
         console.log("DialogOut onEnable");
         this.node.setScale(new Vec3(0.2, 0.2, 0.2));

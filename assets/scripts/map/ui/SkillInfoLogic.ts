@@ -20,7 +20,7 @@ export default class SkillInfoLogic extends Component {
     @property(Node)
     icon:Node = null;
 
- 
+
     @property(Label)
     lvLab: Label = null;
 
@@ -105,7 +105,7 @@ export default class SkillInfoLogic extends Component {
         }else{
             this.lvLab.string = "";
         }
-    
+
         this.triggerLab.string =  outLine.trigger_type.list[conf.trigger-1].des;
         this.rateLab.string = conf.levels[0].probability + "%";
         this.targetLab.string = outLine.target_type.list[conf.target-1].des;
@@ -134,20 +134,20 @@ export default class SkillInfoLogic extends Component {
 
         var str = ""
         if(arms.indexOf(1)>=0 || arms.indexOf(4)>=0 || arms.indexOf(7)>=0){
-            str += "步"
+            str += "Bộ"
         }
 
         if(arms.indexOf(2)>=0 || arms.indexOf(5)>=0 || arms.indexOf(8)>=0){
-            str += "弓"
+            str += "Cung"
         }
-        
+
         if(arms.indexOf(3)>=0 || arms.indexOf(6)>=0 || arms.indexOf(9)>=0){
-            str += "骑"
+            str += "Kỵ"
         }
         return str;
     }
 
-    
+
     protected onClickLearn():void {
         AudioManager.instance.playClick();
         if(this._general){

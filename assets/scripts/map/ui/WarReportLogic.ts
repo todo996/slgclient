@@ -32,7 +32,7 @@ export default class WarReportLogic extends Component {
         EventMgr.on(LogicEvent.closeReport, this.close, this);
     }
 
-    
+
     protected onDisable():void{
         EventMgr.targetOff(this);
     }
@@ -49,7 +49,7 @@ export default class WarReportLogic extends Component {
 
     protected initView():void{
         var report:WarReport[] = MapUICommand.getInstance().proxy.getWarReport();
-        
+
         var comp = this.scrollView.node.getComponent(ListLogic);
         comp.setData(report);
     }

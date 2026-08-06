@@ -43,7 +43,7 @@ export default class ArmyCommand {
         EventMgr.on(ServerConfig.army_push, this.onGeneralArmyStatePush, this);
         EventMgr.on(ServerConfig.nationMap_scanBlock, this.onNationMapScanBlock, this);
 
-        //定时检测自己的军队是否有武将已经征兵完，如果是请求刷新
+        //定时检测Bản thân的Quân đội是否有Võ tướng已经Chiêu mộ完，如果是请求刷新
         setInterval(() => {
             let myCity: MapCityData = MapCommand.getInstance().cityProxy.getMyMainCity();
             if (myCity != null){
@@ -55,12 +55,12 @@ export default class ArmyCommand {
                 for (let i: number = 0; i < armyList.length; i++) {
                     var army = armyList[i];
                     if (army != null && army.isGenConEnd()){
-                        console.log("有武将征兵完了");
+                        console.log("Có võ tướng đã hoàn tất chiêu mộ");
                         this.qryArmyOne(army.cityId, army.order);
                     }
                 }
             }
-            
+
          }, 1000);
     }
 
@@ -76,7 +76,7 @@ export default class ArmyCommand {
         return this._proxy;
     }
 
-    /**军队列表回调*/
+    /**Quân đội列表回调*/
     protected onQryArmyList(data: any, otherData: any): void {
         console.log("onQryArmyList", data);
         if (data.code == 0) {
@@ -95,9 +95,9 @@ export default class ArmyCommand {
         }
     }
 
-    
 
-    /**配置将领回调*/
+
+    /**Thiết lậpTướng回调*/
     protected onGeneralDispose(data: any, otherData: any): void {
         console.log("onGeneralDispose", data);
         if (data.code == 0) {
@@ -107,7 +107,7 @@ export default class ArmyCommand {
         }
     }
 
-    /**征兵回调*/
+    /**Chiêu mộ回调*/
     protected onGeneralConscript(data: any, otherData: any): void {
         console.log("onGeneralConscript", data);
         if (data.code == 0) {
@@ -120,7 +120,7 @@ export default class ArmyCommand {
         }
     }
 
-    /**出征回调*/
+    /**Xuất chinh回调*/
     protected onGeneralAssignArmy(data: any, otherData: any): void {
         console.log("onGeneralAssignArmy", data);
         if (data.code == 0) {
@@ -129,7 +129,7 @@ export default class ArmyCommand {
         }
     }
 
-    /**军队状态变更*/
+    /**Quân độiTrạng thái变更*/
     protected onGeneralArmyStatePush(data: any): void {
         console.log("onGeneralArmyState", data);
         if (data.code == 0) {
@@ -147,7 +147,7 @@ export default class ArmyCommand {
         }
     }
 
-    /**我的角色属性*/
+    /**Ta的Nhân vật属性*/
     public updateMyProperty(datas: any[]): void {
         if (datas.length > 0) {
             let armyDatas: ArmyData[] = this._proxy.updateArmys(datas[0].cityId, datas);
@@ -155,7 +155,7 @@ export default class ArmyCommand {
         }
     }
 
-    /**获取军队当前体力*/
+    /**获取Quân đội当前Thể lực*/
     public getArmyPhysicalPower(armyData: ArmyData): number {
         let minPower: number = 100;
         for (let i: number = 0; i < armyData.generals.length; i++) {
@@ -167,7 +167,7 @@ export default class ArmyCommand {
         return minPower;
     }
 
-    /**获取军队将领列表*/
+    /**获取Quân độiTướng列表*/
     public getArmyGenerals(armyData: ArmyData): GeneralData[] {
         let list: GeneralData[] = [];
         for (let i: number = 0; i < armyData.generals.length; i++) {
@@ -177,7 +177,7 @@ export default class ArmyCommand {
         return list;
     }
 
-    /**根据将领列表获取军队体力*/
+    /**根据Tướng列表获取Quân độiThể lực*/
     public getArmyPhysicalPowerByGenerals(generals: GeneralData[]): number {
         let minPower: number = 100;
         for (let i: number = 0; i < generals.length; i++) {
@@ -188,7 +188,7 @@ export default class ArmyCommand {
         return minPower;
     }
 
-    /**获取军队当前士兵数*/
+    /**获取Quân đội当前Binh lực数*/
     public getArmyCurSoldierCnt(armyData: ArmyData): number {
         let cnt: number = 0;
         for (let i: number = 0; i < armyData.soldiers.length; i++) {
@@ -197,7 +197,7 @@ export default class ArmyCommand {
         return cnt;
     }
 
-    /**根据将领列表获取军队总士兵数*/
+    /**根据Tướng列表获取Quân đội总Binh lực数*/
     public getArmyTotalSoldierCntByGenerals(generals: GeneralData[]): number {
         let cnt: number = 0;
         let levelCfg: GenaralLevelConfig = null;
@@ -210,7 +210,7 @@ export default class ArmyCommand {
         return cnt;
     }
 
-    /**获取速度**/
+    /**获取Tốc độ**/
     public getArmySpeed(generals: GeneralData[]): number {
         let empyt: boolean = true;
         let speed: number = 1000000;
@@ -247,7 +247,7 @@ export default class ArmyCommand {
         }
     }
 
-    /**根据将领列表获取军队阵营*/
+    /**根据Tướng列表获取Quân độiThế lực*/
     public getArmyCamp(generals: GeneralData[]): number {
         let cnt: number = 0;
         let lastCamp: number = 0;
@@ -269,27 +269,27 @@ export default class ArmyCommand {
         let stateStr: string = "";
         if (armyData.state > 0) {
             if (armyData.cmd == ArmyCmd.Return) {
-                stateStr = "[撤退]";
+                stateStr = "[Rút lui]";
             } else {
-                stateStr = "[行军]";
+                stateStr = "[Hành quân]";
             }
         } else {
             if (armyData.cmd == ArmyCmd.Idle) {
-                stateStr = "[待命]";
+                stateStr = "[Chờ lệnh]";
             } else if (armyData.cmd == ArmyCmd.Reclaim) {
-                stateStr = "[屯田]";
+                stateStr = "[Đồn điền]";
             } else if (armyData.cmd == ArmyCmd.Conscript) {
-                stateStr = "[征兵]";
+                stateStr = "[Chiêu mộ]";
             } else if (armyData.cmd == ArmyCmd.Garrison) {
-                stateStr = "[驻守]";
+                stateStr = "[Đồn trú]";
             }else {
-                stateStr = "[停留]";
+                stateStr = "[Dừng lại]";
             }
         }
         return stateStr;
     }
 
-    /**请求自己的军队信息*/
+    /**请求Bản thân的Quân đội信息*/
     public qryArmyList(cityId: number): void {
         let sendData: any = {
             name: ServerConfig.army_myList,
@@ -311,7 +311,7 @@ export default class ArmyCommand {
         NetManager.getInstance().send(sendData);
     }
 
-    /**给军队配置将领*/
+    /**给Quân độiThiết lậpTướng*/
     public generalDispose(cityId: number = 0, generalId: number = 0, order: number = 0, position: number = 0, otherData: any): void {
         let sendData: any = {
             name: ServerConfig.army_dispose,
@@ -325,7 +325,7 @@ export default class ArmyCommand {
         NetManager.getInstance().send(sendData, otherData);
     }
 
-    /**给军队征兵*/
+    /**给Quân độiChiêu mộ*/
     public generalConscript(armyId: number = 0, cnts: number[] = [], otherData: any): void {
         let sendData: any = {
             name: ServerConfig.army_conscript,

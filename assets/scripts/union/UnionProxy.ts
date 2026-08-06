@@ -17,18 +17,18 @@ export class Member {
     title: number = 0;
     public get titleDes() : string {
         if(this.title == 0){
-            return "盟主";
+            return "Minh chủ";
         }
 
         if(this.title == 1){
-            return "副盟主";
+            return "Phó minh chủ";
         }
 
-        return "普通成员"
+        return "Thành viên thường"
     }
     x:number = 0;
     y:number = 0;
-    
+
 }
 
 
@@ -180,7 +180,7 @@ export default class UnionProxy {
 
     public isMeInUnion():boolean{
         let city:MapCityData = MapCommand.getInstance().cityProxy.getMyMainCity();
-        return city.unionId > 0?true:false; 
+        return city.unionId > 0?true:false;
     }
 
     public isMeChairman(unionid:number):boolean{

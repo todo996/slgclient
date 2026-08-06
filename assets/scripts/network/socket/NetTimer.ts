@@ -19,7 +19,7 @@ export class NetTimer {
     }
 
     public schedule(data:any,delay:number = 0):void{
-        
+
         var self = this;
         var token = this._tokenId++;
         var id = setTimeout(function() { self.handleTimeout(token); }, delay);
@@ -70,7 +70,7 @@ export class NetTimer {
         this._tokens.forEach((value , key) =>{
             if(value.name == data.name && value.seq == data.seq){
                 return_key = key;
-            }    
+            }
         });
 
         return return_key;

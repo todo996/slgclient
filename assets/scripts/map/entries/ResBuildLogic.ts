@@ -36,7 +36,7 @@ export default class ResBuildLogic extends Component {
         }
         this.updateUI();
      }
- 
+
      public setBuildData(data: MapBuildData): void {
         this._data = data;
         this.updateUI();

@@ -17,7 +17,7 @@ export default class RightTagItemLogic extends Component {
 
 
     protected onLoad(): void {
-        
+
     }
 
     protected onDestroy(): void {

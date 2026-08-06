@@ -47,7 +47,7 @@ export default class ListLogic extends Component {
     itemClickEvents:EventHandler[]  = [];
 
 
-    
+
     @property(CCBoolean)
     isVirtual:boolean  = false;
 
@@ -68,14 +68,14 @@ export default class ListLogic extends Component {
     private _datas:any = null;
 
     protected onLoad():void{
-        this._updateTimer = 0;//上次更新间隔时间
+        this._updateTimer = 0;//Trên次更新间隔Thời gian
         this._curIndex = -1;
         this._newOffset = 0;
         this._initContentPos = 0;
-        this._maxRowColSize = 0;//当前一行或者一列可以显示的最大宽度或者高度
+        this._maxRowColSize = 0;//当前Một行或者Một列可以显示的最大宽度或者高度
         this._itemWidth = this._itemHeight = 0;
         if (this.itemPrefab) {
-            
+
             this._itemWidth = this.itemPrefab.data.getComponent(UITransform).width * this.scale;//item宽度
             this._itemHeight = this.itemPrefab.data.getComponent(UITransform).height * this.scale;//item高度
         } else if (this.itemNode) {
@@ -91,7 +91,7 @@ export default class ListLogic extends Component {
         }
 
         this._isUpdateList = false;//是否正在更新列表
-        this._itemPool = new NodePool();//item缓存对象池
+        this._itemPool = new NodePool();//item缓存đối với象池
         this._items = [];//item列表
         this.updateList();
     }
@@ -114,13 +114,13 @@ export default class ListLogic extends Component {
         }
         this._updateTimer = 0;
         // if (this.isVirtual == false) {
-        //     return;//非虚拟列表 不需要刷新位置和数据
+        //     return;//非虚拟列表 不Cần làm mới位置和数据
         // }
         if (this._isUpdateList) {
             return;//正在重新构建列表的时候 是不刷新的
         }
         let curOffset = 0;
-       
+
         if (this.isHorizontal) {
             curOffset = this._initContentPos - this.scrollView.content.position.x;
         } else {
@@ -128,19 +128,19 @@ export default class ListLogic extends Component {
         }
         curOffset = Math.max(Math.min(curOffset, this._maxOffset), 0);
         this.setCurOffset(curOffset);
-       
+
     }
 
 
 
 
     protected setCurOffset(curOffset):void {
-    
+
         if (this._datas == null || this._datas.length == 0) {
             return;//没有数据不执行刷新
         }
         if (this._items == null || this._items.length == 0) {
-            return;//没有显示对象也不执行刷新
+            return;//没有显示đối với象也不执行刷新
         }
         if (this._curOffset != curOffset) {
             // console.log("setCurOffset", this._curOffset, curOffset);
@@ -160,7 +160,7 @@ export default class ListLogic extends Component {
         }
     }
 
-    
+
 
 
     protected setStartIndex(index) {
@@ -195,8 +195,8 @@ export default class ListLogic extends Component {
     }
 
 
-    
-        /**设置item实例数量*/
+
+        /**Cài đặtitem实例Số lượng*/
     protected  updateItemCount(count):boolean {
         if (this._itemCount != count) {
             this._itemCount = count;
@@ -207,14 +207,14 @@ export default class ListLogic extends Component {
                 let item = children[i];
                 if (item.isValid) {
                     item.off(Node.EventType.TOUCH_END, this.onItemClick, this);
-                    this._itemPool.put(item);//加入对象池
+                    this._itemPool.put(item);//Gia nhậpđối với象池
                 }
             }
             this._items.length = 0;
             for (var i = 0; i < this._itemCount; i++) {
                 let item = this.createItem();
                 item.active = false;
-                item.itemIdx = i;//在item上纪录当前下标
+                item.itemIdx = i;//在itemTrên纪录当前Dưới标
                 item.on(Node.EventType.TOUCH_END, this.onItemClick, this);
                 this.scrollView.content.addChild(item);
                 this._items.push(item);
@@ -291,7 +291,7 @@ export default class ListLogic extends Component {
 
         var isItemChange = this.updateItemCount(showCount);
         this._newOffset = Math.max(Math.min(this._newOffset, this._maxOffset), 0);
-       
+
 
         if ((isItemChange || this._newOffset != this._curOffset)) {
             let pos = this.scrollView.content.position.clone();
@@ -315,12 +315,12 @@ export default class ListLogic extends Component {
     }
 
 
-    
+
 
 
         //刷新所有item数据
     protected updateItems():void {
-        
+
         for (var i = 0; i < this._items.length; i++) {
             var item = this._items[i];
             // console.log("updateItems:", item, item.itemIdx, this._datas.length, item.itemIdx < this._datas.length)
@@ -353,7 +353,7 @@ export default class ListLogic extends Component {
 
 
     /**
-     * 根据下标获取item对象
+     * 根据Dưới标获取itemđối với象
      */
     protected getItem(index):any{
         var item = null;
@@ -383,18 +383,18 @@ export default class ListLogic extends Component {
     }
 
     /**
-     * 创建item
+     * Tạoitem
      */
     protected createItem():any {
         var item = null;
-        if (this._itemPool.size() > 0) { // 通过 size 接口判断对象池中是否有空闲的对象
+        if (this._itemPool.size() > 0) { // 通过 size 接口判断đối với象池中是否有Nhàn rỗi的đối với象
             item = this._itemPool.get();
-        } else if (this.itemPrefab) { // 如果没有空闲对象，也就是对象池中备用对象不够时，我们就用 instantiate 重新创建
+        } else if (this.itemPrefab) { // 如果没有Nhàn rỗiđối với象，也就是đối với象池中备用đối với象不够时，Ta们就用 instantiate 重新Tạo
             item = instantiate(this.itemPrefab);
-            
-        } else if (this.itemNode) { // 如果没有空闲对象，也就是对象池中备用对象不够时，我们就用 instantiate 重新创建
+
+        } else if (this.itemNode) { // 如果没有Nhàn rỗiđối với象，也就是đối với象池中备用đối với象不够时，Ta们就用 instantiate 重新Tạo
             item = instantiate(this.itemNode);
-            
+
         }
         item.scale = new Vec3(this.scale, this.scale, this.scale);
         item.acitve = true;
@@ -430,8 +430,8 @@ export default class ListLogic extends Component {
     }
 
     /**
-     * 设置列表数据
-     * scrollOffset 没有传值代表刷新到初始位置 其他整数代表刷新到当前位置的相对偏移量
+     * Cài đặt列表数据
+     * scrollOffset 没有传值代表刷新到初始位置 其他整数代表刷新到当前位置的相đối với偏移量
      */
     public setData(data, scrollOffset?:any):void{
         this._datas = data;
