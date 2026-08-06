@@ -12,6 +12,11 @@ export type GameRuntime = Readonly<{
 }>;
 
 export function createGame(options: CreateGameOptions): GameRuntime {
+  const parent = document.getElementById(options.parent);
+  if (!parent) {
+    throw new Error(`Không tìm thấy phần tử game #${options.parent}`);
+  }
+
   const game = new Phaser.Game({
     type: Phaser.AUTO,
     parent: options.parent,
@@ -36,8 +41,32 @@ export function createGame(options: CreateGameOptions): GameRuntime {
     scene: [BootScene, MapScene],
   });
 
+  let resizeFrame = 0;
+  const syncViewport = (): void => {
+    window.cancelAnimationFrame(resizeFrame);
+    resizeFrame = window.requestAnimationFrame(() => {
+      const width = Math.max(1, Math.round(parent.clientWidth));
+      const height = Math.max(1, Math.round(parent.clientHeight));
+      if (game.scale.width !== width || game.scale.height !== height) {
+        game.scale.resize(width, height);
+      }
+    });
+  };
+
+  const resizeObserver = new ResizeObserver(syncViewport);
+  resizeObserver.observe(parent);
+  window.visualViewport?.addEventListener("resize", syncViewport);
+  window.addEventListener("orientationchange", syncViewport);
+  syncViewport();
+
   return {
     game,
-    destroy: () => game.destroy(true),
+    destroy: () => {
+      resizeObserver.disconnect();
+      window.visualViewport?.removeEventListener("resize", syncViewport);
+      window.removeEventListener("orientationchange", syncViewport);
+      window.cancelAnimationFrame(resizeFrame);
+      game.destroy(true);
+    },
   };
 }
