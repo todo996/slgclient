@@ -112,7 +112,7 @@ export class MapScene extends Phaser.Scene {
     const corners = this.map.getTileCorners(
       cell.x,
       cell.y,
-      undefined,
+      this.cameras.main,
       this.groundLayer,
     );
 
