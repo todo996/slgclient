@@ -128,6 +128,7 @@ export class Bootstrap {
   private readonly enterLogin = (): void => {
     this.retryTimes = 0;
     this.shell.showWaiting(false);
+    this.shell.setHudVisible(false);
     this.shell.setPhase("Đăng nhập để tiếp tục");
     this.uiManager.closeAll();
     MapBootstrapCommand.getInstance().clearData();
@@ -138,6 +139,7 @@ export class Bootstrap {
 
   private readonly openCreateRole = (): void => {
     this.shell.showWaiting(false);
+    this.shell.setHudVisible(false);
     this.shell.setPhase("Tạo nhân vật");
     this.uiManager.closeAll();
     this.uiManager.open(
@@ -147,7 +149,8 @@ export class Bootstrap {
 
   private readonly onEnterMap = (): void => {
     this.shell.showWaiting(false);
-    this.shell.setPhase("Đã tải dữ liệu nền tảng bản đồ");
+    this.shell.setHudVisible(true);
+    this.shell.setPhase("Bản đồ thiên hạ");
     this.uiManager.closeAll();
     this.gameRuntime?.game.events.emit(
       "legacy-map-bootstrap-ready",

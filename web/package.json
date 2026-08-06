@@ -4,9 +4,14 @@
   "version": "0.3.0",
   "type": "module",
   "scripts": {
+    "prepare:assets": "python3 scripts/convert-cocos-map.py",
+    "predev": "npm run prepare:assets",
     "dev": "vite --configLoader native",
+    "test:map": "node scripts/verify-map.mjs",
+    "test:unit": "node --experimental-strip-types --test tests/*.test.ts",
+    "test": "npm run prepare:assets && npm run test:map && npm run test:unit",
     "typecheck": "tsc --noEmit",
-    "build": "npm run typecheck && vite build --configLoader native",
+    "build": "npm run test && npm run typecheck && vite build --configLoader native",
     "preview": "vite preview --configLoader native"
   },
   "dependencies": {

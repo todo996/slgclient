@@ -1,0 +1,7 @@
+# Asset runtime được sinh từ nguồn Cocos bởi scripts/convert-cocos-map.py.
+/public/game-assets/world/
+/public/game-assets/ui/auth/
+
+# Build/dependency cục bộ.
+/dist/
+/node_modules/

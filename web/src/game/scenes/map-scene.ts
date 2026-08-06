@@ -1,152 +1,142 @@
 import Phaser from "phaser";
+import { MapCoordinate } from "../map/map-coordinate";
+import { MapInputController } from "../map/map-input-controller";
 
-const GRID_SIZE = 96;
-const GRID_COLUMNS = 30;
-const GRID_ROWS = 30;
+const WORLD_MAP_KEY = "world-map";
 const MAP_READY_EVENT = "legacy-map-bootstrap-ready";
+const MAP_CELL_SELECTED_EVENT = "map-cell-selected";
+
+const TILESET_TEXTURES = [
+  { name: "land", key: "world-land", url: "/game-assets/world/land.png" },
+  { name: "hill", key: "world-hill", url: "/game-assets/world/hill.png" },
+  {
+    name: "water_edge_3",
+    key: "world-water-edge-3",
+    url: "/game-assets/world/water_edge_3.png",
+  },
+  {
+    name: "water_edge_1",
+    key: "world-water-edge-1",
+    url: "/game-assets/world/water_edge_1.png",
+  },
+] as const;
+
+const VISIBLE_LAYER_NAMES = ["base", "hill1", "hill2", "hill3"] as const;
 
 export class MapScene extends Phaser.Scene {
-  private dragPointerId: number | null = null;
-  private lastPointerPosition = new Phaser.Math.Vector2();
-  private statusText: Phaser.GameObjects.Text | null = null;
+  private map: Phaser.Tilemaps.Tilemap | null = null;
+  private groundLayer: Phaser.Tilemaps.TilemapLayer | null = null;
+  private marker: Phaser.GameObjects.Graphics | null = null;
+  private coordinate: MapCoordinate | null = null;
+  private mapBootstrapReady = false;
 
   constructor() {
     super("MapScene");
   }
 
+  preload(): void {
+    this.load.tilemapTiledJSON(WORLD_MAP_KEY, "/game-assets/world/map.json");
+    for (const tileset of TILESET_TEXTURES) {
+      this.load.image(tileset.key, tileset.url);
+    }
+  }
+
   create(): void {
-    this.drawFoundationGrid();
+    this.createWorldMap();
     this.configureCamera();
-    this.configureInput();
+    new MapInputController(this, this.selectCell).enable();
 
-    this.game.events.on(
-      MAP_READY_EVENT,
-      this.onMapBootstrapReady,
-      this,
-    );
-
+    this.game.events.on(MAP_READY_EVENT, this.onMapBootstrapReady, this);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-      this.game.events.off(
-        MAP_READY_EVENT,
-        this.onMapBootstrapReady,
-        this,
-      );
+      this.game.events.off(MAP_READY_EVENT, this.onMapBootstrapReady, this);
     });
   }
 
-  private drawFoundationGrid(): void {
-    const graphics = this.add.graphics();
-    const width = GRID_COLUMNS * GRID_SIZE;
-    const height = GRID_ROWS * GRID_SIZE;
+  private createWorldMap(): void {
+    const map = this.make.tilemap({ key: WORLD_MAP_KEY });
+    const tilesets = TILESET_TEXTURES.map((definition) => {
+      const tileset = map.addTilesetImage(definition.name, definition.key);
+      if (!tileset) throw new Error(`Không tạo được tileset ${definition.name}`);
+      return tileset;
+    });
 
-    graphics.fillStyle(0x2f3b27, 1);
-    graphics.fillRect(0, 0, width, height);
-    graphics.lineStyle(1, 0xb8995e, 0.24);
-
-    for (let column = 0; column <= GRID_COLUMNS; column += 1) {
-      const x = column * GRID_SIZE;
-      graphics.lineBetween(x, 0, x, height);
+    for (const [index, layerName] of VISIBLE_LAYER_NAMES.entries()) {
+      const layer = map.createLayer(layerName, tilesets, 0, 0);
+      if (!layer) throw new Error(`Không tạo được layer ${layerName}`);
+      layer.setDepth(index);
+      layer.setCullPadding(4, 8);
+      if (layerName === "base") this.groundLayer = layer;
     }
 
-    for (let row = 0; row <= GRID_ROWS; row += 1) {
-      const y = row * GRID_SIZE;
-      graphics.lineBetween(0, y, width, y);
-    }
-
-    this.statusText = this.add
-      .text(72, 72, "Nền tảng bản đồ web\nĐang chờ đăng nhập", {
-        color: "#f1e5c8",
-        fontFamily: "system-ui, sans-serif",
-        fontSize: "30px",
-        lineSpacing: 10,
-        padding: { x: 18, y: 14 },
-        backgroundColor: "rgba(23, 23, 19, 0.78)",
-      })
-      .setDepth(10);
+    this.map = map;
+    this.coordinate = new MapCoordinate({
+      width: map.width,
+      height: map.height,
+      tileWidth: map.tileWidth,
+      tileHeight: map.tileHeight,
+    });
+    this.marker = this.add.graphics().setDepth(50);
   }
-
-  private readonly onMapBootstrapReady = (): void => {
-    this.statusText?.setText(
-      "Đăng nhập thành công\nĐã nhận cấu hình map và dữ liệu nhân vật",
-    );
-  };
 
   private configureCamera(): void {
-    const width = GRID_COLUMNS * GRID_SIZE;
-    const height = GRID_ROWS * GRID_SIZE;
+    if (!this.map || !this.coordinate) return;
+
     const camera = this.cameras.main;
+    camera.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
+    camera.setZoom(0.58);
 
-    camera.setBounds(0, 0, width, height);
-    camera.centerOn(width / 2, height / 2);
-    camera.setZoom(0.8);
+    const center = this.coordinate.cellToWorld({
+      x: Math.floor(this.map.width / 2),
+      y: Math.floor(this.map.height / 2),
+    });
+    camera.centerOn(center.x, center.y);
   }
 
-  private configureInput(): void {
-    this.input.on(
-      Phaser.Input.Events.POINTER_DOWN,
-      (pointer: Phaser.Input.Pointer) => {
-        if (this.dragPointerId !== null) return;
+  private readonly selectCell = (worldX: number, worldY: number): void => {
+    if (!this.map || !this.groundLayer || !this.coordinate || !this.marker) {
+      return;
+    }
 
-        this.dragPointerId = pointer.id;
-        this.lastPointerPosition.set(pointer.x, pointer.y);
-      },
+    const tilePoint = this.map.worldToTileXY(
+      worldX,
+      worldY,
+      true,
+      this.cameras.main,
+      this.groundLayer,
+    );
+    if (!tilePoint) return;
+
+    const cell = { x: Math.floor(tilePoint.x), y: Math.floor(tilePoint.y) };
+    if (!this.coordinate.isValidCell(cell)) return;
+
+    const corners = this.map.getTileCorners(
+      cell.x,
+      cell.y,
+      undefined,
+      this.groundLayer,
     );
 
-    this.input.on(
-      Phaser.Input.Events.POINTER_MOVE,
-      (pointer: Phaser.Input.Pointer) => {
-        if (
-          this.dragPointerId !== pointer.id ||
-          !pointer.isDown
-        ) {
-          return;
-        }
+    this.marker.clear();
+    this.marker.lineStyle(4, 0xf1d07a, 0.95);
+    if (corners?.length) {
+      this.marker.beginPath();
+      this.marker.moveTo(corners[0].x, corners[0].y);
+      for (let index = 1; index < corners.length; index += 1) {
+        this.marker.lineTo(corners[index].x, corners[index].y);
+      }
+      this.marker.closePath();
+      this.marker.strokePath();
+    }
 
-        const camera = this.cameras.main;
-        const deltaX = pointer.x - this.lastPointerPosition.x;
-        const deltaY = pointer.y - this.lastPointerPosition.y;
+    this.game.events.emit(MAP_CELL_SELECTED_EVENT, {
+      id: this.coordinate.getCellId(cell),
+      x: cell.x,
+      y: cell.y,
+      ready: this.mapBootstrapReady,
+    });
+  };
 
-        camera.scrollX -= deltaX / camera.zoom;
-        camera.scrollY -= deltaY / camera.zoom;
-        this.lastPointerPosition.set(pointer.x, pointer.y);
-      },
-    );
-
-    this.input.on(
-      Phaser.Input.Events.POINTER_UP,
-      (pointer: Phaser.Input.Pointer) => {
-        if (this.dragPointerId === pointer.id) {
-          this.dragPointerId = null;
-        }
-      },
-    );
-
-    this.input.on(
-      Phaser.Input.Events.POINTER_UP_OUTSIDE,
-      (pointer: Phaser.Input.Pointer) => {
-        if (this.dragPointerId === pointer.id) {
-          this.dragPointerId = null;
-        }
-      },
-    );
-
-    this.input.on(
-      Phaser.Input.Events.POINTER_WHEEL,
-      (
-        _pointer: Phaser.Input.Pointer,
-        _gameObjects: Phaser.GameObjects.GameObject[],
-        _deltaX: number,
-        deltaY: number,
-      ) => {
-        const camera = this.cameras.main;
-        const nextZoom = Phaser.Math.Clamp(
-          camera.zoom - deltaY * 0.001,
-          0.45,
-          1.6,
-        );
-
-        camera.setZoom(nextZoom);
-      },
-    );
-  }
+  private readonly onMapBootstrapReady = (): void => {
+    this.mapBootstrapReady = true;
+  };
 }

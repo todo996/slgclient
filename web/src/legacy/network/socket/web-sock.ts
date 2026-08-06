@@ -37,11 +37,20 @@ export class WebSock implements ISocket {
     socket.binaryType = options.binaryType ?? "arraybuffer";
 
     socket.onmessage = (event: MessageEvent<NetData>) => {
+      if (this.webSocket !== socket) return;
       void this.handleMessage(event.data);
     };
-    socket.onopen = (event) => this.onConnected(event);
-    socket.onerror = (event) => this.onError(event);
+    socket.onopen = (event) => {
+      if (this.webSocket !== socket) return;
+      this.onConnected(event);
+    };
+    socket.onerror = (event) => {
+      if (this.webSocket !== socket) return;
+      this.onError(event);
+    };
     socket.onclose = (event) => {
+      if (this.webSocket !== socket) return;
+
       this.webSocket = null;
       this.codec.clearKey();
       this.onClosed(event);

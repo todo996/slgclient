@@ -3,6 +3,7 @@ export type AppShell = Readonly<{
   panelRoot: HTMLElement;
   setConnectionStatus: (status: string) => void;
   setPhase: (phase: string) => void;
+  setHudVisible: (visible: boolean) => void;
   showWaiting: (visible: boolean) => void;
   showToast: (message: string) => void;
 }>;
@@ -28,9 +29,8 @@ export function createAppShell(rootElement: HTMLElement | null): AppShell {
       ></section>
 
       <section id="ui-root" class="ui-root">
-        <header class="top-hud">
-          <div>
-            <p class="top-hud__eyebrow">CLIENT WEB</p>
+        <header class="top-hud" data-layer="hud">
+          <div class="top-hud__identity">
             <h1 class="top-hud__title">Tam Quốc Truyền Kỳ</h1>
             <p class="top-hud__phase" data-field="phase">Đang khởi tạo</p>
           </div>
@@ -52,6 +52,9 @@ export function createAppShell(rootElement: HTMLElement | null): AppShell {
     </main>
   `;
 
+  const hudElement = root.querySelector<HTMLElement>(
+    '[data-layer="hud"]',
+  );
   const connectionElement = root.querySelector<HTMLElement>(
     '[data-field="connection"]',
   );
@@ -69,6 +72,7 @@ export function createAppShell(rootElement: HTMLElement | null): AppShell {
   );
 
   if (
+    !hudElement ||
     !connectionElement ||
     !phaseElement ||
     !panelRoot ||
@@ -86,6 +90,9 @@ export function createAppShell(rootElement: HTMLElement | null): AppShell {
     },
     setPhase(phase: string): void {
       phaseElement.textContent = phase;
+    },
+    setHudVisible(visible: boolean): void {
+      hudElement.hidden = !visible;
     },
     showWaiting(visible: boolean): void {
       overlayRoot.replaceChildren();
