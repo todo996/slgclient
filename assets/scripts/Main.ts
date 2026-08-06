@@ -18,6 +18,7 @@ import { Tools } from "./utils/Tools";
 import { EventMgr } from './utils/EventMgr';
 import { AudioManager } from './common/AudioManager';
 import { LogicEvent } from './common/LogicEvent';
+import { localizeNode, translateText } from './i18n/I18n';
 
 @ccclass('Main')
 export default class Main extends Component {
@@ -31,7 +32,6 @@ export default class Main extends Component {
 
     @property(Prefab)
     loadingPrefab: Prefab = null;
-
 
     @property(Prefab)
     waitPrefab: Prefab = null;
@@ -50,32 +50,28 @@ export default class Main extends Component {
     private _h5GeneralPicIndex: number = 0;
     private _h5GeneralPic = [];
 
-
     protected onLoad(): void {
+        console.log("Khởi tạo trò chơi");
+        localizeNode(this.node);
 
-        console.log("main load");
-        
         const audioSource = this.getComponent(AudioSource)!;
         assert(audioSource);
         this._audioSource = audioSource;
 
         AudioManager.instance.init(this._audioSource);
-  
+
         EventMgr.on(LogicEvent.enterMap, this.onEnterMap, this);
         EventMgr.on(LogicEvent.enterLogin, this.enterLogin, this);
         EventMgr.on(LogicEvent.showToast, this.onShowToast, this);
         EventMgr.on(LogicEvent.showWaiting, this.showWaitNode, this);
         EventMgr.on(LogicEvent.hideWaiting, this.hideWaitNode, this);
 
-        EventMgr.on(NetEvent.ServerRequesting, this.showWaitNode,this);
-        EventMgr.on(NetEvent.ServerRequestSucess,this.onServerRequest,this);
+        EventMgr.on(NetEvent.ServerRequesting, this.showWaitNode, this);
+        EventMgr.on(NetEvent.ServerRequestSucess, this.onServerRequest, this);
 
-
-        //初始化连接
-        NetManager.getInstance().connect({ url: GameConfig.serverUrl , type:NetNodeType.BaseServer });
+        NetManager.getInstance().connect({ url: GameConfig.serverUrl, type: NetNodeType.BaseServer });
         HttpManager.getInstance().setWebUrl(GameConfig.webUrl);
 
-        //初始化业务模块
         LoginCommand.getInstance();
         MapCommand.getInstance();
         MapUICommand.getInstance();
@@ -83,12 +79,10 @@ export default class Main extends Component {
         ArmyCommand.getInstance();
 
         this.enterLogin();
-       
     }
 
     protected onDestroy(): void {
-        console.log("main onDestroy");
-
+        console.log("Đóng trò chơi");
         EventMgr.targetOff(this);
     }
 
@@ -103,48 +97,48 @@ export default class Main extends Component {
         this.clearData();
         this._loginScene = instantiate(this.loginScenePrefab);
         this._loginScene.parent = this.node;
-
-        //this.h5LoadGeneralTex();
+        localizeNode(this._loginScene);
     }
 
     protected onEnterMap(): void {
-        let dataList: LoadData[] = [];
+        const dataList: LoadData[] = [];
         dataList.push(new LoadData("./world/map", LoadDataType.FILE, TiledMapAsset));
         dataList.push(new LoadData("./config/mapRes_0", LoadDataType.FILE, JsonAsset));
         dataList.push(new LoadData("./config/json/facility/", LoadDataType.DIR, JsonAsset));
         dataList.push(new LoadData("./config/json/general/", LoadDataType.DIR, JsonAsset));
 
-        if(sys.isBrowser){
+        if (sys.isBrowser) {
             dataList.push(new LoadData("./generalpic1", LoadDataType.DIR, SpriteFrame));
-        }else{
+        } else {
             dataList.push(new LoadData("./generalpic", LoadDataType.DIR, SpriteFrame));
         }
-       
+
         dataList.push(new LoadData("./config/basic", LoadDataType.FILE, JsonAsset));
         dataList.push(new LoadData("./config/json/skill/", LoadDataType.DIR, JsonAsset));
 
         this.addLoadingNode();
-        console.log("onEnterMap");
+        console.log("Đang tải bản đồ");
         LoaderManager.getInstance().startLoadList(dataList, null,
             (error: Error, paths: string[], datas: any[]) => {
                 if (error != null) {
-                    console.log("加载配置文件失败");
+                    console.log("Không thể tải dữ liệu cấu hình");
+                    this.showTopToast("Không thể tải dữ liệu trò chơi.");
                     return;
                 }
-                console.log("loadComplete", paths, datas);
+                console.log("Đã tải dữ liệu", paths, datas);
                 MapCommand.getInstance().proxy.tiledMapAsset = datas[0] as TiledMapAsset;
                 MapCommand.getInstance().proxy.initMapResConfig((datas[1] as JsonAsset).json);
 
                 MapUICommand.getInstance().proxy.setAllFacilityCfg(datas[2]);
-                GeneralCommand.getInstance().proxy.initGeneralConfig(datas[3],(datas[5] as JsonAsset).json);
+                GeneralCommand.getInstance().proxy.initGeneralConfig(datas[3], (datas[5] as JsonAsset).json);
                 GeneralCommand.getInstance().proxy.initGeneralTex(datas[4]);
                 MapUICommand.getInstance().proxy.setBasic(datas[5]);
                 SkillCommand.getInstance().proxy.initSkillConfig(datas[6]);
 
-                var d = (datas[5] as JsonAsset).json
-                MapCommand.getInstance().proxy.setWarFree(d["build"].war_free);
+                const basicData = (datas[5] as JsonAsset).json;
+                MapCommand.getInstance().proxy.setWarFree(basicData["build"].war_free);
 
-                let cityId: number = MapCommand.getInstance().cityProxy.getMyMainCity().cityId;
+                const cityId: number = MapCommand.getInstance().cityProxy.getMyMainCity().cityId;
                 GeneralCommand.getInstance().qryMyGenerals();
                 ArmyCommand.getInstance().qryArmyList(cityId);
                 MapUICommand.getInstance().qryWarReport();
@@ -152,38 +146,35 @@ export default class Main extends Component {
 
                 this.clearAllScene();
 
-            
                 this._mapScene = instantiate(this.mapScenePrefab);
                 this._mapScene.parent = this.node;
-              
+                localizeNode(this._mapScene);
+
                 this._mapUIScene = instantiate(this.mapUIScenePrefab);
                 this._mapUIScene.parent = this.node;
+                localizeNode(this._mapUIScene);
 
                 this.addLoadingNode();
-             
             },
             this
         );
-        
     }
 
     private h5LoadGeneralTex() {
-        if(!sys.isBrowser){
+        if (!sys.isBrowser) {
             return;
         }
 
-        if(this._h5GeneralPic.length == 0){
-            let generalpic = resources.getDirWithPath("./generalpic");
-            // console.log("generalpic:", generalpic);
+        if (this._h5GeneralPic.length == 0) {
+            const generalpic = resources.getDirWithPath("./generalpic");
             generalpic.forEach(v => {
-                if (v.ctor == SpriteFrame){
+                if (v.ctor == SpriteFrame) {
                     this._h5GeneralPic.push(v);
                 }
             });
         }
-        
-        let f = ()=>{
-           
+
+        const loadNext = () => {
             for (let index = this._h5GeneralPicIndex; index < this._h5GeneralPic.length; index++) {
                 const pic = this._h5GeneralPic[index];
 
@@ -191,96 +182,95 @@ export default class Main extends Component {
                 name = name.replaceAll("/", "");
                 name = name.replaceAll("\\", "");
 
-                let id: number = Number(String(name).split("_")[1]);
-                let frame = GeneralCommand.getInstance().proxy.getGeneralTex(id);
-                this._h5GeneralPicIndex = index+1;
-                // console.log("load index 1111:", index);
+                const id: number = Number(String(name).split("_")[1]);
+                const frame = GeneralCommand.getInstance().proxy.getGeneralTex(id);
+                this._h5GeneralPicIndex = index + 1;
 
-                if(!frame){
-                    resources.load(pic.path, SpriteFrame, 
-                    (finish: number, total: number) => {
-                    },
-                    (error: Error, asset: any) => {
-                        if (error != null) {
-                            console.log("h5LoadGeneralTex error:", error.message);
-                        }else{
-                            GeneralCommand.getInstance().proxy.setGeneralTex(id, asset);
-                        }
-                    });
+                if (!frame) {
+                    resources.load(pic.path, SpriteFrame,
+                        (_finish: number, _total: number) => {
+                        },
+                        (error: Error, asset: any) => {
+                            if (error != null) {
+                                console.log("Không thể tải ảnh võ tướng:", error.message);
+                            } else {
+                                GeneralCommand.getInstance().proxy.setGeneralTex(id, asset);
+                            }
+                        });
                     break;
                 }
             }
-            if(this._h5GeneralPicIndex >= this._h5GeneralPic.length){
-                this.unschedule(f);
-                console.log("h5 load generalPic finish");
+            if (this._h5GeneralPicIndex >= this._h5GeneralPic.length) {
+                this.unschedule(loadNext);
+                console.log("Đã tải xong ảnh võ tướng");
             }
-        }
+        };
 
-        this.schedule(f, 0.01);
-    
+        this.schedule(loadNext, 0.01);
     }
 
     protected addLoadingNode(): void {
         if (this.loadingPrefab) {
             if (this._loadingNode == null) {
                 this._loadingNode = instantiate(this.loadingPrefab);
+                localizeNode(this._loadingNode);
             }
 
             this._loadingNode.parent = this.node;
-            this._loadingNode.setSiblingIndex(this.topLayer()+1);
+            this._loadingNode.setSiblingIndex(this.topLayer() + 1);
         }
     }
 
-
-    protected showWaitNode():void{
+    protected showWaitNode(): void {
         if (this._waitNode == null) {
             this._waitNode = instantiate(this.waitPrefab);
             this._waitNode.parent = this.node;
+            localizeNode(this._waitNode);
         }
-        this._waitNode.setSiblingIndex(this.topLayer()+2);
+        this._waitNode.setSiblingIndex(this.topLayer() + 2);
         this._waitNode.active = true;
     }
 
-    protected hideWaitNode():void{
+    protected hideWaitNode(): void {
         if (this._waitNode == null) {
             this._waitNode = instantiate(this.waitPrefab);
             this._waitNode.parent = this.node;
-            this._waitNode.setSiblingIndex(this.topLayer()+2);
+            this._waitNode.setSiblingIndex(this.topLayer() + 2);
+            localizeNode(this._waitNode);
         }
         this._waitNode.active = false;
     }
 
-
-    protected showTopToast(text:string = ""):void{
-        if(this.toastNode == null){
-            let toast = instantiate(this.toastPrefab);
+    protected showTopToast(text: string = ""): void {
+        if (this.toastNode == null) {
+            const toast = instantiate(this.toastPrefab);
             toast.parent = this.node;
             this.toastNode = toast;
+            localizeNode(this.toastNode);
         }
         this.toastNode.active = true;
-        this.toastNode.setSiblingIndex(this.topLayer()+10);
-        this.toastNode.getComponent(Toast).setText(text);
+        this.toastNode.setSiblingIndex(this.topLayer() + 10);
+        this.toastNode.getComponent(Toast).setText(translateText(text));
     }
 
-
-    private onServerRequest(msg:any):void{
-        if(msg.code == undefined || msg.code == 0 || msg.code == 9){
+    private onServerRequest(msg: any): void {
+        if (msg.code == undefined || msg.code == 0 || msg.code == 9) {
             this._retryTimes = 0;
             return;
         }
 
-        if(msg.code == -1 || msg.code == -2 || msg.code == -3 || msg.code == -4 ){
-            if (this._retryTimes < 3){
+        if (msg.code == -1 || msg.code == -2 || msg.code == -3 || msg.code == -4) {
+            if (this._retryTimes < 3) {
                 LoginCommand.getInstance().role_enterServer(LoginCommand.getInstance().proxy.getSession(), false);
                 this._retryTimes += 1;
-                return
+                return;
             }
         }
 
         this.showTopToast(Tools.getCodeStr(msg.code));
     }
 
-    private onShowToast(msg:string) {
+    private onShowToast(msg: string) {
         this.showTopToast(msg);
     }
 
@@ -299,15 +289,14 @@ export default class Main extends Component {
             this._loginScene.destroy();
             this._loginScene = null;
         }
-        
+
         if (this._waitNode) {
             this._waitNode.destroy();
             this._waitNode = null;
         }
-        
     }
 
-    public topLayer():number {
-        return this.node.children.length+1;
+    public topLayer(): number {
+        return this.node.children.length + 1;
     }
 }
