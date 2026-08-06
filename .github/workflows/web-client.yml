@@ -8,6 +8,7 @@ on:
   push:
     branches:
       - main
+      - "agent/**"
     paths:
       - "web/**"
       - ".github/workflows/web-client.yml"
@@ -28,6 +29,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+
       - name: Install
         run: npm install
 
