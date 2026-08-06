@@ -124,12 +124,12 @@ export class MapScene extends Phaser.Scene {
       if (!layer) throw new Error(`Không tạo được layer ${layerName}`);
       layer.setDepth(index);
       if (layerName === "base") {
-        // Phaser culling có thể bỏ nhầm tile isometric ở mức zoom mobile.
-        // Layer nền chỉ có 40.000 tile và được giữ nguyên để không tạo lỗ đen.
-        layer.setCullPadding(map.width, map.height);
+        // Safari/iPhone có thể loại nhầm tile isometric khi camera zoom/resize.
+        // Nền chỉ có 40.000 ô nên tắt culling để không xuất hiện lỗ đen.
+        layer.setSkipCull(true);
         this.groundLayer = layer;
       } else {
-        layer.setCullPadding(24, 24);
+        layer.setCullPadding(16, 16);
       }
     }
 
@@ -185,7 +185,8 @@ export class MapScene extends Phaser.Scene {
 
     const camera = this.cameras.main;
     camera.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
-    camera.setZoom(0.58);
+    this.applyResponsiveZoom(this.scale.width, this.scale.height);
+    this.scale.on(Phaser.Scale.Events.RESIZE, this.handleResize, this);
 
     const center = this.coordinate.cellToWorld({
       x: Math.floor(this.map.width / 2),
@@ -193,6 +194,21 @@ export class MapScene extends Phaser.Scene {
     });
     camera.centerOn(center.x, center.y);
   }
+
+  private applyResponsiveZoom(width: number, height: number): void {
+    const shortestSide = Math.max(1, Math.min(width, height));
+    const divisor = height > width ? 900 : 760;
+    const zoom = Phaser.Math.Clamp(shortestSide / divisor, 0.42, 0.62);
+    this.cameras.main.setZoom(zoom);
+  }
+
+  private readonly handleResize = (
+    gameSize: Phaser.Structs.Size,
+  ): void => {
+    this.applyResponsiveZoom(gameSize.width, gameSize.height);
+    this.lastCenterCellId = -1;
+    this.syncMapCenter();
+  };
 
   private syncMapCenter(): void {
     if (!this.map || !this.coordinate || !this.resourceLayer) return;
@@ -255,7 +271,6 @@ export class MapScene extends Phaser.Scene {
     });
   };
 
-
   private readonly scrollToCell = (x: number, y: number): void => {
     if (!this.coordinate || !this.map) return;
     const cell = { x: Math.floor(Number(x)), y: Math.floor(Number(y)) };
@@ -280,6 +295,7 @@ export class MapScene extends Phaser.Scene {
 
   private readonly shutdown = (): void => {
     this.game.events.off(MAP_READY_EVENT, this.onMapBootstrapReady, this);
+    this.scale.off(Phaser.Scale.Events.RESIZE, this.handleResize, this);
     EventMgr.targetOff(this);
     this.resourceLayer?.destroy();
     this.scanController?.destroy();
