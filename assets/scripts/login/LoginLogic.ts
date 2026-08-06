@@ -11,17 +11,16 @@ import { LogicEvent } from '../common/LogicEvent';
 export default class LoginLogic extends Component {
 
     @property(EditBox)
-    editName:EditBox = null;
+    editName: EditBox = null;
 
     @property(EditBox)
-    editPass:Label = null;
+    editPass: Label = null;
 
     protected onLoad(): void {
         EventMgr.on(LogicEvent.loginComplete, this.onLoginComplete, this);
 
-        var data = LocalCache.getLoginValidation();
-        console.log("LoginLogic  data:",data)
-        if(data){
+        const data = LocalCache.getLoginValidation();
+        if (data) {
             this.editName.string = data.username;
             this.editPass.string = data.password;
         }
@@ -31,15 +30,15 @@ export default class LoginLogic extends Component {
         EventMgr.targetOff(this);
     }
 
-    protected onLoginComplete():void {
+    protected onLoginComplete(): void {
         this.node.active = false;
     }
 
     protected onClickRegister(): void {
         AudioManager.instance.playClick();
 
-        if(!this.editName.string || !this.editPass.string){
-            EventMgr.emit(LogicEvent.showToast, "账号密码有误");
+        if (!this.editName.string || !this.editPass.string) {
+            EventMgr.emit(LogicEvent.showToast, "Vui lòng nhập đầy đủ tài khoản và mật khẩu.");
             return;
         }
 
@@ -49,12 +48,12 @@ export default class LoginLogic extends Component {
     protected onClickLogin(): void {
         AudioManager.instance.playClick();
 
-        if(!this.editName.string || !this.editPass.string){
-            EventMgr.emit(LogicEvent.showToast, "账号密码有误");
+        if (!this.editName.string || !this.editPass.string) {
+            EventMgr.emit(LogicEvent.showToast, "Vui lòng nhập đầy đủ tài khoản và mật khẩu.");
             return;
         }
 
-        LoginCommand.getInstance().accountLogin(this.editName.string, this.editPass.string)
+        LoginCommand.getInstance().accountLogin(this.editName.string, this.editPass.string);
     }
 
     protected onClickClose(): void {
