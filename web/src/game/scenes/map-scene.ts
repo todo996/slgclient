@@ -1,8 +1,15 @@
 import Phaser from "phaser";
+import { MapAreaGrid } from "../map/map-area-grid";
 import { MapCoordinate } from "../map/map-coordinate";
 import { MapInputController } from "../map/map-input-controller";
+import { MapResourceCatalog } from "../map/map-resource-catalog";
+import { MapResourceLayer } from "../map/map-resource-layer";
+import { MapScanController } from "../../legacy/map/map-scan-controller";
+import { NetManager } from "../../legacy/network/socket/net-manager";
+import type { MapBootstrapSnapshot } from "../../legacy/map/map-bootstrap-command";
 
 const WORLD_MAP_KEY = "world-map";
+const MAP_RESOURCE_CONFIG_KEY = "map-resource-config";
 const MAP_READY_EVENT = "legacy-map-bootstrap-ready";
 const MAP_CELL_SELECTED_EVENT = "map-cell-selected";
 
@@ -28,7 +35,10 @@ export class MapScene extends Phaser.Scene {
   private groundLayer: Phaser.Tilemaps.TilemapLayer | null = null;
   private marker: Phaser.GameObjects.Graphics | null = null;
   private coordinate: MapCoordinate | null = null;
+  private resourceLayer: MapResourceLayer | null = null;
+  private scanController: MapScanController | null = null;
   private mapBootstrapReady = false;
+  private lastCenterCellId = -1;
 
   constructor() {
     super("MapScene");
@@ -36,6 +46,21 @@ export class MapScene extends Phaser.Scene {
 
   preload(): void {
     this.load.tilemapTiledJSON(WORLD_MAP_KEY, "/game-assets/world/map.json");
+    this.load.json(
+      MAP_RESOURCE_CONFIG_KEY,
+      "/game-assets/world/mapRes_0.json",
+    );
+    this.load.atlas(
+      "map-tiles",
+      "/game-assets/world/atlases/map_tiles.png",
+      "/game-assets/world/atlases/map_tiles.json",
+    );
+    this.load.atlas(
+      "map-res",
+      "/game-assets/world/atlases/map_res.png",
+      "/game-assets/world/atlases/map_res.json",
+    );
+
     for (const tileset of TILESET_TEXTURES) {
       this.load.image(tileset.key, tileset.url);
     }
@@ -43,13 +68,17 @@ export class MapScene extends Phaser.Scene {
 
   create(): void {
     this.createWorldMap();
+    this.createRuntimeLayers();
     this.configureCamera();
     new MapInputController(this, this.selectCell).enable();
+    this.syncMapCenter();
 
     this.game.events.on(MAP_READY_EVENT, this.onMapBootstrapReady, this);
-    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-      this.game.events.off(MAP_READY_EVENT, this.onMapBootstrapReady, this);
-    });
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.shutdown, this);
+  }
+
+  update(): void {
+    this.syncMapCenter();
   }
 
   private createWorldMap(): void {
@@ -75,7 +104,37 @@ export class MapScene extends Phaser.Scene {
       tileWidth: map.tileWidth,
       tileHeight: map.tileHeight,
     });
-    this.marker = this.add.graphics().setDepth(50);
+    this.marker = this.add.graphics().setDepth(50_000);
+  }
+
+  private createRuntimeLayers(): void {
+    if (!this.map || !this.coordinate) return;
+
+    const areaGrid = new MapAreaGrid({
+      mapWidth: this.map.width,
+      mapHeight: this.map.height,
+      tileHeight: this.map.tileHeight,
+      viewportHeight: Math.max(this.scale.height, this.map.tileHeight),
+    });
+    const catalog = MapResourceCatalog.fromUnknown(
+      this.cache.json.get(MAP_RESOURCE_CONFIG_KEY),
+    );
+
+    if (catalog.width !== this.map.width || catalog.height !== this.map.height) {
+      throw new Error("mapRes_0 không cùng kích thước với map TMX");
+    }
+
+    this.resourceLayer = new MapResourceLayer(
+      this,
+      this.coordinate,
+      areaGrid,
+      catalog,
+    );
+    this.scanController = new MapScanController(
+      areaGrid,
+      (envelope, otherData) =>
+        NetManager.getInstance().send(envelope, otherData),
+    );
   }
 
   private configureCamera(): void {
@@ -90,6 +149,22 @@ export class MapScene extends Phaser.Scene {
       y: Math.floor(this.map.height / 2),
     });
     camera.centerOn(center.x, center.y);
+  }
+
+  private syncMapCenter(): void {
+    if (!this.map || !this.coordinate || !this.resourceLayer) return;
+
+    const rawCell = this.coordinate.worldToCell(this.cameras.main.midPoint);
+    const cell = {
+      x: Phaser.Math.Clamp(rawCell.x, 0, this.map.width - 1),
+      y: Phaser.Math.Clamp(rawCell.y, 0, this.map.height - 1),
+    };
+    const cellId = this.coordinate.getCellId(cell);
+    if (cellId === this.lastCenterCellId) return;
+
+    this.lastCenterCellId = cellId;
+    this.resourceLayer.updateForCenter(cell);
+    if (this.mapBootstrapReady) this.scanController?.updateForCenter(cell);
   }
 
   private readonly selectCell = (worldX: number, worldY: number): void => {
@@ -136,7 +211,24 @@ export class MapScene extends Phaser.Scene {
     });
   };
 
-  private readonly onMapBootstrapReady = (): void => {
+  private readonly onMapBootstrapReady = (
+    _snapshot?: MapBootstrapSnapshot,
+  ): void => {
     this.mapBootstrapReady = true;
+    this.lastCenterCellId = -1;
+    this.syncMapCenter();
+  };
+
+  private readonly shutdown = (): void => {
+    this.game.events.off(MAP_READY_EVENT, this.onMapBootstrapReady, this);
+    this.resourceLayer?.destroy();
+    this.scanController?.destroy();
+    this.resourceLayer = null;
+    this.scanController = null;
+    this.marker = null;
+    this.groundLayer = null;
+    this.map = null;
+    this.coordinate = null;
+    this.lastCenterCellId = -1;
   };
 }

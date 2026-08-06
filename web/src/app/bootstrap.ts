@@ -2,7 +2,10 @@ import { createGame, type GameRuntime } from "../game/game";
 import { LogicEvent } from "../legacy/common/logic-event";
 import { EventMgr } from "../legacy/events/event-manager";
 import { LoginCommand } from "../legacy/login/login-command";
-import { MapBootstrapCommand } from "../legacy/map/map-bootstrap-command";
+import {
+  MapBootstrapCommand,
+  type MapBootstrapSnapshot,
+} from "../legacy/map/map-bootstrap-command";
 import { HttpManager } from "../legacy/network/http/http-manager";
 import {
   NetEvent,
@@ -147,13 +150,16 @@ export class Bootstrap {
     );
   };
 
-  private readonly onEnterMap = (): void => {
+  private readonly onEnterMap = (
+    snapshot?: MapBootstrapSnapshot,
+  ): void => {
     this.shell.showWaiting(false);
     this.shell.setHudVisible(true);
     this.shell.setPhase("Bản đồ thiên hạ");
     this.uiManager.closeAll();
     this.gameRuntime?.game.events.emit(
       "legacy-map-bootstrap-ready",
+      snapshot,
     );
   };
 

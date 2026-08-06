@@ -56,4 +56,21 @@ assert.equal(mapResource.w, 200);
 assert.equal(mapResource.h, 200);
 assert.equal(mapResource.list.length, 40_000);
 
-console.log("Bản đồ web khớp map TMX và mapRes_0 hiện tại.");
+const requiredAtlases = new Map([
+  ["map_tiles", { size: { w: 400, h: 700 }, frames: ["land_ground_1_1", "land_ground_2_1"] }],
+  ["map_res", { size: { w: 1000, h: 550 }, frames: ["land_1_1", "land_2_1", "land_4_1", "sys_fortress"] }],
+]);
+
+for (const [name, expected] of requiredAtlases) {
+  const atlasDirectory = resolve(worldDirectory, "atlases");
+  const atlas = JSON.parse(
+    await readFile(resolve(atlasDirectory, `${name}.json`), "utf8"),
+  );
+  await access(resolve(atlasDirectory, `${name}.png`));
+  assert.deepEqual(atlas.meta.size, expected.size, `Sai kích thước atlas ${name}`);
+  for (const frame of expected.frames) {
+    assert.ok(atlas.frames[frame], `Thiếu frame ${name}:${frame}`);
+  }
+}
+
+console.log("Bản đồ web khớp TMX, mapRes_0 và atlas Cocos hiện tại.");
