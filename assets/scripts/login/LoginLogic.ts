@@ -21,9 +21,9 @@ export default class LoginLogic extends Component {
 
         const data = LocalCache.getLoginValidation();
         if (data) {
-            this.editName.string = data.username;
-            this.editPass.string = data.password;
+            this.editName.string = data.username || "";
         }
+        this.editPass.string = "";
     }
 
     protected onDestroy(): void {
@@ -31,33 +31,39 @@ export default class LoginLogic extends Component {
     }
 
     protected onLoginComplete(): void {
+        this.editPass.string = "";
         this.node.active = false;
     }
 
     protected onClickRegister(): void {
         AudioManager.instance.playClick();
+        const username = this.editName.string.trim();
+        const password = this.editPass.string;
 
-        if (!this.editName.string || !this.editPass.string) {
+        if (!username || !password) {
             EventMgr.emit(LogicEvent.showToast, "Vui lòng nhập đầy đủ tài khoản và mật khẩu.");
             return;
         }
 
-        LoginCommand.getInstance().register(this.editName.string, this.editPass.string);
+        LoginCommand.getInstance().register(username, password);
     }
 
     protected onClickLogin(): void {
         AudioManager.instance.playClick();
+        const username = this.editName.string.trim();
+        const password = this.editPass.string;
 
-        if (!this.editName.string || !this.editPass.string) {
+        if (!username || !password) {
             EventMgr.emit(LogicEvent.showToast, "Vui lòng nhập đầy đủ tài khoản và mật khẩu.");
             return;
         }
 
-        LoginCommand.getInstance().accountLogin(this.editName.string, this.editPass.string);
+        LoginCommand.getInstance().accountLogin(username, password);
     }
 
     protected onClickClose(): void {
         AudioManager.instance.playClick();
+        this.editPass.string = "";
         this.node.active = false;
     }
 }
