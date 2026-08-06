@@ -19,8 +19,20 @@ Client game chiến thuật SLG Tam Quốc được phát triển bằng **Cocos
 ```text
 Cocos Web Desktop / PWA
         │
-        ├── HTTPS → http-service trên Railway
-        └── WSS   → gate-service trên Railway
+        ├── HTTPS ─┐
+        └── WSS ───┤
+                   ▼
+       Một Railway Service duy nhất
+                   │
+                   ▼
+          Supabase PostgreSQL
+```
+
+Client dùng cùng một domain Railway cho HTTP và WebSocket:
+
+```dotenv
+GAME_HTTP_URL=https://tam-quoc-server.up.railway.app
+GAME_WS_URL=wss://tam-quoc-server.up.railway.app
 ```
 
 Client không kết nối trực tiếp tới Supabase. Toàn bộ dữ liệu tài khoản và dữ liệu game đi qua backend Railway.
@@ -29,7 +41,7 @@ Client không kết nối trực tiếp tới Supabase. Toàn bộ dữ liệu t
 
 - Cocos Creator `3.4.0`.
 - Node.js `22` để chạy kiểm tra và script chuẩn bị Vercel.
-- Backend `slgserver` đã được triển khai.
+- Backend `slgserver` đã được triển khai thành một Railway Service.
 
 ## Chạy trong Cocos Creator
 
@@ -51,8 +63,8 @@ Trong Cocos Creator:
 Sau khi build, chạy script chuẩn bị Vercel/PWA:
 
 ```bash
-GAME_WS_URL=wss://domain-gate-railway \
-GAME_HTTP_URL=https://domain-http-railway \
+GAME_WS_URL=wss://tam-quoc-server.up.railway.app \
+GAME_HTTP_URL=https://tam-quoc-server.up.railway.app \
 GAME_LOCALE=vi-VN \
 npm run vercel-build
 ```
