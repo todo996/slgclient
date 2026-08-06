@@ -1,130 +1,116 @@
-
 import { LocalCache } from "./LocalCache";
 
-export class Tools{
-    public static getUUID():string{
-        let uuid_str = '';
-        let cache = LocalCache.getUuid();
-        if(cache == ""){
-            var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
-            var uuid = [];
-            let radix = 16 | chars.length;
+export class Tools {
+    public static getUUID(): string {
+        let uuidString = '';
+        const cache = LocalCache.getUuid();
+        if (cache == "") {
+            const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
+            const uuid = [];
+            const radix = 16 | chars.length;
             for (let i = 0; i < 36; i++) uuid[i] = chars[0 | Math.random() * radix];
             uuid[8] = uuid[13] = uuid[18] = uuid[23] = '-';
-            uuid_str = uuid.join('');
-            LocalCache.setUuid(uuid_str);
-        }else{
-            uuid_str = cache;
+            uuidString = uuid.join('');
+            LocalCache.setUuid(uuidString);
+        } else {
+            uuidString = cache;
         }
 
-        return uuid_str
+        return uuidString;
     }
 
+    public static getCodeStr(code: number = 0): string {
+        const messages: Record<number, string> = {
+            [-4]: "Không thể kết nối dịch vụ trung gian.",
+            [-3]: "Dịch vụ trung gian gặp lỗi.",
+            [-2]: "Không tìm thấy tài khoản trong kết nối.",
+            [-1]: "Không tìm thấy nhân vật trong kết nối.",
+            [0]: "Thành công.",
+            [1]: "Thông tin gửi lên không hợp lệ.",
+            [2]: "Cơ sở dữ liệu gặp sự cố.",
+            [3]: "Tài khoản đã tồn tại.",
+            [4]: "Mật khẩu không chính xác.",
+            [5]: "Tài khoản không tồn tại.",
+            [6]: "Phiên đăng nhập không hợp lệ.",
+            [7]: "Thiết bị đăng nhập không hợp lệ.",
+            [8]: "Tài khoản đã tạo nhân vật.",
+            [9]: "Nhân vật chưa tồn tại.",
+            [10]: "Thành trì không tồn tại.",
+            [11]: "Bạn không sở hữu thành trì này.",
+            [12]: "Nâng cấp thất bại.",
+            [13]: "Võ tướng không tồn tại.",
+            [14]: "Bạn không sở hữu võ tướng này.",
+            [15]: "Bạn không sở hữu đội quân này.",
+            [16]: "Không đủ tài nguyên.",
+            [17]: "Vượt quá giới hạn binh lực.",
+            [18]: "Đội quân đang thực hiện nhiệm vụ khác.",
+            [19]: "Võ tướng đang thực hiện nhiệm vụ khác.",
+            [20]: "Không thể từ bỏ mục tiêu này.",
+            [21]: "Bạn không sở hữu lãnh địa này.",
+            [22]: "Đội quân chưa có chủ tướng.",
+            [23]: "Không thể di chuyển đến vị trí này.",
+            [24]: "Không đủ thể lực.",
+            [25]: "Không đủ lệnh.",
+            [26]: "Không đủ vàng.",
+            [27]: "Võ tướng đã được xếp vào đội hình.",
+            [28]: "Không đủ điểm thống lĩnh.",
+            [29]: "Không có võ tướng dùng để dung hợp.",
+            [30]: "Các võ tướng dung hợp không cùng tên.",
+            [31]: "Không đủ giới hạn thống lĩnh.",
+            [32]: "Nâng cấp thất bại.",
+            [33]: "Võ tướng đã đạt số sao tối đa.",
+            [34]: "Không thể tạo liên minh.",
+            [35]: "Liên minh không tồn tại.",
+            [36]: "Bạn không có quyền thực hiện thao tác này.",
+            [37]: "Bạn đã tham gia một liên minh.",
+            [38]: "Hiện chưa thể rời liên minh.",
+            [39]: "Nội dung vượt quá độ dài cho phép.",
+            [40]: "Người chơi không thuộc liên minh này.",
+            [41]: "Liên minh đã đủ thành viên.",
+            [42]: "Bạn đã gửi đơn xin gia nhập.",
+            [43]: "Không thể đồn trú tại vị trí này.",
+            [44]: "Không thể chiếm lĩnh vị trí này.",
+            [45]: "Thành trì chưa có công trình chiêu mộ.",
+            [46]: "Mục tiêu đang trong thời gian miễn chiến.",
+            [47]: "Đội quân đang chiêu mộ binh lính.",
+            [48]: "Lãnh địa đang trong quá trình từ bỏ.",
+            [49]: "Không thể xây thêm công trình trên lãnh địa này.",
+            [50]: "Không thể điều động đội quân.",
+            [51]: "Tất cả vị trí đội hình đã được sử dụng.",
+            [52]: "Đội quân đang ở ngoài thành.",
+            [53]: "Không thể nâng cấp công trình.",
+            [54]: "Không thể phá bỏ công trình.",
+            [55]: "Đã dùng hết lượt thu thuế.",
+            [56]: "Thao tác đang trong thời gian chờ.",
+            [57]: "Số lượng võ tướng đã đạt giới hạn.",
+            [58]: "Thành trì chưa có chợ.",
+            [59]: "Số vị trí đánh dấu đã đạt giới hạn.",
+            [60]: "Số kỹ năng đã đạt giới hạn.",
+            [61]: "Trang bị kỹ năng thất bại.",
+            [62]: "Gỡ kỹ năng thất bại.",
+            [63]: "Binh chủng không phù hợp.",
+            [64]: "Vị trí này chưa được trang bị kỹ năng.",
+            [65]: "Kỹ năng đã đạt cấp tối đa.",
+            [66]: "Tên nhân vật đã được sử dụng.",
+        };
 
-
-    public static getCodeStr(code:number = 0):string{
-        let str = "";
-
-        var codeObj = {};
-        codeObj[-4] = "代理连接失败";
-        codeObj[-3] = "代理错误";
-        codeObj[-2] = "链接没有找到用户";
-        codeObj[-1] = "链接没有找到角色";
-        codeObj[0] = "成功";
-
-        codeObj[1] = "参数有误";
-        codeObj[2] = "数据库异常";
-        codeObj[3] = "用户已存在";
-        codeObj[4] = "密码不正确";
-        codeObj[5] = "用户不存在";
-        codeObj[6] = "session无效";
-        codeObj[7] = "Hardware错误";
-        codeObj[8] = "已经创建过角色了";
-        codeObj[9] = "角色不存在";
-        codeObj[10] = "城市不存在";
-
-        codeObj[11] = "城市不是自己的";
-        codeObj[12] = "升级失败";
-        codeObj[13] = "武将不存在";
-        codeObj[14] = "武将不是自己的";
-        codeObj[15] = "军队不是自己的";
-        codeObj[16] = "资源不足";
-        codeObj[17] = "超过带兵限制";
-        codeObj[18] = "军队再忙";
-        codeObj[19] = "将领再忙";
-        codeObj[20] = "不能放弃";
-
-        codeObj[21] = "领地不是自己的";
-        codeObj[22] = "军队没有主将";
-        codeObj[23] = "不可到达";
-        codeObj[24] = "体力不足";
-        codeObj[25] = "政令不足";
-        codeObj[26] = "金币不足";
-        codeObj[27] = "重复上阵";
-        codeObj[28] = "cost不足";
-        codeObj[29] = "没有该合成武将";
-        codeObj[30] = "合成武将非同名";
-
-        codeObj[31] = "统帅不足";
-        codeObj[32] = "升级失败";
-        codeObj[33] = "升级到最大星级";
-        codeObj[34] = "联盟创建失败";
-        codeObj[35] = "联盟不存在";
-        codeObj[36] = "权限不足";
-        codeObj[37] = "已经有联盟";
-        codeObj[38] = "不允许退出";
-        codeObj[39] = "内容太长";
-        codeObj[40] = "不属于该联盟";
-
-        codeObj[41] = "用户已满";
-        codeObj[42] = "已经申请过了";
-        codeObj[43] = "不能驻守";
-        codeObj[44] = "不能占领";
-        codeObj[45] = "没有募兵所";
-        codeObj[46] = "免战中";
-        codeObj[47] = "征兵中";
-        codeObj[48] = "领地已经在放弃了";
-        codeObj[49] = "不能再新建建筑在领地上";
-        codeObj[50] = "不能调兵";
-
-        codeObj[51] = "坑位已满";
-        codeObj[52] = "队伍在城外";
-        codeObj[53] = "不能升级建筑";
-        codeObj[54] = "不能拆除建筑";
-        codeObj[55] = "超过征收次数";
-        codeObj[56] = "cd内不能操作";
-        codeObj[57] = "武将超过上限了";
-        codeObj[58] = "没有集市";
-        codeObj[59] = "超过了收藏上限";
-
-        codeObj[60] = "超过了技能上限";
-        codeObj[61] = "装备技能失败";
-        codeObj[62] = "取下技能失败";
-        codeObj[63] = "兵种不符";
-        codeObj[64] = "该位置没有技能";
-        codeObj[65] = "技能等级已满";
-        codeObj[66] = "昵称已经存在";
-       
-
-        if (codeObj[code] == null){
-            str = "错误:" + code;
-        }else{
-            str = codeObj[code]
-        }
-
-        console.log("getCodeStr:", str)
-        return str;
+        return messages[code] ?? `Lỗi không xác định (${code}).`;
     }
 
-    public static numberToShow(num:number = 0):string{
-        if (num >= 100000000){
-            return Math.floor(num/100000000) + "亿"
+    public static numberToShow(num: number = 0): string {
+        if (num >= 1_000_000_000) {
+            return `${this.trimNumber(num / 1_000_000_000)} tỷ`;
         }
-        else if (num >= 10000){
-            return Math.floor(num/10000) + "万"
-        }else{
-            return num + ""
+        if (num >= 1_000_000) {
+            return `${this.trimNumber(num / 1_000_000)} triệu`;
         }
+        if (num >= 1_000) {
+            return `${this.trimNumber(num / 1_000)} nghìn`;
+        }
+        return Math.floor(num).toLocaleString('vi-VN');
     }
 
+    private static trimNumber(value: number): string {
+        return Number(value.toFixed(value >= 10 ? 0 : 1)).toLocaleString('vi-VN');
+    }
 }
