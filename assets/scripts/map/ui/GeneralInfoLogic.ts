@@ -23,7 +23,7 @@ export default class GeneralInfoLogic  extends Component {
     @property(ToggleContainer)
     generalToggleContainer: ToggleContainer = null;
 
-    
+
     private _currData:any = null;
     private _cfgData:any = null;
 
@@ -31,7 +31,7 @@ export default class GeneralInfoLogic  extends Component {
     private _nodeList:Node[] = [];
 
     protected onLoad():void{
-        EventMgr.on(LogicEvent.updateOneGenerals, this.updateOnce, this); 
+        EventMgr.on(LogicEvent.updateOneGenerals, this.updateOnce, this);
 
         var des = instantiate(this.generalDesPrefab);
         des.parent = this.node;
@@ -55,7 +55,7 @@ export default class GeneralInfoLogic  extends Component {
     protected updateOnce(curData:any):void{
         this.setData(this._cfgData,curData)
     }
-   
+
 
     protected onDestroy():void{
         this._nodeList = []

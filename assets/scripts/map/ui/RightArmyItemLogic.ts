@@ -55,13 +55,13 @@ export default class RightArmyItemLogic extends Component {
             let nowTime: number = DateUtil.getServerTime();
             let time: number = 0;
             if (this._data.state > 0) {
-                //行军或者撤退中
+                //Hành quân或者Rút lui中
                 time = Math.max(0, this._data.endTime - nowTime);
             } else {
-                //屯田中
+                //Đang đồn điền
                 time = Math.max(0, GeneralCommand.getInstance().proxy.getCommonCfg().reclamation_time * 1000 - (nowTime - this._data.endTime));
                 // if (time == 0 && nowTime - this._qryReturnTime > 2000) {
-                //     //屯田结束 主动请求撤退
+                //     //Đồn điền结束 Chủ động请求Rút lui
                 //     this._qryReturnTime = nowTime;
                 //     this.onClickBack();
                 // }
@@ -107,9 +107,9 @@ export default class RightArmyItemLogic extends Component {
             let cfg: GeneralConfig = GeneralCommand.getInstance().proxy.getGeneralCfg(this._firstGeneral.cfgId);
             teamName = cfg.name;
             this.headIcon.getComponent(GeneralHeadLogic).setHeadId(this._firstGeneral.cfgId);
-            this.labelStrength.string = "体力 " + this._firstGeneral.physical_power + "/" + cfg.physical_power_limit;
+            this.labelStrength.string = "Thể lực " + this._firstGeneral.physical_power + "/" + cfg.physical_power_limit;
         }
-        this.labelInfo.string = stateStr + " " + teamName + "队";
+        this.labelInfo.string = stateStr + " " + teamName + "Đội";
 
     }
 
@@ -122,17 +122,17 @@ export default class RightArmyItemLogic extends Component {
 
             this.labelPos.string = "(" + this._data.x + ", " + this._data.y + ")";
 
-            this.labelSoldierCnt.string = "骑兵 " + (this._data.soldiers[0] + this._data.soldiers[1] + this._data.soldiers[2]);
+            this.labelSoldierCnt.string = "Kỵ binh " + (this._data.soldiers[0] + this._data.soldiers[1] + this._data.soldiers[2]);
 
             if (this._data.cmd == ArmyCmd.Idle) {
-                
+
                 this.btnSetting.active = true;
                 let cityData: MapCityData = MapCommand.getInstance().cityProxy.getMyCityById(this._data.cityId);
                 if (cityData && cityData.x == this._data.fromX && cityData.y == this._data.fromY){
-                    //代表在城池里面
+                    //代表在Thành trì里面
                     this.btnBack.active = false;
                 }else{
-                    //代表在城外据点待命
+                    //代表在城外据点Chờ lệnh
                     this.btnBack.active = true;
                 }
 
@@ -140,7 +140,7 @@ export default class RightArmyItemLogic extends Component {
                 this.btnSetting.active = false;
                 this.btnBack.active = false;
             } else if (this._data.state == 0 && this._data.cmd != ArmyCmd.Reclaim) {
-                //停留的时候才能配置队伍和撤退
+                //Dừng lại的时候才能Thiết lậpĐội hình和Rút lui
                 this.btnSetting.active = false;
                 this.btnBack.active = true;
             } else {

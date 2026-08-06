@@ -18,7 +18,7 @@ export default class UnionLogLogic extends Component {
     protected onLoad():void{
         EventMgr.on(LogicEvent.unionLog,this.updateLog,this);
     }
-    
+
     protected onDestroy():void{
         EventMgr.targetOff(this);
     }

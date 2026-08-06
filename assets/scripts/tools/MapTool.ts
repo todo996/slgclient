@@ -72,28 +72,28 @@ export default class MapTool extends Component {
         }
 
         if (this.editBox.string == ""){
-            this.tipsLab.string = "请输入生成输出目录";
+            this.tipsLab.string = "Vui lòng nhập thư mục đầu ra";
             return
         }
 
         if (!JSB) {
-            this.tipsLab.string = "请使用 Windows 模拟器运行";
+            this.tipsLab.string = "Vui lòng dùng Windows Chạy bằng trình mô phỏng";
             return
         }
 
         var path = this.editBox.string;
         if(jsb.fileUtils.isDirectoryExist(path) == false){
-            this.tipsLab.string = "目录不存在";
+            this.tipsLab.string = "Thư mục không tồn tại";
             return
         }
-        
+
 
         data.w = this._mapSize.width;
         data.h = this._mapSize.height;
         data.list = this._resList;
         jsb.fileUtils.writeStringToFile(JSON.stringify(data), path + "/mapRes_0.json");
-       
 
-        this.tipsLab.string = "生成成功";
+
+        this.tipsLab.string = "Đã tạo thành công";
     }
 }

@@ -10,7 +10,7 @@ export enum HttpInvokeType {
 
 
 export class HttpInvoke {
-    
+
     protected _receiveTime: number = 15000;               // 多久没收到数据断开
     protected _name:string = "";
     protected _otherData:any = null;
@@ -34,18 +34,18 @@ export class HttpInvoke {
         }
         EventMgr.emit(this._name, json,this._otherData);
         EventMgr.emit(NetEvent.ServerRequestSucess,json);
-        
+
     }
 
 
     public doSend(url:string,params:any,type:HttpInvokeType):Promise<any>{
-       
+
         let xhr = new XMLHttpRequest();
         xhr.timeout = this._receiveTime;
         var self = this;
-        
+
         let p = new Promise(function(resolve, reject){
-            
+
             xhr.onreadystatechange = function () {
                 if (xhr.readyState == 4) {
                     console.log("onreadystatechange:",xhr);
@@ -58,7 +58,7 @@ export class HttpInvoke {
                         resolve(xhr);
                     }
                 }
-    
+
             };
             xhr.ontimeout = function () {
                 console.log("xhr.ontimeout");
@@ -70,8 +70,8 @@ export class HttpInvoke {
                 self.onComplete(null);
                 resolve(null);
             };
-            
-            
+
+
             if(type == HttpInvokeType.GET){
                 url +="?"+ params;
                 xhr.open("GET",url , true);
@@ -82,8 +82,8 @@ export class HttpInvoke {
                 xhr.send(params);
             }
         });
-         
-       
+
+
         return p;
 
     }

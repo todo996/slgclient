@@ -42,7 +42,7 @@ export default class ChatLogic extends Component {
     protected updateUnion():void{
         let city:MapCityData = MapCommand.getInstance().cityProxy.getMyMainCity();
         if (city.unionId > 0){
-            //加入联盟频道
+            //Gia nhập liên minh频道
             ChatCommand.getInstance().join(1, city.unionId);
         }else{
             ChatCommand.getInstance().exit(1, 0);
@@ -75,7 +75,7 @@ export default class ChatLogic extends Component {
     protected onClickChat(): void {
         AudioManager.instance.playClick();
         if(this.editConent.string == ""){
-            EventMgr.emit(LogicEvent.showToast, "聊天内容不能为空");
+            EventMgr.emit(LogicEvent.showToast, "Nội dung trò chuyện không được để trống");
             return;
         }
 

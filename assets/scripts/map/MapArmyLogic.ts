@@ -65,7 +65,7 @@ export default class MapArmyLogic extends Component {
         let aniNode: Node = null;
         let arrowNode: Node = null;
         if (data.cmd == ArmyCmd.Idle || data.cmd == ArmyCmd.Conscript) {
-            //代表不在地图上
+            //代表不在地图Trên
             this.removeArmyById(data.id);
             return;
         }
@@ -123,7 +123,7 @@ export default class MapArmyLogic extends Component {
         this._armyLogics.forEach((logic:ArmyLogic) => {
             let city = MapCommand.getInstance().cityProxy.getMyCityById(logic.data.cityId);
             if(!city || city.rid != MapCommand.getInstance().buildProxy.myId){
-            
+
                 var visible1 = MapUtil.armyIsInView(logic.data.x, logic.data.y);
                 var visible2 = MapUtil.armyIsInView(logic.data.toX, logic.data.toY);
                 var visible3 = MapUtil.armyIsInView(logic.data.fromX, logic.data.fromY);
@@ -131,7 +131,7 @@ export default class MapArmyLogic extends Component {
                     this.removeArmyById(logic.data.id);
                 }
             }
-            
+
         });
     }
 }

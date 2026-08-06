@@ -16,19 +16,19 @@ export class MapResConfig {
     defender: number = 0;
 }
 
-/**地图资源类型*/
+/**地图Tài nguyên类型*/
 export class MapResType {
-    static SYS_FORTRESS: number = 50;   //系统要塞
+    static SYS_FORTRESS: number = 50;   //Hệ thống要塞
     static SYS_CITY: number = 51;
     static WOOD: number = 52;
     static IRON: number = 53;
     static STONE: number = 54;
     static GRAIN: number = 55;
     static FORTRESS: number = 56; //要塞
-    
+
 }
 
-/**地图资源数据*/
+/**地图Tài nguyên数据*/
 export class MapResData {
     id: number = 0;
     type: number = 0;
@@ -87,7 +87,7 @@ export class MapAreaData {
 }
 
 export default class MapProxy {
-    public warFree:number = 0; //免战时间
+    public warFree:number = 0; //Miễn chiếnThời gian
     public tiledMapAsset: TiledMapAsset = null;
     //当前地图中心点
     protected _curCenterPoint: Vec2 = null;
@@ -100,10 +100,10 @@ export default class MapProxy {
 
     //地图请求列表
     public qryAreaIds: number[] = [];
-    //地图基础配置数据
+    //地图基础Thiết lập数据
     protected _mapResConfigs: Map<string, MapResConfig> = new Map<string, MapResConfig>();
 
-    // 初始化地图配置
+    // 初始化地图Thiết lập
     public initData(): void {
         this._mapAreaDatas.length = MapUtil.areaCount;
     }
@@ -115,7 +115,7 @@ export default class MapProxy {
         this.qryAreaIds.length = 0;
     }
 
-    /**地图建筑基础配置信息*/
+    /**地图Công trình基础Thiết lập信息*/
     public setNationMapConfig(configList: any[]): void {
         this._mapResConfigs.clear();
         for (let i: number = 0; i < configList.length; i++) {
@@ -164,7 +164,7 @@ export default class MapProxy {
 
     public getSysCityResData(x, y): MapResData{
         for (let index = 0; index < this._mapSysCityResDatas.length; index++) {
-            
+
             var resData = this._mapSysCityResDatas[index];
             var level = resData.level;
             var dis = 0;
@@ -185,7 +185,7 @@ export default class MapProxy {
 
 
 
-    /**设置地图当前中心点的信息*/
+    /**Cài đặt地图当前中心点的信息*/
     public setCurCenterPoint(point: Vec2, pixelPoint: Vec2): boolean {
         if (this._curCenterPoint == null
             || this._curCenterPoint.x != point.x
@@ -297,20 +297,20 @@ export default class MapProxy {
         return this._mapAreaDatas[id];
     }
 
-    /*获取产量描述**/
+    /*获取Sản lượng描述**/
     public getResYieldDesList(cfg: MapResConfig): string[] {
         let list: string[] = [];
         if (cfg.grain > 0) {
-            list.push("粮食 +" + cfg.grain + "/小时");
+            list.push("Lương thực +" + cfg.grain + "/giờ");
         }
         if (cfg.wood > 0) {
-            list.push("木材 +" + cfg.wood + "/小时");
+            list.push("Gỗ +" + cfg.wood + "/giờ");
         }
         if (cfg.iron > 0) {
-            list.push("铁矿 +" + cfg.iron + "/小时");
+            list.push("Sắt +" + cfg.iron + "/giờ");
         }
         if (cfg.stone > 0) {
-            list.push("石料 +" + cfg.stone + "/小时");
+            list.push("Đá +" + cfg.stone + "/giờ");
         }
         return list;
     }
@@ -319,7 +319,7 @@ export default class MapProxy {
         return this._mapResDatas[id];
     }
 
-    /**根据类型获取配置数据*/
+    /**根据类型获取Thiết lập数据*/
     public getResConfig(type: number, level: number): MapResConfig {
         let key: string = type + "_" + level;
         if (this._mapResConfigs.has(key)) {
@@ -375,7 +375,7 @@ export default class MapProxy {
         if (ok){
             this._mapPosTags.push(tag);
         }
-       
+
     }
 
     public isPosTag(x: number, y:number):boolean {
@@ -387,7 +387,7 @@ export default class MapProxy {
                 break;
             }
         }
-       
+
         return ret;
     }
 

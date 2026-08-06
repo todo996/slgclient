@@ -1,17 +1,17 @@
 import DateUtil from "../utils/DateUtil";
 
-/**军队命令*/
+/**Quân đội命令*/
 export class ArmyCmd {
-    static Idle: number = 0;//空闲
-    static Attack: number = 1;//攻击
-    static Garrison: number = 2;//驻军
-    static Reclaim: number = 3;//屯田
-    static Return: number = 4;//撤退
-    static Conscript: number = 5;//征兵
-    static Transfer: number = 6;//调动
+    static Idle: number = 0;//Nhàn rỗi
+    static Attack: number = 1;//Tấn công
+    static Garrison: number = 2;//Đồn trú
+    static Reclaim: number = 3;//Đồn điền
+    static Return: number = 4;//Rút lui
+    static Conscript: number = 5;//Chiêu mộ
+    static Transfer: number = 6;//Điều động
 }
 
-/**军队数据*/
+/**Quân đội数据*/
 export class ArmyData {
     id: number = 0;
     cityId: number = 0;
@@ -48,7 +48,7 @@ export class ArmyData {
         data.state = serverData.state;
         data.cmd = serverData.cmd;
         if (data.cmd == ArmyCmd.Return) {
-            //返回的时候 坐标是反的
+            //Quay lại的时候 Toạ độ是反的
             data.fromX = serverData.to_x;
             data.fromY = serverData.to_y;
             data.toX = serverData.from_x;
@@ -60,7 +60,7 @@ export class ArmyData {
             data.toY = serverData.to_y;
         }
         if (data.cmd == ArmyCmd.Idle || data.cmd == ArmyCmd.Conscript) {
-            //代表是停留在城池中
+            //代表是Dừng lại在Thành trì中
             data.x = data.fromX;
             data.y = data.fromY;
         } else {
@@ -89,8 +89,8 @@ export class ArmyData {
 }
 
 export default class ArmyProxy {
-    protected _maxArmyCnt: number = 5;//一个城池最大军队数量
-    //武将基础配置数据
+    protected _maxArmyCnt: number = 5;//Một个Thành trì最大Quân độiSố lượng
+    //Võ tướng基础Thiết lập数据
     protected _armys: Map<number, ArmyData[]> = new Map<number, ArmyData[]>();
 
     public clearData(): void {
@@ -140,7 +140,7 @@ export default class ArmyProxy {
         return list;
     }
 
-    /**根据id获取军队*/
+    /**根据id获取Quân đội*/
     public getArmyById(id: number, cityId: number): ArmyData {
         let list: ArmyData[] = this.getArmyList(cityId);
         if (list) {
@@ -153,7 +153,7 @@ export default class ArmyProxy {
         return null;
     }
 
-    /**根据位置获取军队*/
+    /**根据位置获取Quân đội*/
     public getArmyByOrder(order: number, cityId: number): ArmyData {
         let list: ArmyData[] = this.getArmyList(cityId);
         console.log("getArmyByOrder", order, cityId, list);

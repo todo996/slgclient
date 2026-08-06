@@ -24,7 +24,7 @@ export default class FacilityAdditionItemLogic extends Component {
         let additionCfg: FacilityAdditionCfg = MapUICommand.getInstance().proxy.getFacilityAdditionCfgByType(additionType);
         this.labelName.string = additionCfg.des;
         if (data.level >= cfg.upLevels.length) {
-            //达到最大等级
+            //达到最大Cấp độ
             this.upNode.active = false;
             this.maxNode.active = true;
 
@@ -37,7 +37,7 @@ export default class FacilityAdditionItemLogic extends Component {
             this.upNode.active = true;
             this.maxNode.active = false;
             if (data.level == 0) {
-                //代表未升级过
+                //代表未Nâng cấp过
                 this.labelOld.string = "---";
             } else {
 

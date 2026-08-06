@@ -11,7 +11,7 @@ export enum BgScaleType {
     SCALE_ONLY_WIDTH = 4,
     SCALE_ONLY_HEIGHT = 5,
 };
-// //bg对齐方位
+// //bgđối với齐方位
 export enum BgAlignmentType {
     TOP = 1,
     BOTTOM = 2,
@@ -60,12 +60,12 @@ export default class BgLogic extends Component {
         this.node.getComponent(UITransform).height = this._realH * scaleY;
 
         let widget: Widget = this.node.getComponent(Widget);
-        
-       
+
+
         if (widget == null) {
             widget = this.node.addComponent(Widget);
         }
-      
+
 
         if (this.alignmentType == BgAlignmentType.BOTTOM) {
             widget.isAlignHorizontalCenter = true;

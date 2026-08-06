@@ -84,7 +84,7 @@ export default class CollectLogic extends Component {
             this.cdLab.string = DateUtil.leftTimeStr(this._data.next_time);
             this.collectBtn.node.active = false;
         }else{
-            this.cdLab.string = "目前可以征收";
+            this.cdLab.string = "Có thể thu thuế ngay";
             this.collectBtn.node.active = true;
         }
     }

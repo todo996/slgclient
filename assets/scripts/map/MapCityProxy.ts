@@ -4,7 +4,7 @@ import { EventMgr } from '../utils/EventMgr';
 import { LogicEvent } from '../common/LogicEvent';
 
 
-/**地图城池配置*/
+/**地图Thành trìThiết lập*/
 export class MapCityData {
     id: number = 0;
     cityId: number = 0;
@@ -32,7 +32,7 @@ export class MapCityData {
             && this.curDurable == data.cur_durable
             && this.maxDurable == data.maxDurable
             && this.unionId == data.union_id
-            && this.parentId == data.parent_id 
+            && this.parentId == data.parent_id
             && this.unionName == data.union_name
             && this.occupyTime == data.occupy_time) {
             return true;
@@ -124,7 +124,7 @@ export default class MapCityProxy {
         return false;
     }
 
-    /**我的建筑信息*/
+    /**Ta的Công trình信息*/
     public initMyCitys(citys: any[]): void {
         this._myCitys.length = 0;
         for (let i: number = 0; i < citys.length; i++) {
@@ -138,7 +138,7 @@ export default class MapCityProxy {
         }
     }
 
-    /**更新建筑id*/
+    /**更新Công trìnhid*/
     public updateMyCityIds(): void {
         for (let i: number = 0; i < this._myCitys.length; i++) {
             let id: number = MapUtil.getIdByCellPoint(this._myCitys[i].x, this._myCitys[i].y);
@@ -148,7 +148,7 @@ export default class MapCityProxy {
 
     }
 
-    /**更新建筑*/
+    /**更新Công trình*/
     public updateCity(city: any): MapCityData {
         let id: number = MapUtil.getIdByCellPoint(city.x, city.y);
         let cityData: MapCityData = null;
@@ -185,7 +185,7 @@ export default class MapCityProxy {
             for (let i: number = 0; i < cBuilds.length; i++) {
                 let areaIndex: number = MapUtil.getAreaIdByCellPoint(cBuilds[i].x, cBuilds[i].y);
                 if (areaIndex != areaId) {
-                    //代表服务端给过来的数据不在当前区域
+                    //Dữ liệu từ máy chủ không nằm trong khu vực hiện tại
                     continue;
                 }
                 let cellId: number = MapUtil.getIdByCellPoint(cBuilds[i].x, cBuilds[i].y);
@@ -195,7 +195,7 @@ export default class MapCityProxy {
                     if (index != -1) {
                         //存在就列表中 就代表是已存在的数据
                         if (this._mapCitys[cellId].equalsServerData(cBuilds[i]) == false) {
-                            //代表数据不一样需要刷新
+                            //代表数据不Một样Cần làm mới
                             this.addCityData(cBuilds[i], cellId);
                             updateCityCellIds.push(cellId);
                         }

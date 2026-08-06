@@ -36,13 +36,13 @@ export default class FacilityDesLogic extends Component {
     protected _cfg: FacilityConfig = null;
     protected _additonCfg: FacilityAdditionCfg = null;
     protected _isUnLock: boolean = false;//是否解锁
-    protected _isNeedComplete: boolean = false;//是否满足升级需求
-    protected _isLevelMax: boolean = false;//是否已达最高等级
+    protected _isNeedComplete: boolean = false;//是否满足Nâng cấp需求
+    protected _isLevelMax: boolean = false;//是否已达最高Cấp độ
     protected _additionPool: NodePool = new NodePool();
 
     protected onLoad(): void {
         this.schedule(this.updateNeedTime);
-        
+
     }
 
     protected onDestroy(): void {
@@ -65,7 +65,7 @@ export default class FacilityDesLogic extends Component {
         }
     }
 
-    //更新加成描述界面
+    //更新Cộng thêm描述界面
     public updateAdditionView() {
         this.removeAllAdditionItems();
         for (let i: number = 0; i < this._cfg.additions.length; i++) {
@@ -75,22 +75,22 @@ export default class FacilityDesLogic extends Component {
         }
     }
 
-    //更新解锁条件
+    //更新Điều kiện mở khóa
     public updateContidionView() {
         this._isUnLock = true;
         if (this._cfg.conditions.length > 0) {
-            //有解锁条件
+            //有Điều kiện mở khóa
             let contidionList: string[] = [];
             for (let i: number = 0; i < this._cfg.conditions.length; i++) {
                 let data: Facility = MapUICommand.getInstance().proxy.getMyFacilityByType(this._cityId, this._cfg.conditions[i].type);
                 let cfg: FacilityConfig = MapUICommand.getInstance().proxy.getFacilityCfgByType(this._cfg.conditions[i].type);
                 if (data == null || data.level < this._cfg.conditions[i].level) {
                     //不满足条件
-                    contidionList.push("<color=#ff0000>" + cfg.name + this._cfg.conditions[i].level + "级</color>");
+                    contidionList.push("<color=#ff0000>" + cfg.name + this._cfg.conditions[i].level + "cấp</color>");
                     this._isUnLock = false;
                 } else {
                     //满足条件
-                    contidionList.push("<color=#00ff00>" + cfg.name + this._cfg.conditions[i].level + "级</color>");
+                    contidionList.push("<color=#00ff00>" + cfg.name + this._cfg.conditions[i].level + "cấp</color>");
                 }
             }
             this.labelConditions.node.parent.active = true;
@@ -101,54 +101,54 @@ export default class FacilityDesLogic extends Component {
         }
     }
 
-    //更新资源需求
+    //更新Tài nguyên需求
     public updateNeedView(): void {
         this._isNeedComplete = true;
-        
+
         let curLevel: number = this._data.level;
         if (curLevel >= 0 && curLevel < this._cfg.upLevels.length) {
-            //未达到最高级时
+            //未达到最高cấp时
             let roleRes: any = LoginCommand.getInstance().proxy.getRoleResData();
             let upLevel: FacilityUpLevel = this._cfg.upLevels[curLevel];
             let needStrList: string[] = [];
             if (upLevel.grain > 0) {
                 if (roleRes.grain < upLevel.grain) {
                     this._isNeedComplete = false;
-                    needStrList.push("粮食：<color=#ff0000>" + upLevel.grain + "/" + roleRes.grain + "</color>");
+                    needStrList.push("Lương thực：<color=#ff0000>" + upLevel.grain + "/" + roleRes.grain + "</color>");
                 } else {
-                    needStrList.push("粮食：<color=#00ff00>" + upLevel.grain + "/" + roleRes.grain + "</color>");
+                    needStrList.push("Lương thực：<color=#00ff00>" + upLevel.grain + "/" + roleRes.grain + "</color>");
                 }
             }
             if (upLevel.wood > 0) {
                 if (roleRes.wood < upLevel.wood) {
                     this._isNeedComplete = false;
-                    needStrList.push("木材：<color=#ff0000>" + upLevel.wood + "/" + roleRes.wood + "</color>");
+                    needStrList.push("Gỗ：<color=#ff0000>" + upLevel.wood + "/" + roleRes.wood + "</color>");
                 } else {
-                    needStrList.push("木材：<color=#00ff00>" + upLevel.wood + "/" + roleRes.wood + "</color>");
+                    needStrList.push("Gỗ：<color=#00ff00>" + upLevel.wood + "/" + roleRes.wood + "</color>");
                 }
             }
             if (upLevel.iron > 0) {
                 if (roleRes.iron < upLevel.iron) {
                     this._isNeedComplete = false;
-                    needStrList.push("铁矿：<color=#ff0000>" + upLevel.iron + "/" + roleRes.iron + "</color>");
+                    needStrList.push("Sắt：<color=#ff0000>" + upLevel.iron + "/" + roleRes.iron + "</color>");
                 } else {
-                    needStrList.push("铁矿：<color=#00ff00>" + upLevel.iron + "/" + roleRes.iron + "</color>");
+                    needStrList.push("Sắt：<color=#00ff00>" + upLevel.iron + "/" + roleRes.iron + "</color>");
                 }
             }
             if (upLevel.stone > 0) {
                 if (roleRes.stone < upLevel.stone) {
                     this._isNeedComplete = false;
-                    needStrList.push("石头：<color=#ff0000>" + upLevel.stone + "/" + roleRes.stone + "</color>");
+                    needStrList.push("Đá：<color=#ff0000>" + upLevel.stone + "/" + roleRes.stone + "</color>");
                 } else {
-                    needStrList.push("石头：<color=#00ff00>" + upLevel.stone + "/" + roleRes.stone + "</color>");
+                    needStrList.push("Đá：<color=#00ff00>" + upLevel.stone + "/" + roleRes.stone + "</color>");
                 }
             }
             if (upLevel.decree > 0) {
                 if (roleRes.decree < upLevel.decree) {
                     this._isNeedComplete = false;
-                    needStrList.push("政令：<color=#ff0000>" + upLevel.decree + "/" + roleRes.decree + "</color>");
+                    needStrList.push("Lệnh：<color=#ff0000>" + upLevel.decree + "/" + roleRes.decree + "</color>");
                 } else {
-                    needStrList.push("政令：<color=#00ff00>" + upLevel.decree + "/" + roleRes.decree + "</color>");
+                    needStrList.push("Lệnh：<color=#00ff00>" + upLevel.decree + "/" + roleRes.decree + "</color>");
                 }
             }
             this.labelNeed.node.parent.active = true;
@@ -170,33 +170,33 @@ export default class FacilityDesLogic extends Component {
                 this.labelNeedTime.string = DateUtil.converSecondStr(this._data.upLastTime());
             }
         }else{
-            this.labelNeedTime.string = "等级已满";
+            this.labelNeedTime.string = "Đã đạt cấp tối đa";
         }
     }
 
-    //更新升级按钮
+    //更新Nâng cấp按钮
     public updateUpBtn(): void {
         if (this._isLevelMax) {
-            //升满级了
+            //升满cấp了
             this.btnUp.node.active = false;
         } else {
             this.btnUp.node.active = true;
             if (this._isUnLock == false) {
-                //未解锁
+                //Chưa mở khóa
                 this.btnUp.interactable = false;
-                this.labelUp.string = "未解锁";
+                this.labelUp.string = "Chưa mở khóa";
             } else if (this._isNeedComplete == false) {
-                //资源不足
+                //Tài nguyên不足
                 this.btnUp.interactable = false;
-                this.labelUp.string = "升级";
+                this.labelUp.string = "Nâng cấp";
             } else if(this._data.isUping()){
-                //正在升级中
+                //正在Đang nâng cấp
                 this.btnUp.interactable = false;
-                this.labelUp.string = "升级中";
+                this.labelUp.string = "Đang nâng cấp";
             }
             else {
                 this.btnUp.interactable = true;
-                this.labelUp.string = "升级";
+                this.labelUp.string = "Nâng cấp";
             }
         }
     }

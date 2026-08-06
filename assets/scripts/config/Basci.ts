@@ -1,5 +1,5 @@
-// /**征兵相关**/
-// /**武将相关**/
+// /**Chiêu mộ相关**/
+// /**Võ tướng相关**/
 
 import { _decorator } from 'cc';
 export class Conscript {
@@ -11,14 +11,14 @@ export class Conscript {
 }
 
 export class General {
-	physical_power_limit: number = 0;       //体力上限
-	cost_physical_power: number = 0;        //消耗体力
-	recovery_physical_power: number = 0;    //恢复体力
-	reclamation_time: number = 0;           //屯田消耗时间，单位秒
-	reclamation_cost: number = 0;           //屯田消耗政令
-	draw_general_cost: number = 0;          //抽卡消耗金币
-	pr_point: number = 0;                   //合成一个武将或者的技能点
-	limit: number = 0;                      //武将数量上限
+	physical_power_limit: number = 0;       //Thể lựcTrên限
+	cost_physical_power: number = 0;        //Tiêu haoThể lực
+	recovery_physical_power: number = 0;    //恢复Thể lực
+	reclamation_time: number = 0;           //Đồn điềnTiêu haoThời gian，单位giây
+	reclamation_cost: number = 0;           //Đồn điềnTiêu haoLệnh
+	draw_general_cost: number = 0;          //Chiêu mộ tướngTiêu haoVàng
+	pr_point: number = 0;                   //Dung hợpMột个Võ tướng或者的Kỹ năng点
+	limit: number = 0;                      //Võ tướngSố lượngTrên限
 }
 
 export class Role {
@@ -33,13 +33,13 @@ export class Role {
 	stone_yield: number = 0;
 	grain_yield: number = 0;
 	gold_yield: number = 0;
-	depot_capacity: number = 0;		 //仓库初始容量
-	build_limit: number = 0;		 //野外建筑上限
+	depot_capacity: number = 0;		 //Kho初始容量
+	build_limit: number = 0;		 //野外Công trìnhTrên限
 	recovery_time: number = 0;
-	decree_limit: number = 0;        //令牌上限
-	collect_times_limit: number = 0; //每日征收次数上限
-	collect_interval: number = 0;    //征收间隔
-	pos_tag_limit: number = 0;       //位置标签上限
+	decree_limit: number = 0;        //LệnhTrên限
+	collect_times_limit: number = 0; //每日Lượt thu thuếTrên限
+	collect_interval: number = 0;    //Thu thuế间隔
+	pos_tag_limit: number = 0;       //位置Đánh dấuTrên限
 }
 
 export class City {
@@ -50,9 +50,9 @@ export class City {
 }
 
 export class Build {
-	war_free: number = 0;       //免战时间，单位秒
-	giveUp_time: number = 0;    //建筑放弃时间
-	fortress_limit: number = 0; //要塞上限
+	war_free: number = 0;       //Miễn chiếnThời gian，单位giây
+	giveUp_time: number = 0;    //Công trìnhTừ bỏThời gian
+	fortress_limit: number = 0; //要塞Trên限
 }
 
 export class Union {

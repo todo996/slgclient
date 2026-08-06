@@ -41,7 +41,7 @@ export default class SkillIconLogic extends Component {
                 this.lvLab.string = "";
             }
         }
-    
+
     }
 
     public isEmpty():boolean {

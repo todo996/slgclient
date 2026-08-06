@@ -14,7 +14,7 @@ export default class UnionLobbyLogic extends Component {
     protected onLoad():void{
         EventMgr.on(LogicEvent.updateUnionList,this.updateUnion,this);
     }
-    
+
     protected onDestroy():void{
         EventMgr.targetOff(this);
     }
@@ -24,9 +24,9 @@ export default class UnionLobbyLogic extends Component {
         comp.setData(list);
     }
     protected onEnable():void{
- 
+
         UnionCommand.getInstance().unionList();
     }
-  
+
 }
 

@@ -5,12 +5,12 @@ import { GeneralCampType, GeneralConfig } from "../../general/GeneralProxy";
 import GeneralHeadLogic from "./GeneralHeadLogic";
 
 
-// /**军队命令*/
+// /**Quân đội命令*/
 export class GeneralItemType {
-    static GeneralInfo: number = 0;//武将详情
-    static GeneralDispose: number = 1;//武将上阵
-    static GeneralConScript: number = 2;//武将征兵
-    static GeneralNoThing: number = 3;//无用
+    static GeneralInfo: number = 0;//Võ tướngChi tiết
+    static GeneralDispose: number = 1;//Võ tướngTrên阵
+    static GeneralConScript: number = 2;//Võ tướngChiêu mộ
+    static GeneralNoThing: number = 3;//Không用
     static GeneralSelect: number = 4;//选择
 }
 
@@ -29,11 +29,11 @@ export default class GeneralRosterLogic extends Component {
     @property(Label)
     costLabel: Label = null;
 
-    
+
     @property(Layout)
     starLayout:Layout = null;
 
-    
+
     @property(Label)
     campLabel: Label = null;
 
@@ -49,28 +49,28 @@ export default class GeneralRosterLogic extends Component {
     protected updateItem(cfg:GeneralConfig):void{
         // console.log("updateItem");
         this._cfg = cfg;
-        this.nameLabel.string = this._cfg.name 
+        this.nameLabel.string = this._cfg.name
         this.spritePic.getComponent(GeneralHeadLogic).setHeadId(this._cfg.cfgId);
         this.showStar(this._cfg.star, 0);
-        
+
         if(this.costLabel){
             this.costLabel.string = this._cfg.cost + "";
         }
 
         if(this._cfg.camp == GeneralCampType.Han){
-            this.campLabel.string = "汉";
+            this.campLabel.string = "Hán";
         }else if(this._cfg.camp == GeneralCampType.Qun){
-            this.campLabel.string = "群";
+            this.campLabel.string = "Quần Hùng";
         }else if(this._cfg.camp == GeneralCampType.Wei){
-            this.campLabel.string = "魏";
+            this.campLabel.string = "Ngụy";
         }else if(this._cfg.camp == GeneralCampType.Shu){
-            this.campLabel.string = "蜀";
+            this.campLabel.string = "Thục";
         }else if(this._cfg.camp == GeneralCampType.Wu){
-            this.campLabel.string = "吴";
+            this.campLabel.string = "Ngô";
         }
 
         this.armLabel.string = this.armstr(this._cfg.arms);
-        
+
     }
 
 
@@ -85,7 +85,7 @@ export default class GeneralRosterLogic extends Component {
                     childen[i].getComponent(Sprite).color = color(255,255,255);
                 }
             }else{
-                childen[i].active = false; 
+                childen[i].active = false;
             }
         }
     }
@@ -95,11 +95,11 @@ export default class GeneralRosterLogic extends Component {
 
         var str = ""
         if(arms.indexOf(1)>=0 || arms.indexOf(4)>=0 || arms.indexOf(7)>=0){
-            str += "步"
+            str += "Bộ"
         }else if(arms.indexOf(2)>=0 || arms.indexOf(5)>=0 || arms.indexOf(8)>=0){
-            str += "弓"
+            str += "Cung"
         }else if(arms.indexOf(3)>=0 || arms.indexOf(6)>=0 || arms.indexOf(9)>=0){
-            str += "骑"
+            str += "Kỵ"
         }
         return str;
     }

@@ -33,7 +33,7 @@ export default class FortressAbout extends Component {
     @property(Prefab)
     armyItem: Prefab = null;
 
-    protected _armyCnt: number = 5;//队伍数量 固定值
+    protected _armyCnt: number = 5;//Đội hìnhSố lượng 固定值
     protected _data: MapBuildData = null;
     protected _armyComps: CityArmyItemLogic[] = [];
     protected _cmd: MapCommand;
@@ -41,7 +41,7 @@ export default class FortressAbout extends Component {
     protected onLoad(): void {
 
         this._cmd = MapCommand.getInstance();
-        
+
     }
 
     onEnable (): void{
@@ -77,7 +77,7 @@ export default class FortressAbout extends Component {
             }else{
                 this._armyComps[i].isOpenedArmy(false, true);
             }
-            
+
             this._armyComps[i].setArmyData(0, null);
             if (armyList.length > i){
                 this._armyComps[i].setArmyData(armyList[i].cityId, armyList[i]);
@@ -162,11 +162,11 @@ export default class FortressAbout extends Component {
 
     public countDownTime() {
         if (this._data.isBuilding()){
-            this.timeLab.string = "建设中..." + DateUtil.leftTimeStr(this._data.endTime);
+            this.timeLab.string = "Đang xây dựng..." + DateUtil.leftTimeStr(this._data.endTime);
         } else if(this._data.isUping()){
-            this.timeLab.string = "升级中..." + DateUtil.leftTimeStr(this._data.endTime);
+            this.timeLab.string = "Đang nâng cấp..." + DateUtil.leftTimeStr(this._data.endTime);
         } else if(this._data.isDestroying()){
-            this.timeLab.string = "拆除中..." + DateUtil.leftTimeStr(this._data.endTime);
+            this.timeLab.string = "Đang phá dỡ..." + DateUtil.leftTimeStr(this._data.endTime);
         }else{
             this.timeLab.string = "";
             this.stopCountDownTime();

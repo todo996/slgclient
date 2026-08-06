@@ -6,16 +6,16 @@ import MapUICommand from "./MapUICommand";
 
 export class CityAddition {
     cost: number = 0;
-    armyCnt: number = 0;//军队数量
-    vanguardCnt: 0;//军队前锋数量 默认每队只有两个位置 前锋数量影响第三个位置的开启
-    soldierCnt: 0;//带兵数加成
-    han: number = 0;//汉阵营加成
-    qun: number = 0;//群阵营加成
-    wei: number = 0;//魏阵营加成
-    shu: number = 0;//蜀阵营加成
-    wu: number = 0;//吴阵营加成
+    armyCnt: number = 0;//Quân độiSố lượng
+    vanguardCnt: 0;//Quân đội前锋Số lượng 默认每Đội只有两个位置 前锋Số lượng影响Hiệp 三个位置的Mở khóa
+    soldierCnt: 0;//带兵数Cộng thêm
+    han: number = 0;//Tăng cường thế lực Hán
+    qun: number = 0;//Tăng cường thế lực Quần Hùng
+    wei: number = 0;//Tăng cường thế lực Ngụy
+    shu: number = 0;//Tăng cường thế lực Thục
+    wu: number = 0;//Tăng cường thế lực Ngô
     taxRate:number = 0;//交换的税率
-    durable:number = 0;//耐久
+    durable:number = 0;//Độ bền
 
 
     public clear(): void {
@@ -32,17 +32,17 @@ export class CityAddition {
     }
 };
 
-/**城池加成类型*/
+/**Thành trìCộng thêm类型*/
 export class CityAdditionType {
-    static Durable: number = 1;//耐久
+    static Durable: number = 1;//Độ bền
     static Cost: number = 2;
-    static ArmyTeams: number = 3;//队伍数量
-    static Speed: number = 4;//速度
-    static Defense: number = 5;//防御
-    static Strategy: number = 6;	//谋略
-    static Force: number = 7;	//攻击武力
-    static ConscriptTime: number = 8;//征兵时间
-    static ReserveLimit: number = 9;//预备役上限
+    static ArmyTeams: number = 3;//Đội hìnhSố lượng
+    static Speed: number = 4;//Tốc độ
+    static Defense: number = 5;//Phòng thủ
+    static Strategy: number = 6;	//Mưu lược
+    static Force: number = 7;	//Tấn côngVũ lực
+    static ConscriptTime: number = 8;//Thời gian chiêu mộ
+    static ReserveLimit: number = 9;//Giới hạn dự bị
     static Unkonw: number = 10;
     static HanAddition: number = 11;
     static QunAddition: number = 12;
@@ -54,18 +54,18 @@ export class CityAdditionType {
     static Iron: number = 18;
     static Grain: number = 19;
     static Stone: number = 20;
-    static Tax: number = 21;//税收
-    static ExtendTimes: number = 22;//扩建次数
-    static WarehouseLimit: number = 23;//仓库容量
-    static SoldierLimit: number = 24;//带兵数量
-    static VanguardLimit: number = 25;//前锋数量
+    static Tax: number = 21;//Thuế
+    static ExtendTimes: number = 22;//Số lần mở rộng
+    static WarehouseLimit: number = 23;//Sức chứa kho
+    static SoldierLimit: number = 24;//Sức chứa binh lực
+    static VanguardLimit: number = 25;//前锋Số lượng
 }
 
-/**设施*/
+/**Công trình*/
 export class Facility {
     level: number = 0;
     type: number = 0;
-    upTime:number = 0;  //升级的时间，0为该等级已经升级成功
+    upTime:number = 0;  //Nâng cấp的Thời gian，0为该Cấp độ已经Nâng cấp成功
 
     public isUping(): boolean{
         return this.upLastTime() > 0
@@ -86,7 +86,7 @@ export class Facility {
     }
 }
 
-/**设施(配置)*/
+/**Công trình(Thiết lập)*/
 export class FacilityConfig {
     name: string = "";
     type: number = 0;
@@ -96,20 +96,20 @@ export class FacilityConfig {
     upLevels: FacilityUpLevel[] = [];
 }
 
-/**设施加成类型配置*/
+/**Công trìnhCộng thêm类型Thiết lập*/
 export class FacilityAdditionCfg {
     type: number = 0;
     des: string = "";
     value: string = "";
 }
 
-/**设施开启条件配置*/
+/**Công trìnhMở khóa条件Thiết lập*/
 export class FacilityOpenCondition {
     type: number = 0;
     level: number = 0;
 }
 
-/**设施升级配置*/
+/**Công trìnhNâng cấpThiết lập*/
 export class FacilityUpLevel {
     level: number = 0;
     values: number[] = [];
@@ -162,8 +162,8 @@ export class WarReportSkill {
     lv:number
     includeEffect:number[]
     effectValue:number[]//效果值
-	effectRound:number[]//效果持续回合数
-    kill:number[] //技能死数量
+	effectRound:number[]//效果Kéo dài  lượt数
+    kill:number[] //Kỹ năng死Số lượng
 }
 
 export class WarReportRound {
@@ -182,9 +182,9 @@ export class WarReportRound {
 
 
 export default class MapUIProxy {
-    protected _myFacility: Map<number, Map<number, Facility>> = new Map<number, Map<number, Facility>>();//城市设施
-    protected _facilityCfg: Map<number, FacilityConfig> = new Map<number, FacilityConfig>();//设施配置
-    protected _facilityAdditionCfg: Map<number, FacilityAdditionCfg> = new Map<number, FacilityAdditionCfg>();//升级加成配置
+    protected _myFacility: Map<number, Map<number, Facility>> = new Map<number, Map<number, Facility>>();//城市Công trình
+    protected _facilityCfg: Map<number, FacilityConfig> = new Map<number, FacilityConfig>();//Công trìnhThiết lập
+    protected _facilityAdditionCfg: Map<number, FacilityAdditionCfg> = new Map<number, FacilityAdditionCfg>();//Nâng cấpCộng thêmThiết lập
     protected _warReport: Map<number, WarReport> = new Map<number, WarReport>();
     protected _additions: Map<number, CityAddition> = new Map<number, CityAddition>();
     protected _basic: Basic
@@ -196,8 +196,8 @@ export default class MapUIProxy {
     }
 
     /**
-     * 当前城市的设施
-     * @param data 
+     * 当前城市的Công trình
+     * @param data
      */
     public updateMyFacilityList(cityId: number, datas: any[]): void {
         console.log("updateMyFacilityList:", datas);
@@ -231,7 +231,7 @@ export default class MapUIProxy {
         return null;
     }
 
-    /**更新设施加成数据*/
+    /**更新Công trìnhCộng thêm数据*/
     public updateMyCityAdditions(cityId: number): CityAddition {
         if (this._myFacility.has(cityId)) {
             let addition: CityAddition = null;
@@ -251,62 +251,62 @@ export default class MapUIProxy {
                         let index: number = -1;
                         index = cfg.additions.indexOf(CityAdditionType.ArmyTeams);
                         if (index != -1) {
-                            //军队数量加成
+                            //Quân độiSố lượngCộng thêm
                             addValue = cfg.upLevels[data.level - 1].values[index];
                             addition.armyCnt += addValue;
                         }
                         index = cfg.additions.indexOf(CityAdditionType.Cost);
                         if (index != -1) {
-                            //cost加成
+                            //costCộng thêm
                             addValue = cfg.upLevels[data.level - 1].values[index];
                             addition.cost += addValue;
                         }
                         index = cfg.additions.indexOf(CityAdditionType.SoldierLimit);
                         if (index != -1) {
-                            //带兵数加成
+                            //带兵数Cộng thêm
                             addValue = cfg.upLevels[data.level - 1].values[index];
                             addition.soldierCnt += addValue;
                         }
                         index = cfg.additions.indexOf(CityAdditionType.VanguardLimit);
                         if (index != -1) {
-                            //带兵数加成
+                            //带兵数Cộng thêm
                             addValue = cfg.upLevels[data.level - 1].values[index];
                             addition.vanguardCnt += addValue;
                         }
                         index = cfg.additions.indexOf(CityAdditionType.HanAddition);
                         if (index != -1) {
-                            //汉阵营加成
+                            //Tăng cường thế lực Hán
                             addValue = cfg.upLevels[data.level - 1].values[index];
                             addition.han += addValue;
                         }
                         index = cfg.additions.indexOf(CityAdditionType.QunAddition);
                         if (index != -1) {
-                            //群阵营加成
+                            //Tăng cường thế lực Quần Hùng
                             addValue = cfg.upLevels[data.level - 1].values[index];
                             addition.qun += addValue;
                         }
                         index = cfg.additions.indexOf(CityAdditionType.WeiAddition);
                         if (index != -1) {
-                            //魏阵营加成
+                            //Tăng cường thế lực Ngụy
                             addValue = cfg.upLevels[data.level - 1].values[index];
                             addition.wei += addValue;
                         }
                         index = cfg.additions.indexOf(CityAdditionType.ShuAddition);
                         if (index != -1) {
-                            //蜀阵营加成
+                            //Tăng cường thế lực Thục
                             addValue = cfg.upLevels[data.level - 1].values[index];
                             addition.shu += addValue;
                         }
                         index = cfg.additions.indexOf(CityAdditionType.WuAddition);
                         if (index != -1) {
-                            //吴阵营加成
+                            //Tăng cường thế lực Ngô
                             addValue = cfg.upLevels[data.level - 1].values[index];
                             addition.wu += addValue;
                         }
 
                         index = cfg.additions.indexOf(CityAdditionType.DealTaxRate);
                         if (index != -1) {
-                            //交易税收
+                            //交易Thuế
                             addValue = cfg.upLevels[data.level - 1].values[index];
                             addition.taxRate += addValue;
                         }
@@ -314,7 +314,7 @@ export default class MapUIProxy {
                         index = cfg.additions.indexOf(CityAdditionType.Durable);
                         if (index != -1) {
                             //console.log("CityAdditionType.Durable:", cfg.upLevels, addValue, index);
-                            //耐久
+                            //Độ bền
                             addValue = cfg.upLevels[data.level - 1].values[index];
                             addition.durable += addValue;
                         }
@@ -328,8 +328,8 @@ export default class MapUIProxy {
     }
 
     /**
-     * 获取当前拥有的设施
-     * @param cityId 
+     * 获取当前拥有的Công trình
+     * @param cityId
      */
     public getMyFacilitys(cityId: number = 0): Map<number, Facility> {
         return this._myFacility.get(cityId);
@@ -339,7 +339,7 @@ export default class MapUIProxy {
         return this._myFacility;
     }
 
-    /**获取指定的设施数据*/
+    /**获取指定的Công trình数据*/
     public getMyFacilityByType(cityId: number = 0, type: number = 0): Facility {
         if (this._myFacility.has(cityId)) {
             let list: Map<number, Facility> = this._myFacility.get(cityId);
@@ -350,7 +350,7 @@ export default class MapUIProxy {
         return null;
     }
 
-    /**获取城池的加成数据*/
+    /**获取Thành trì的Cộng thêm数据*/
     public getMyCityAddition(cityId: number): CityAddition {
         let addition: CityAddition = null;
         if (this._additions.has(cityId)) {
@@ -368,7 +368,7 @@ export default class MapUIProxy {
         return addition.cost + this._basic.city.cost;
     }
 
-    //最大耐久
+    //最大Độ bền
     public getMyCityMaxDurable(cityId: number):number{
         let addition = this.getMyCityAddition(cityId);
         console.log("getMyCityMaxDurable:", cityId, addition, this._basic.city.durable);
@@ -380,15 +380,15 @@ export default class MapUIProxy {
     }
 
     /**
-     * 全部设施配置
-     * @param jsonAsset 
+     * 全部Công trìnhThiết lập
+     * @param jsonAsset
      */
     public setAllFacilityCfg(jsonAssets: any[]): void {
         this._facilityCfg = new Map();
 
-        let mainJson: any = null;//设施类型配置
-        let additionJson: any = null;//升级类型配置
-        let otherJsons: any[] = [];//具体升级配置
+        let mainJson: any = null;//Công trình类型Thiết lập
+        let additionJson: any = null;//Nâng cấp类型Thiết lập
+        let otherJsons: any[] = [];//具体Nâng cấpThiết lập
 
         for (let i: number = 0; i < jsonAssets.length; i++) {
             if (jsonAssets[i]._name == "facility") {
@@ -401,7 +401,7 @@ export default class MapUIProxy {
         }
         console.log("mainJson", mainJson, additionJson);
         if (mainJson != null && additionJson != null) {
-            //主配置存在才处理配置文件
+            //ChủThiết lập存在才处理Thiết lập文件
             this._facilityCfg.clear();
             for (let i: number = 0; i < mainJson.list.length; i++) {
                 let cfgData: FacilityConfig = new FacilityConfig();
@@ -429,7 +429,7 @@ export default class MapUIProxy {
                 let type: number = jsonList[i].type;
                 let cfgData: FacilityConfig = this._facilityCfg.get(type);
                 if (cfgData) {
-                    //存在主配置 才加入升级配置
+                    //存在ChủThiết lập 才Gia nhậpNâng cấpThiết lập
                     cfgData.des = jsonList[i].des;
                     cfgData.additions = jsonList[i].additions;
                     cfgData.conditions = [];
@@ -486,7 +486,7 @@ export default class MapUIProxy {
         return this._facilityAdditionCfg.get(type);
     }
 
-    /**设施是否解锁*/
+    /**Công trình是否解锁*/
     public isFacilityUnlock(cityId: number, type: number): boolean {
         let isUnlock: boolean = true;
         let cfg: FacilityConfig = this.getFacilityCfgByType(type);
@@ -535,7 +535,7 @@ export default class MapUIProxy {
 
 
     protected createWarReprot(data: any): WarReport {
-       
+
         var obj = new WarReport();
         obj.id = data.id;
         obj.attack_rid = data.a_rid;
@@ -545,7 +545,7 @@ export default class MapUIProxy {
         obj.end_attack_general = this.arrayToObject(JSON.parse(data.e_a_general));
         obj.end_attack_army = JSON.parse(data.e_a_army);
         obj.beg_attack_army = JSON.parse(data.b_a_army);
-      
+
         try {
             obj.beg_defense_army = JSON.parse(data.b_d_army);
             obj.end_defense_army = JSON.parse(data.e_d_army);
@@ -554,8 +554,8 @@ export default class MapUIProxy {
             obj.rounds = this.createRoundsData(data.rounds, obj.beg_attack_general, obj.beg_defense_general)
         } catch (error) {
             console.log("createWarReprot:", error);
-        } 
-        
+        }
+
 
         obj.result = data.result;
         obj.defense_is_read = data.d_is_read;
@@ -579,7 +579,7 @@ export default class MapUIProxy {
         var rounds: any[] = JSON.parse(data);
         for (var i = 0; i < rounds.length; i++) {
             var round: any[] = rounds[i].b;
-            
+
             if(!round){
                 continue;
             }
@@ -611,7 +611,7 @@ export default class MapUIProxy {
                         wrs.kill = s.kill;
                         obj.attackBefore.push(wrs);
                     }
-                   
+
                 }
 
                 if(turn.a_as){
@@ -655,7 +655,7 @@ export default class MapUIProxy {
 
         }
 
-  
+
         return _list;
     }
 

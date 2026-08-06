@@ -18,8 +18,8 @@ export default class GeneralTool extends Component {
 
     @property(Node)
     generalParentNode: Node = null;
-    
-    
+
+
     @property(Node)
     opNode: Node = null;
 
@@ -82,23 +82,23 @@ export default class GeneralTool extends Component {
     protected _curIndex = 0;
 
     protected onLoad(): void {
-        
-        this.tipsLab.string = "加载中...";
+
+        this.tipsLab.string = "Đang tải......";
         this.opNode.active = false;
 
         let dataList: LoadData[] = [];
         dataList.push(new LoadData("./config/json/general/", LoadDataType.DIR, JsonAsset));
         dataList.push(new LoadData("./generalpic", LoadDataType.DIR, SpriteFrame));
         dataList.push(new LoadData("./config/basic", LoadDataType.FILE, JsonAsset));
-    
+
         LoaderManager.getInstance().startLoadList(dataList, null,
             (error: Error, paths: string[], datas: any[]) => {
                 if (error != null) {
-                    console.log("加载配置文件失败");
+                    console.log("Không thể tải dữ liệu cấu hình.");
                     return;
                 }
                 console.log("loadComplete", paths, datas);
- 
+
                 GeneralCommand.getInstance().proxy.initGeneralConfig(datas[0],(datas[2] as JsonAsset).json);
                 GeneralCommand.getInstance().proxy.initGeneralTex(datas[1]);
 
@@ -107,7 +107,7 @@ export default class GeneralTool extends Component {
             this
         );
 
-        
+
     }
 
     protected loadFinish(): void{
@@ -119,7 +119,7 @@ export default class GeneralTool extends Component {
         this._cfgs = Array.from(cfgs.values());
         this._cfgs.sort(this.sortStar);
 
-        
+
         var probability: number = 100;
         for (let index = 0; index < this._cfgs.length; index++) {
             var e = this._cfgs[index];
@@ -136,13 +136,13 @@ export default class GeneralTool extends Component {
             }
             e.probability = probability;
         }
-        
+
 
         this.show(this._curIndex);
     }
 
     protected show(idx:number):void {
-       
+
         if(this._cfgs.length > 0){
             if(idx < 0){
                 idx = this._cfgs.length-1
@@ -185,7 +185,7 @@ export default class GeneralTool extends Component {
             }else {
                 this.toggleArmGroup.toggleItems[2].isChecked = true;
             }
-            
+
         }
     }
 
@@ -198,7 +198,7 @@ export default class GeneralTool extends Component {
         var xj = parseInt(this.xjEditBox.string);
         if(0 < xj && xj <= 5){
             this._cfgs[this._curIndex].star = xj;
-        } 
+        }
 
         this._cfgs[this._curIndex].force = parseInt(this.wlEditBox.string)*100;
         this._cfgs[this._curIndex].strategy = parseInt(this.mlEditBox.string)*100;
@@ -236,9 +236,9 @@ export default class GeneralTool extends Component {
             }
         }
     }
-    
+
     protected onClickMake(): void {
-        
+
         if(this._isLoading){
             return
         }
@@ -246,32 +246,32 @@ export default class GeneralTool extends Component {
         this.refresh();
 
         if (this.outDirEditBox.string == ""){
-            this.tipsLab.string = "请输入生成输出目录";
+            this.tipsLab.string = "Vui lòng nhập thư mục đầu ra";
             return
         }
 
         if (!JSB) {
-            this.tipsLab.string = "请使用 Windows 模拟器运行";
+            this.tipsLab.string = "Vui lòng dùng Windows Chạy bằng trình mô phỏng";
             return
         }
 
         var path = this.outDirEditBox.string;
         if(jsb.fileUtils.isDirectoryExist(path) == false){
-            this.tipsLab.string = "目录不存在";
+            this.tipsLab.string = "Thư mục không tồn tại";
             return
         }
 
         var obj = Object();
-        obj.title = "武将配置";
+        obj.title = "Cấu hình võ tướng";
         obj.list = this._cfgs
-       
+
         var str = JSON.stringify(obj, null, "\t");
         jsb.fileUtils.writeStringToFile(str, path + "/general.json");
-        
-        this.tipsLab.string = "保存成功";
+
+        this.tipsLab.string = "Đã lưu thành công";
     }
 
-    
+
     protected onClickPre(): void {
         if(this._isLoading){
             return

@@ -99,9 +99,9 @@ export default class GeneralConvertLogic extends Component {
         }
     }
 
-   
+
     protected onGeneralConvert(msg:any):void{
-        EventMgr.emit(LogicEvent.showToast, "获得金币:"+msg.add_gold);
+        EventMgr.emit(LogicEvent.showToast, "Nhận vàng:"+msg.add_gold);
         this._upMap.forEach((g:Node) => {
             g.parent = null;
         });
@@ -118,6 +118,6 @@ export default class GeneralConvertLogic extends Component {
         var ids = Array.from(keys);
         GeneralCommand.getInstance().convert(ids);
     }
-    
+
 
 }

@@ -71,11 +71,11 @@ export default class FacilityBuildLogic extends Component {
     }
     public countDownTime() {
         if (this._data.isBuilding()){
-        this.tipsLab.string = "建设中..." + DateUtil.leftTimeStr(this._data.endTime);
+        this.tipsLab.string = "Đang xây dựng..." + DateUtil.leftTimeStr(this._data.endTime);
         } else if(this._data.isUping()){
-        this.tipsLab.string = "升级中..." + DateUtil.leftTimeStr(this._data.endTime);
+        this.tipsLab.string = "Đang nâng cấp..." + DateUtil.leftTimeStr(this._data.endTime);
         } else if(this._data.isDestroying()){
-        this.tipsLab.string = "拆除中..." + DateUtil.leftTimeStr(this._data.endTime);
+        this.tipsLab.string = "Đang phá dỡ..." + DateUtil.leftTimeStr(this._data.endTime);
         } else{
         this.tipsLab.string = "";
         this.stopCountDownTime();

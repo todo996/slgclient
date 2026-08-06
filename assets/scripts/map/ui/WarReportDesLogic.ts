@@ -29,11 +29,11 @@ export default class WarReportDesLogic extends Component {
 
     onEnable(){
         this.scrollView.scrollToTop();
-        
+
     }
 
     public setData(data:any):void{
-        
+
         this.scrollView.content.removeAllChildren();
         this._curData = data;
         this._curNum =  0;
@@ -44,10 +44,10 @@ export default class WarReportDesLogic extends Component {
 
     private make() {
         let max = Math.min(6, this._curData.rounds.length-this._curNum);
-        
+
         for (let index = this._curNum; index < this._curNum + max; index++) {
             let r = this._curData.rounds[index];
-            
+
             let item = instantiate(this.item);
             item.active = true;
             item.parent = this.scrollView.content;
@@ -69,6 +69,6 @@ export default class WarReportDesLogic extends Component {
         console.log("scrollToBottom");
         this.make();
     }
-    
+
 
 }

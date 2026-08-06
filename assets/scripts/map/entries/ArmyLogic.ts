@@ -35,7 +35,7 @@ export default class ArmyLogic {
             if (nowTime < this.data.endTime) {
                 //代表移动中
                 let percent: number = Math.max(0, (nowTime - this.data.startTime) / (this.data.endTime - this.data.startTime));
-               
+
                 let pos = this.aniNode.position.clone();
                 pos.x = this._startPixelPos.x + percent * this._lenX;
                 pos.y = this._startPixelPos.y + percent * this._lenY;
@@ -58,7 +58,7 @@ export default class ArmyLogic {
     protected updateArrow(): void {
         this.arrowNode.active = this.data && this.data.state > 0;
         if (this.arrowNode.active == true) {
-        
+
             this.arrowNode.setPosition(this.aniNode.getPosition());
             let len: number = Math.sqrt(
                 Math.abs((this._endPixelPos.y - this.arrowNode.position.y) * (this._endPixelPos.y - this.arrowNode.position.y))
@@ -97,7 +97,7 @@ export default class ArmyLogic {
                 this._aniName = "qb_run_l";
             }
         } else if (this._startPixelPos.y < this._endPixelPos.y) {
-            //往上走
+            //往Trên走
             if (this._startPixelPos.x < this._endPixelPos.x) {
                 this._aniName = "qb_run_ru";
             } else if (this._startPixelPos.x == this._endPixelPos.x) {
@@ -106,7 +106,7 @@ export default class ArmyLogic {
                 this._aniName = "qb_run_lu";
             }
         } else if (this._startPixelPos.y > this._endPixelPos.y) {
-            //往下走
+            //往Dưới走
             if (this._startPixelPos.x < this._endPixelPos.x) {
                 this._aniName = "qb_run_rd";
             } else if (this._startPixelPos.x == this._endPixelPos.x) {

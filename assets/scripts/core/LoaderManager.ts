@@ -10,7 +10,7 @@ export enum LoadDataType {
 export class LoadData {
     path: string = "";
     loadType: LoadDataType = LoadDataType.FILE;
-    fileType: typeof Asset = Asset; 
+    fileType: typeof Asset = Asset;
 
     constructor(path: string = "", loadType: LoadDataType = LoadDataType.FILE, fileType: typeof Asset = Asset) {
         this.path = path;
@@ -68,7 +68,7 @@ export default class LoaderManager {
         let data: LoadData = this._loadDataList[this._curIndex];
         if (data.loadType == LoadDataType.DIR) {
             //加载目录
-            resources.loadDir(data.path, data.fileType, 
+            resources.loadDir(data.path, data.fileType,
                 (finish: number, total: number) => {
                     this.onProgress(finish, total);
                 },
@@ -84,7 +84,7 @@ export default class LoaderManager {
                 });
         } else {
             //加载文件
-            resources.load(data.path, data.fileType, 
+            resources.load(data.path, data.fileType,
                 (finish: number, total: number) => {
                     this.onProgress(finish, total);
                 },
@@ -102,20 +102,20 @@ export default class LoaderManager {
     }
 
     protected onProgress(finish: number, total: number): void {
-        
+
         let percent: number = 1 / this._loadDataList.length;
         let subPercent:number = (finish / total) * percent;
         let totalPercent:number = Number((subPercent + percent * this._curIndex).toFixed(2));
         EventMgr.emit(CoreEvent.loadProgress, totalPercent);
-        
+
         if (this._target && this._progressCallback) {
             this._progressCallback.call(this._target, totalPercent);
         }
-        
+
     }
 
     protected onComplete(error: Error = null): void {
-        
+
         EventMgr.emit(CoreEvent.loadComplete);
         if (this._target && this._completeCallback) {
             this._completeCallback.call(this._target, error, this._completePaths, this._completeAssets);

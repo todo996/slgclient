@@ -53,13 +53,13 @@ export default class FacilityItemLogic extends Component {
         this.data = data;
         this.cfg = cfg;
         this.isUnlock = isUnlock;
-        
+
         if(this.data.isUping()){
             this.startUpTime();
         }else{
             this.stopCountDown();
         }
- 
+
         this.updateItem();
     }
 

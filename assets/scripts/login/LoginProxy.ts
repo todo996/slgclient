@@ -12,15 +12,15 @@ export class Role{
 
 
 export default class LoginProxy {
-    //登录数据
+    //Đăng nhập数据
     private _loginData: any = null;
     public serverId:number = 0;
 
 
-    //角色数据
+    //Nhân vật数据
     private _roleData :Role = null;
 
-    //角色资源
+    //Nhân vậtTài nguyên
     private _roleResData:any = null;
 
     private _token:string = null;
@@ -37,15 +37,15 @@ export default class LoginProxy {
         if(data.role){
             this.setRoleData(data.role);
         }
-        
+
         if(data.role_res){
             this.setRoleResData(data.role_res);
         }
-        
+
         if(data.token){
             this._token = data.token
         }
-        
+
     }
 
     public setRoleResData(data:any):void{

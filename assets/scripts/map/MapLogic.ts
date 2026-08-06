@@ -26,12 +26,12 @@ export default class MapLogic extends Component {
     protected _touchAniNode: Node = null;
     protected _centerPoint: Vec2 = null;
 
-    
+
     protected onLoad(): void {
         console.log("MapLogic onLoad");
         this._cmd = MapCommand.getInstance();
         this._mapCamera = this.node.parent.getChildByName("Map Camera").getComponent(Camera);
-   
+
         this._orthoHeight = this._mapCamera.orthoHeight;
 
         EventMgr.on(LogicEvent.openCityAbout, this.openCityAbout, this);
@@ -50,7 +50,7 @@ export default class MapLogic extends Component {
         this._tiledMap.enableCulling = true;
 
         this.updateCulling();
-        
+
         var uit = this._tiledMap.node.getComponent(UITransform);
         this._maxMapX = (uit.width - view.getVisibleSize().width) * 0.5;
         this._maxMapY = (uit.height - view.getVisibleSize().height) * 0.5;
@@ -124,7 +124,7 @@ export default class MapLogic extends Component {
         this._isMove = false;
     }
 
-    //界面坐标转世界坐标
+    //界面Toạ độ转Thế giớiToạ độ
     protected viewPointToWorldPoint(point: Vec2): Vec2 {
         // console.log("viewPointToWorldPoint in", point.x, point.y);
 
@@ -141,7 +141,7 @@ export default class MapLogic extends Component {
 
 
 
-    //世界坐标转化为相对地图的像素坐标
+    //Thế giớiToạ độ转化为相đối với地图的像素Toạ độ
     protected worldToMapPixelPoint(point: Vec2): Vec2 {
         var uit = this._tiledMap.node.getComponent(UITransform);
         let pixelX: number = point.x - uit.width * uit.anchorX;
@@ -185,12 +185,12 @@ export default class MapLogic extends Component {
             this.scheduleOnce(()=>{
                 this._tiledMap.node.emit(Node.EventType.TRANSFORM_CHANGED);
             })
-    
+
         }
 
      }
 
- 
+
     public curCameraPoint():Vec2 {
         let pos = this._mapCamera.node.position;
         return new Vec2(pos.x, pos.y);

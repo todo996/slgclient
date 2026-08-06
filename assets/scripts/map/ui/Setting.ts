@@ -6,10 +6,10 @@ const { ccclass, property } = _decorator;
 
 @ccclass('Setting')
 export class Setting extends Component {
-    
+
     @property(Toggle)
     protected music:Toggle = null;
-    
+
     @property(Toggle)
     protected sound:Toggle = null;
 
@@ -34,7 +34,7 @@ export class Setting extends Component {
         }else{
             AudioManager.instance.closeMusic();
         }
-        
+
     }
 
     onClickSound(){

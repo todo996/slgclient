@@ -18,7 +18,7 @@ export default class CityAboutLogic extends Component {
     @property(Prefab)
     armyItem: Prefab = null;
 
-    protected _armyCnt: number = 5;//队伍数量 固定值
+    protected _armyCnt: number = 5;//Đội hìnhSố lượng 固定值
     protected _cityData: MapCityData = null;
     protected _armyComps: CityArmyItemLogic[] = [];
 
@@ -55,10 +55,10 @@ export default class CityAboutLogic extends Component {
         let armyList: ArmyData[] = ArmyCommand.getInstance().proxy.getArmyList(this._cityData.cityId);
         for (let i: number = 0; i < this._armyComps.length; i++) {
             if (i >= additon.armyCnt) {
-                //未开启
+                //未Mở khóa
                 this._armyComps[i].isOpenedArmy(false, false);
             } else {
-                //已开启
+                //已Mở khóa
                 this._armyComps[i].isOpenedArmy(true, false);
                 this._armyComps[i].setArmyData(this._cityData.cityId, armyList[i]);
             }
@@ -74,7 +74,7 @@ export default class CityAboutLogic extends Component {
 
     protected onClickFacility(): void {
         AudioManager.instance.playClick();
-        //设施
+        //Công trình
         EventMgr.emit(LogicEvent.openFacility, this._cityData);
     }
 
@@ -84,6 +84,6 @@ export default class CityAboutLogic extends Component {
         this.node.active = false;
 
         EventMgr.emit(LogicEvent.closeCityAbout, this._cityData);
-        
+
     }
 }

@@ -2,19 +2,19 @@ import { _decorator, Component, Enum, sys, director, UITransform, Widget, view, 
 const {ccclass, property} = _decorator;
 
 export enum BGScaleType {
-    FULL_SCREEN,                    
-    SCALE_BY_WIDTH,                 
+    FULL_SCREEN,
+    SCALE_BY_WIDTH,
     SCALE_BY_HEIGHT,
-    SCALE_ONLY_WIDTH,  
-    SCALE_ONLY_HEIGHT,                     
+    SCALE_ONLY_WIDTH,
+    SCALE_ONLY_HEIGHT,
 }
 
 export enum BGAlignmentType {
-    TOP,                    
-    BOTTOM,                 
+    TOP,
+    BOTTOM,
     CENTER,
-    LEFT,  
-    RIGHT,                     
+    LEFT,
+    RIGHT,
 }
 
 @ccclass
@@ -52,13 +52,13 @@ export default class BgScale extends Component {
     }
 
     protected setMyFrameSize():void {
-       
+
         if (!this.node) {
             return;
         }
         var wsize = null;
         wsize = view.getVisibleSize();
-        
+
         var scale1 = wsize.width / this.realW;
         var scale2 = wsize.height / this.realH;
         var max_scale = Math.max(scale1, scale2);
@@ -88,7 +88,7 @@ export default class BgScale extends Component {
         if (widget == null) {
             widget = this.node.addComponent(Widget);
         }
-  
+
         if (this.alignmentType == BGAlignmentType.BOTTOM) {
             widget.isAlignHorizontalCenter = true;
             widget.isAlignBottom = true;

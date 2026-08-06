@@ -76,15 +76,15 @@ export default class CityArmyItemLogic extends Component {
     }
 
     protected updateItem(): void {
-     
+
         // console.log("cityarmyitem:", this._data);
-        
+
         if(this._isOpened == false){
             return
         }
 
         if (this._data && this._data.generals[0] != 0) {
-            //有数据 并且配置了第一个将
+            //有数据 并且Thiết lập了Hiệp Một个Tướng
             this.tipNode.active = false;
             this.infoNode.active = true;
             let generals: GeneralData[] = ArmyCommand.getInstance().getArmyGenerals(this._data);
@@ -92,12 +92,12 @@ export default class CityArmyItemLogic extends Component {
             let curSoldierCnt: number = ArmyCommand.getInstance().getArmyCurSoldierCnt(this._data);
             let totalSoldierCnt: number = ArmyCommand.getInstance().getArmyTotalSoldierCntByGenerals(generals);
             if (this._data.cmd == ArmyCmd.Reclaim) {
-                //屯田中
-                this.labelState.string = "屯田中...";
+                //Đang đồn điền
+                this.labelState.string = "Đang đồn điền...";
             } else if(this._data.cmd == ArmyCmd.Conscript){
-                this.labelState.string = "征兵中...";
+                this.labelState.string = "Đang chiêu mộ...";
             } else if (this._data.cmd > 0) {
-                this.labelState.string = "队伍外派中...";
+                this.labelState.string = "Đội quân đang làm nhiệm vụ...";
             } else {
                 this.labelState.string = "";
             }
@@ -112,24 +112,24 @@ export default class CityArmyItemLogic extends Component {
                 let sencondGeneralCfg: GeneralConfig = GeneralCommand.getInstance().proxy.getGeneralCfg(generals[1].cfgId);
                 this.labelVice1.string = sencondGeneralCfg.name;
             } else {
-                this.labelVice1.string = "无";
+                this.labelVice1.string = "Không";
             }
 
             if (generals[2]) {
                 let thirdGeneralCfg: GeneralConfig = GeneralCommand.getInstance().proxy.getGeneralCfg(generals[2].cfgId);
                 this.labelVice2.string = thirdGeneralCfg.name;
             } else {
-                this.labelVice2.string = "无";
+                this.labelVice2.string = "Không";
             }
         } else {
             if(this._isOut){
                 this.tipNode.active = true;
                 this.infoNode.active = false;
-                this.labelTip.string = "暂无队伍";
+                this.labelTip.string = "Chưa có đội quân";
             }else{
                 this.tipNode.active = true;
                 this.infoNode.active = false;
-                this.labelTip.string = "点击编制队伍";
+                this.labelTip.string = "Nhấn để biên chế đội quân";
             }
         }
     }
@@ -142,10 +142,10 @@ export default class CityArmyItemLogic extends Component {
         this._isOut = isOut;
         if (this._isOpened == false) {
             if (this._isOut){
-                this.labelTip.string = " 等级" + this.order + "开启";
+                this.labelTip.string = " Cấp độ" + this.order + "Mở khóa";
             }else{
                 let desName: string = MapUICommand.getInstance().proxy.getFacilityCfgByType(13).name;
-                this.labelTip.string = desName + " 等级" + this.order + "开启";
+                this.labelTip.string = desName + " Cấp độ" + this.order + "Mở khóa";
             }
         }
     }

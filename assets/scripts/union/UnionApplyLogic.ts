@@ -24,7 +24,7 @@ export default class UnionApplyLogic extends Component {
         EventMgr.on(LogicEvent.updateUnionApply,this.updateApply,this);
         EventMgr.on(LogicEvent.verifyUnionSuccess,this.getApply,this);
     }
-    
+
     protected onDestroy():void{
         EventMgr.targetOff(this);
     }

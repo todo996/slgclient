@@ -51,13 +51,13 @@ export default class LoginCommand {
         EventMgr.targetOff(this);
     }
 
-    //抢登录
+    //抢Đăng nhập
     private onAccountRobLogin(): void{
         console.log("onAccountRobLogin")
         EventMgr.emit(LogicEvent.robLoginUI);
     }
 
-    /**注册回调*/
+    /**Đăng ký回调*/
     private onRegister(data: any, otherData: any): void {
         console.log("LoginProxy register:", data, otherData);
         if (data.code == 0) {
@@ -66,7 +66,7 @@ export default class LoginCommand {
         }
     }
 
-    /**登录回调*/
+    /**Đăng nhập回调*/
     private onAccountLogin(data: any, otherData:any): void {
         console.log("LoginProxy  login:", data , otherData);
         if (data.code == 0) {
@@ -75,16 +75,16 @@ export default class LoginCommand {
             LocalCache.setLoginValidation(otherData);
 
 
-            this.role_enterServer(this._proxy.getSession());           
+            this.role_enterServer(this._proxy.getSession());
             EventMgr.emit(LogicEvent.loginComplete, data.code);
         }
-        
+
     }
 
-    /**进入服务器回调*/
+    /**Vào服务器回调*/
     private onEnterServer(data: any,isLoadMap:boolean): void {
         console.log("LoginProxy  enter:", data,isLoadMap);
-        //没有创建打开创建
+        //没有Tạo打开Tạo
         if (data.code == 9) {
             EventMgr.emit(LogicEvent.createRole);
             DateUtil.setServerTime(data.msg.time);
@@ -96,7 +96,7 @@ export default class LoginCommand {
                 // var roleData = this._proxy.getRoleData();
                 // this.chatLogin(roleData.rid, data.msg.token, roleData.nickName);
 
-                 //进入游戏
+                 //Vào game
                 if(isLoadMap == true){
                     console.log("enterServerComplete");
                     MapCommand.getInstance().enterMap();
@@ -111,11 +111,11 @@ export default class LoginCommand {
 
     /**重连回调*/
     private onServerConneted(): void {
-        //重新连接成功 重新登录
+        //重新连接成功 重新Đăng nhập
         var loginData = this._proxy.getLoginData();
         var roleData = this._proxy.getRoleData();
         console.log("LoginProxy  conneted:", loginData,roleData);
-        
+
         if (loginData) {
             this.account_reLogin(loginData.session);
         }else{
@@ -123,9 +123,9 @@ export default class LoginCommand {
         }
     }
 
-    /**重新登录回调回调*/
+    /**重新Đăng nhập回调回调*/
     private onAccountRelogin(data: any): void {
-        //断线重新登录
+        //断线重新Đăng nhập
         console.log("LoginProxy  relogin:", data);
         if(data.code == 0){
             // EventMgr.emit(NetEvent.ServerHandShake);
@@ -133,7 +133,7 @@ export default class LoginCommand {
         }
     }
 
-    /**创建角色回调*/
+    /**Tạo nhân vật回调*/
     private onRoleCreate(data: any): void {
         //重换成功再次调用
         if (data.code == 0) {
@@ -142,7 +142,7 @@ export default class LoginCommand {
     }
 
 
-    
+
     /**登出回调*/
     private onAccountLogout(data: any): void {
         //重换成功再次调用
@@ -155,7 +155,7 @@ export default class LoginCommand {
 
 
 
-    //聊天登录
+    //Trò chuyệnĐăng nhập
     private onChatLogin(data: any): void{
         console.log("onChatLogin:",data);
     }
@@ -166,7 +166,7 @@ export default class LoginCommand {
 
     /**
      * register
-     * @param data 
+     * @param data
      */
     public register(name: string, password: string) {
 
@@ -182,10 +182,10 @@ export default class LoginCommand {
 
     /**
      * login
-     * @param data 
+     * @param data
      */
     public accountLogin(name: string, password: string) {
-        
+
         var api_name = ServerConfig.account_login;
         var pwd =  Md5.encrypt(password);
 
@@ -206,11 +206,11 @@ export default class LoginCommand {
 
     /**
      * create
-     * @param uid 
-     * @param nickName 
-     * @param sex 
-     * @param sid 
-     * @param headId 
+     * @param uid
+     * @param nickName
+     * @param sex
+     * @param sid
+     * @param headId
      */
     public role_create(uid: string, nickName: string, sex: number = 0, sid: number = 0, headId: number = 0) {
         var api_name = ServerConfig.role_create;
@@ -240,8 +240,8 @@ export default class LoginCommand {
     }
 
     /**
-     * 重新登录
-     * @param session 
+     * 重新Đăng nhập
+     * @param session
      */
     public account_reLogin(session: string) {
         var api_name = ServerConfig.account_reLogin;

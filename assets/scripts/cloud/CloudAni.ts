@@ -5,7 +5,7 @@ const { ccclass, property } = _decorator;
 
 @ccclass('CloudAni')
 export class CloudAni extends Component {
-    
+
     @property(Node)
     leftNode: Node = null;
 

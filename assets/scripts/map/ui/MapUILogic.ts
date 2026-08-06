@@ -76,7 +76,7 @@ export default class MapUILogic extends Component {
     @property(Prefab)
     drawResultrefab: Prefab = null;
     protected _drawResultNode: Node = null;
-    
+
     @property(Prefab)
     unionPrefab: Prefab = null;
     protected _unionNode: Node = null;
@@ -114,7 +114,7 @@ export default class MapUILogic extends Component {
     settingPrefab: Prefab = null;
     protected _settingNode: Node = null;
 
-    
+
     @property(Prefab)
     cloudAniPrefab: Prefab = null;
     protected _cloudAniNode: Node = null;
@@ -137,16 +137,16 @@ export default class MapUILogic extends Component {
 
     protected onLoad(): void {
 
-        this._resArray.push({key:"grain", name:"谷:"});
-        this._resArray.push({key:"wood", name:"木:"});
-        this._resArray.push({key:"iron", name:"铁:"});
-        this._resArray.push({key:"stone", name:"石:"});
-        this._resArray.push({key:"gold", name:"钱:"});
+        this._resArray.push({key:"grain", name:"Lương:"});
+        this._resArray.push({key:"wood", name:"Gỗ:"});
+        this._resArray.push({key:"iron", name:"Sắt:"});
+        this._resArray.push({key:"stone", name:"Đá:"});
+        this._resArray.push({key:"gold", name:"Vàng:"});
 
-        this._yieldArray.push({key:"wood_yield", name:"木+"});
-        this._yieldArray.push({key:"iron_yield", name:"铁+"});
-        this._yieldArray.push({key:"stone_yield", name:"石+"});
-        this._yieldArray.push({key:"grain_yield", name:"谷+"});
+        this._yieldArray.push({key:"wood_yield", name:"Gỗ+"});
+        this._yieldArray.push({key:"iron_yield", name:"Sắt+"});
+        this._yieldArray.push({key:"stone_yield", name:"Đá+"});
+        this._yieldArray.push({key:"grain_yield", name:"Lương+"});
 
 
         EventMgr.on(LogicEvent.openCityAbout, this.openCityAbout, this);
@@ -169,8 +169,8 @@ export default class MapUILogic extends Component {
         EventMgr.on(LogicEvent.openSkillInfo, this.onOpenSkillInfo, this);
         EventMgr.on(LogicEvent.beforeScrollToMap, this.beforeScrollToMap, this);
         EventMgr.on(LogicEvent.showTip, this.showTip, this);
-        
-        
+
+
 
         this.updateRoleRes();
         this.updateRole();
@@ -181,7 +181,7 @@ export default class MapUILogic extends Component {
     }
 
     protected robLoginUI(): void {
-        this.showTip("账号在其他地方登录",function () {
+        this.showTip("Tài khoản đã đăng nhập ở nơi khác",function () {
             EventMgr.emit(LogicEvent.enterLogin);
         });
     }
@@ -232,7 +232,7 @@ export default class MapUILogic extends Component {
         return this.contentNode.children.length+1;
     }
     /**
-     * 设施
+     * Công trình
      */
     protected openFacility(data: any): void {
         if (this._facilityNode == null) {
@@ -256,14 +256,14 @@ export default class MapUILogic extends Component {
         this._armySettingNode.getComponent(CityArmySettingLogic).setData(cityId, order);
     }
     /**
-     * 武将
+     * Võ tướng
      */
-    
+
     protected onClickGeneral(){
         AudioManager.instance.playClick();
         this.openGeneral([]);
-    } 
-    
+    }
+
     protected openGeneral(data: number[], type: number = 0, position: number = 0): void {
         if (this._generalNode == null) {
             this._generalNode = instantiate(this.generalPrefab);
@@ -277,15 +277,15 @@ export default class MapUILogic extends Component {
 
 
     /**
-     * 武将选择
-     * @param data 
-     * @param zIndex 
+     * Võ tướng选择
+     * @param data
+     * @param zIndex
      */
     protected openGeneralChoose(data: number[], position: number = 0): void {
         this.openGeneral(data, 1, position);
     }
 
-    /**打开军队选择界面*/
+    /**打开Quân đội选择界面*/
     protected onOpenArmySelectUI(cmd: number, x: number, y: number): void {
         if (this._armySelectNode == null) {
             this._armySelectNode = instantiate(this.armySelectPrefab);
@@ -299,7 +299,7 @@ export default class MapUILogic extends Component {
 
 
     /**
-     * 武将详情
+     * Võ tướngChi tiết
      */
     protected openGeneralDes(cfgData: any, curData: any): void {
         if (this._generalDesNode == null) {
@@ -317,7 +317,7 @@ export default class MapUILogic extends Component {
      * 城市
      */
     protected openCityAbout(data: any): void {
-   
+
         if (this._cityAboutNode == null) {
             this._cityAboutNode = instantiate(this.cityAboutPrefab);
             this._cityAboutNode.parent = this.contentNode;
@@ -334,7 +334,7 @@ export default class MapUILogic extends Component {
     protected closeCityAbout(): void {
         this.widgetNode.active = true;
     }
-    
+
     protected openFortressAbout(data: any): void {
         if (this._fortressAboutNode == null) {
             this._fortressAboutNode = instantiate(this.fortressAboutPrefab);
@@ -346,10 +346,10 @@ export default class MapUILogic extends Component {
         this._fortressAboutNode.getComponent(FortressAbout).setData(data);
     }
 
-    
+
 
     /**
-     * 战报
+     * Chiến báo
      */
     protected openWarReport(): void {
         AudioManager.instance.playClick();
@@ -364,16 +364,16 @@ export default class MapUILogic extends Component {
     }
 
     /**
-     * 角色信息
+     * Nhân vật信息
      */
     protected updateRoleRes(): void {
         var children = this.srollLayout.node.children;
         var roleRes = LoginCommand.getInstance().proxy.getRoleResData();
 
         var i = 0;
-        children[i].getChildByName("New Label").getComponent(Label).string = "令牌:" + Tools.numberToShow(roleRes["decree"]);
+        children[i].getChildByName("New Label").getComponent(Label).string = "Lệnh:" + Tools.numberToShow(roleRes["decree"]);
         i+=1;
-        
+
 
         for (let index = 0; index < this._resArray.length; index++) {
             const obj = this._resArray[index];
@@ -384,7 +384,7 @@ export default class MapUILogic extends Component {
             }else{
                 label.string = obj.name + Tools.numberToShow(roleRes[obj.key]) + "/" + Tools.numberToShow(roleRes["depot_capacity"]);
             }
-            
+
             i+=1;
         }
 
@@ -400,7 +400,7 @@ export default class MapUILogic extends Component {
 
 
     /**
-     * 抽卡
+     * Chiêu mộ tướng
      */
     protected openDraw(): void {
         AudioManager.instance.playClick();
@@ -417,8 +417,8 @@ export default class MapUILogic extends Component {
 
 
     /**
-     * 抽卡结果
-     * @param data 
+     * Chiêu mộ tướng结果
+     * @param data
      */
     protected openDrawR(data: any): void {
         if (this._drawResultNode == null) {
@@ -476,7 +476,7 @@ export default class MapUILogic extends Component {
         if (this._generalConvertNode == null) {
             this._generalConvertNode = instantiate(this.generalConvertPrefab);
             this._generalConvertNode.parent = this.contentNode;
-            
+
         } else {
             this._generalConvertNode.active = true;
         }
@@ -497,7 +497,7 @@ export default class MapUILogic extends Component {
         this._generalRosterNode.setSiblingIndex(this.topLayer());
 
     }
-    
+
     onClickSkillBtn(): void{
         AudioManager.instance.playClick();
         this.onOpenSkill(0);
@@ -519,9 +519,9 @@ export default class MapUILogic extends Component {
         AudioManager.instance.playClick();
         if (this._skillNode) {
            this._skillNode.active = false;
-        } 
+        }
     }
-    
+
     protected onOpenSkillInfo(cfg:Skill, type:number=0, general:GeneralData = null, skillPos:number=-1){
         console.log("onOpenSkillInfo", cfg, type, general, skillPos);
         AudioManager.instance.playClick();
@@ -536,20 +536,20 @@ export default class MapUILogic extends Component {
     }
 
 
-    //征收
+    //Thu thuế
     protected onCollection(msg:any):void{
-        this.showTip("成功征收到 "+msg.gold+" 金币", null);
+        this.showTip("Đã thu được "+msg.gold+" Vàng", null);
     }
 
     protected updateRole(): void {
         var roleData = LoginCommand.getInstance().proxy.getRoleData();
-        this.nameLabel.string = "昵称: " + roleData.nickName;
-        this.ridLabel.string = "角色ID: " + roleData.rid + "";
+        this.nameLabel.string = "Tên nhân vật: " + roleData.nickName;
+        this.ridLabel.string = "Nhân vậtID: " + roleData.rid + "";
     }
 
     protected onClickCollection():void {
         AudioManager.instance.playClick();
-      
+
         if(this._collectNode == null){
             this._collectNode = instantiate(this.collectPrefab);
             this._collectNode.parent = this.contentNode;
@@ -589,6 +589,6 @@ export default class MapUILogic extends Component {
 
     }
 
-    
+
 
 }

@@ -79,11 +79,11 @@ export default class CityGeneralItemLogic extends Component {
     protected onClickItem(): void {
         AudioManager.instance.playClick();
         if (this._data) {
-            //点击展示武将信息
+            //点击展示Võ tướng信息
             let cfg: GeneralConfig = GeneralCommand.getInstance().proxy.getGeneralCfg(this._data.cfgId);
             EventMgr.emit(LogicEvent.openGeneralDes, cfg, this._data);
         } else if (this.addNode.active) {
-            //上阵武将
+            //Trên阵Võ tướng
             var generalArr: number[] = this.getAllGenerals();
             EventMgr.emit(LogicEvent.openGeneralChoose, generalArr, this.index);
         }
@@ -111,34 +111,34 @@ export default class CityGeneralItemLogic extends Component {
 
     protected updateItem(): void {
         if (this.index == 0) {
-            this.labelTitle.string = "主将"
+            this.labelTitle.string = "Chủ tướng"
         } else {
-            this.labelTitle.string = "副将"
+            this.labelTitle.string = "Phó tướng"
         }
         if (this._isUnlock == false) {
-            //未解锁
+            //Chưa mở khóa
             this.infoNode.active = false;
             this.addNode.active = false;
             this.lockNode.active = true;
             this.btnDown.active = false;
             let desName: string = MapUICommand.getInstance().proxy.getFacilityCfgByType(14).name;
-            this.labelTip.string = desName + " 等级" + this._order + "开启";
+            this.labelTip.string = desName + " Cấp độ" + this._order + "Mở khóa";
             this.conBg.active = false;
         } else if (this._data == null) {
-            //未配置武将
+            //未Thiết lậpVõ tướng
             this.infoNode.active = false;
             this.addNode.active = true;
             this.lockNode.active = false;
             this.btnDown.active = false;
             this.conBg.active = false;
-            
+
         } else {
-            //展示武将信息
+            //展示Võ tướng信息
             this.infoNode.active = true;
             this.addNode.active = false;
             this.lockNode.active = false;
             this.btnDown.active = true;
-            
+
             this.updateCon();
 
             let cfg: GeneralConfig = GeneralCommand.getInstance().proxy.getGeneralCfg(this._data.cfgId);
@@ -150,22 +150,22 @@ export default class CityGeneralItemLogic extends Component {
             this.labelCost.string = "Cost " + cfg.cost;
             switch (this._data.config.camp) {
                 case GeneralCampType.Han:
-                    this.labelCamp.string = "汉";
+                    this.labelCamp.string = "Hán";
                     break;
                 case GeneralCampType.Qun:
-                    this.labelCamp.string = "群";
+                    this.labelCamp.string = "Quần Hùng";
                     break;
                 case GeneralCampType.Wei:
-                    this.labelCamp.string = "魏";
+                    this.labelCamp.string = "Ngụy";
                     break;
                 case GeneralCampType.Shu:
-                    this.labelCamp.string = "蜀";
+                    this.labelCamp.string = "Thục";
                     break;
                 case GeneralCampType.Wu:
-                    this.labelCamp.string = "吴";
+                    this.labelCamp.string = "Ngô";
                     break;
                 default:
-                    this.labelCamp.string = "无";
+                    this.labelCamp.string = "Không";
                     break;
             }
 
@@ -183,9 +183,9 @@ export default class CityGeneralItemLogic extends Component {
             this.labelConCnt.string = "+" + this._conCnt;
         }
     }
- 
-    public setData(cityId: number, order: number, data: GeneralData, 
-        soldierCnt: number, totalSoldierCnt: number, conCnt:number, 
+
+    public setData(cityId: number, order: number, data: GeneralData,
+        soldierCnt: number, totalSoldierCnt: number, conCnt:number,
         conTime:number, isUnlock: boolean): void {
         this._cityId = cityId;
         this._order = order;

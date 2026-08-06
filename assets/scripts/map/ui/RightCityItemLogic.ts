@@ -17,7 +17,7 @@ export default class RightCityItemLogic extends Component {
 
 
     protected onLoad(): void {
-        
+
     }
 
     protected onDestroy(): void {

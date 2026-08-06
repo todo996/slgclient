@@ -36,7 +36,7 @@ export default class UnionMemItemLogic extends Component {
         this._menberData = data;
         this.titleLabel.string = "(" + this._menberData.titleDes + ")";
         this.nameLabel.string = this._menberData.name;
-        this.posLabel.string = "坐标:(" + this._menberData.x + "," + this._menberData.y+")";
+        this.posLabel.string = "Toạ độ:(" + this._menberData.x + "," + this._menberData.y+")";
     }
 
     protected click():void{
@@ -49,7 +49,7 @@ export default class UnionMemItemLogic extends Component {
         UnionCommand.getInstance().unionKick(this._menberData.rid);
     }
 
-    
+
     protected appoint():void{
         AudioManager.instance.playClick();
         UnionCommand.getInstance().unionKick(this._menberData.rid);
@@ -59,7 +59,7 @@ export default class UnionMemItemLogic extends Component {
         AudioManager.instance.playClick();
         UnionCommand.getInstance().unionKick(this._menberData.rid);
     }
-    
+
     protected jump():void{
         AudioManager.instance.playClick();
         EventMgr.emit(LogicEvent.closeUnion);

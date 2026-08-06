@@ -1,4 +1,4 @@
-// /**服务器接口配置*/
+// /**服务器接口Thiết lập*/
 import { _decorator } from 'cc';
 
 const ServerConfig = {
@@ -6,7 +6,7 @@ const ServerConfig = {
     account_logout: "account.logout",
     account_reLogin: "account.reLogin",
     account_robLogin:"robLogin",
-    
+
     role_create: "role.create",
     role_roleList: "role.roleList",
     role_enterServer: "role.enterServer",
@@ -62,7 +62,7 @@ const ServerConfig = {
     union_info:"union.info",
     union_log:"union.log",
     union_apply_push: "unionApply.push",
-    
+
     interior_collect: "interior.collect",
     interior_openCollect: "interior.openCollect",
     interior_transform: "interior.transform",

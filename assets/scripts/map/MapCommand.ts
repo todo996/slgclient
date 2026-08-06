@@ -95,7 +95,7 @@ export default class MapCommand {
             this._buildProxy.myUnionId = this._cityProxy.getMyMainCity().unionId;
             this._buildProxy.myParentId = this._cityProxy.getMyMainCity().parentId;
             MapCommand.getInstance().posTagList();
-            
+
             this.enterMap();
         }
     }
@@ -154,14 +154,14 @@ export default class MapCommand {
             }
         }
     }
-    
+
 
     protected onRoleCityPush(data: any): void {
         console.log("onRoleCityPush:", data)
         this._buildProxy.updateSub(data.msg.rid, data.msg.union_id, data.msg.parent_id);
         this._cityProxy.updateCity(data.msg);
         EventMgr.emit(LogicEvent.unionChange, data.msg.rid, data.msg.union_id, data.msg.parent_id);
-       
+
     }
 
     public isBuildSub(id: number): boolean {
@@ -191,7 +191,7 @@ export default class MapCommand {
         }
     }
 
-    
+
     public isCitySub(id: number): boolean {
         let cityData: MapCityData = this.cityProxy.getCity(id);
         if (cityData) {
@@ -222,7 +222,7 @@ export default class MapCommand {
     }
 
 
-    /**是否是可行军的位置*/
+    /**是否是可Hành quân的位置*/
     public isCanMoveCell(x: number, y: number): boolean {
         let id: number = MapUtil.getIdByCellPoint(x, y);
         if (this.isBuildSub(id)){
@@ -273,7 +273,7 @@ export default class MapCommand {
                         }
                     }
                 }
-        
+
                 let buildData: MapBuildData = this.buildProxy.getBuild(id);
                 if (buildData) {
                     var absX = Math.abs(x-tx);
@@ -303,7 +303,7 @@ export default class MapCommand {
         EventMgr.emit(LogicEvent.enterMap);
     }
 
-    /**请求角色全量信息*/
+    /**请求Nhân vật全量信息*/
     public qryRoleMyProperty(): void {
         let sendData: any = {
             name: ServerConfig.role_myProperty,
@@ -313,7 +313,7 @@ export default class MapCommand {
         NetManager.getInstance().send(sendData);
     }
 
-    /**请求自己的城池信息*/
+    /**请求Bản thân的Thành trì信息*/
     public qryRoleMyCity(): void {
         let sendData: any = {
             name: ServerConfig.role_myCity,
@@ -322,7 +322,7 @@ export default class MapCommand {
         NetManager.getInstance().send(sendData);
     }
 
-    /**请求地图基础配置*/
+    /**请求地图基础Thiết lập*/
     public qryNationMapConfig(): void {
         let sendData: any = {
             name: ServerConfig.nationMap_config,
@@ -388,7 +388,7 @@ export default class MapCommand {
         NetManager.getInstance().send(sendData);
     }
 
-    
+
     public upPosition(x: number, y: number): void {
         let sendData: any = {
             name: ServerConfig.role_upPosition,

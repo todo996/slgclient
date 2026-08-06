@@ -12,7 +12,7 @@ import { LogicEvent } from '../../common/LogicEvent';
 
 @ccclass('GeneralDesLogic')
 export default class GeneralDesLogic extends Component {
-  
+
     @property(Label)
     nameLab: Label = null;
 
@@ -21,7 +21,7 @@ export default class GeneralDesLogic extends Component {
 
     @property(Label)
     lvLabel: Label = null;
-    
+
     @property(Label)
     foreLabel: Label = null;
 
@@ -78,13 +78,13 @@ export default class GeneralDesLogic extends Component {
     protected onLoad():void{
 
         this._nameObj = {
-            force:"武力",
-            strategy:"战略",
-            defense:"防御",
-            speed:"速度",
-            destroy:"破坏",
+            force:"Vũ lực",
+            strategy:"Chiến lược",
+            defense:"Phòng thủ",
+            speed:"Tốc độ",
+            destroy:"Công thành",
         };
-       
+
         this._generalNode = instantiate(this.generalItemPrefab);
         this._generalNode.parent = this.generalItemParent;
     }
@@ -99,13 +99,13 @@ export default class GeneralDesLogic extends Component {
     public setData(cfgData:any, curData:GeneralData):void{
         this._currData = curData;
         this._cfgData = cfgData;
-    
+
         var nextCfg = GeneralCommand.getInstance().proxy.getGeneralLevelCfg(this._currData.level + 1);
         var levelExp = nextCfg?nextCfg.exp:"MAX";
         var maxLevel: number = GeneralCommand.getInstance().proxy.getMaxLevel();
-        this.lvLabel.string = '等级:' + this._currData.level + "/" + maxLevel;
-        this.expLabel.string = "经验:" + curData.exp +"/" + levelExp;
-        
+        this.lvLabel.string = 'Cấp độ:' + this._currData.level + "/" + maxLevel;
+        this.expLabel.string = "Kinh nghiệm:" + curData.exp +"/" + levelExp;
+
         this.nameLab.string = this._cfgData.name;
 
         this._addPrObj = {
@@ -116,19 +116,19 @@ export default class GeneralDesLogic extends Component {
             destroy:this._currData.destroy_added,
         };
 
-       
+
         this.foreLabel.string = this.getAttrStr("force");
         this.strategyLabel.string = this.getAttrStr("strategy");
         this.defenseLabel.string = this.getAttrStr("defense");
         this.speedLabel.string = this.getAttrStr("speed");
         this.destroyLabel.string = this.getAttrStr("destroy");
-     
+
         var com = this._generalNode.getComponent(GeneralItemLogic);
         if(com){
             com.updateItem(this._currData);
         }
 
-        this.powerLabel.string = "体力:" + curData.physical_power + "/" + cfgData.physical_power_limit;
+        this.powerLabel.string = "Thể lực:" + curData.physical_power + "/" + cfgData.physical_power_limit;
         this.costLabel.string = "cost:"+cfgData.cost;
 
         for (let index = 0; index < curData.skills.length; index++) {
@@ -140,7 +140,7 @@ export default class GeneralDesLogic extends Component {
                 icon.getComponent(SkillIconLogic).setData(null, null);
                 iconNameLab.string = "";
             }else{
-                
+
                 let skillConf = SkillCommand.getInstance().proxy.getSkillCfg(gSkill.cfgId);
                 let skill = SkillCommand.getInstance().proxy.getSkill(gSkill.cfgId);
                 if(skillConf && skill){

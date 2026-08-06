@@ -9,7 +9,7 @@ export default class Modal extends Component {
     @property(Node)
     mask: Node = null;
 
-    
+
     start () {
 
     }
@@ -18,7 +18,7 @@ export default class Modal extends Component {
         this.mask.active = true;
         this.mask.on(Node.EventType.TOUCH_START, this.stopPropagation, this, true);
         this.mask.on(Node.EventType.TOUCH_END, this.stopPropagation, this, true);
-    } 
+    }
 
     protected onDisable():void{
         this.mask.active = false;

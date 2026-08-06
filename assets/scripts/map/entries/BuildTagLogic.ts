@@ -8,7 +8,7 @@ const { ccclass, property } = _decorator;
 
 @ccclass('BuildTagLogic')
 export default class BuildTagLogic extends Component {
-   
+
     protected _data: MapResData = null;
 
     @property(Node)

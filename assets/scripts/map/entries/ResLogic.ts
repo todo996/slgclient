@@ -25,10 +25,10 @@ export default class ResLogic extends Component {
 
     public setResourceData(data: MapResData): void {
         this._data = data;
-        
-        
+
+
         if (data.type == MapResType.WOOD) {
-            //木头
+            //Gỗ头
             if(data.level == 1){
                 this.spr.spriteFrame = this.resourceAtlas1.getSpriteFrame("land_ground_1_1");
             }else if(data.level == 2){
@@ -36,9 +36,9 @@ export default class ResLogic extends Component {
             }else{
                 this.spr.spriteFrame = this.resourceAtlas2.getSpriteFrame("land_2_" + (data.level-2));
             }
-           
+
         } else if (data.type == MapResType.IRON) {
-            //铁
+            //Sắt
             if(data.level == 1){
                 this.spr.spriteFrame = this.resourceAtlas1.getSpriteFrame("land_ground_1_1");
             }else if(data.level == 2){
@@ -46,9 +46,9 @@ export default class ResLogic extends Component {
             }else{
                 this.spr.spriteFrame = this.resourceAtlas2.getSpriteFrame("land_4_" + (data.level-2));
             }
-            
+
         } else if (data.type == MapResType.STONE) {
-            //石头
+            //Đá
             if(data.level == 1){
                 this.spr.spriteFrame = this.resourceAtlas1.getSpriteFrame("land_ground_1_1");
             }else if(data.level == 2){
@@ -66,11 +66,11 @@ export default class ResLogic extends Component {
                 this.spr.spriteFrame = this.resourceAtlas2.getSpriteFrame("land_1_" + (data.level-2));
             }
         } else if (data.type == MapResType.SYS_FORTRESS) {
-            //系统要塞
+            //Hệ thống要塞
             this.spr.spriteFrame = this.resourceAtlas2.getSpriteFrame("sys_fortress");
         }else {
             this.spr.spriteFrame = null;
         }
-       
+
     }
 }

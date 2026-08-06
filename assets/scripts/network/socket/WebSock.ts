@@ -6,7 +6,7 @@ import { convert } from "../../libs/convert";
 
 
 export class WebSock implements ISocket {
-    private _ws: WebSocket = null;              // websocket对象
+    private _ws: WebSocket = null;              // websocketđối với象
     private _key:String = "";
 
 
@@ -26,7 +26,7 @@ export class WebSock implements ISocket {
 
 
     onMessage(msg):void{
-    
+
         // console.log("websocket onMessage0:",msg)
         var ab = msg
         var view = new Uint8Array(ab)
@@ -35,14 +35,14 @@ export class WebSock implements ISocket {
         msg = c.byteToString(undata)
         // console.log("websocket onMessage1:",msg)
 
-        //第一次
+        //Hiệp Một次
         if(this._key == ""){
             try {
                 var hand_data = JSON.parse(msg);
                 console.log("hand_data:",hand_data)
                 if(hand_data.name == "handshake"){
                     this._key = hand_data.msg.key;
-                    this.onGetKey();                    
+                    this.onGetKey();
                     return;
                 }
             } catch (error) {
@@ -94,7 +94,7 @@ export class WebSock implements ISocket {
             let ip = options.ip;
             let port = options.port;
             let protocol = options.protocol;
-            url = `${protocol}://${ip}:${port}`;    
+            url = `${protocol}://${ip}:${port}`;
         }
         console.log()
         this._ws = new WebSocket(url);
@@ -127,7 +127,7 @@ export class WebSock implements ISocket {
 
     /**
      * json 加密打包
-     * @param send_data 
+     * @param send_data
      */
     public packAndSend(send_data:any){
         // console.log("packAndSend:", send_data);
@@ -148,7 +148,7 @@ export class WebSock implements ISocket {
 
     /**
      * 解密
-     * @param msg 
+     * @param msg
      */
     public getAnddecrypt(get_msg:any){
         var decrypt = this._key == ""?get_msg:this.decrypt(get_msg);
@@ -166,8 +166,8 @@ export class WebSock implements ISocket {
         }
         let srcs = crypto.enc.Utf8.parse(data);
         let encrypted = crypto.AES.encrypt(srcs, key, { iv: iv, mode: crypto.mode.CBC, padding: crypto.pad.ZeroPadding });
-    
-    
+
+
         return encrypted.ciphertext.toString()
     }
 

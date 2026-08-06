@@ -16,7 +16,7 @@ export default class BuildTipsLogic extends Component {
     giveUpNode: Node | null = null;
     @property(Label)
     giveUpLabTime: Label | null = null;
- 
+
     protected onLoad(): void {
 
     }

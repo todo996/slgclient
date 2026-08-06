@@ -49,7 +49,7 @@ export default class MapBuildTipsLogic extends MapBaseLayerLogic {
     }
 
     public setItemData(item: Node, data: any): void {
-  
+
         let buildData: MapBuildData = data as MapBuildData;
         let position: Vec2 = MapUtil.mapCellToPixelPoint(new Vec2(buildData.x, buildData.y));
         item.setPosition(new Vec3(position.x, position.y, 0));

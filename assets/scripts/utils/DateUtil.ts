@@ -13,7 +13,7 @@ export default class DateUtil {
         return nowTime - this._getServerTime + this._serverTime;
     }
 
-    //是否在该时间之后
+    //是否在该Thời gian之后
     public static isAfterServerTime(stms:number):boolean{
         var st = this.getServerTime();
         return st - stms > 0;
@@ -37,14 +37,14 @@ export default class DateUtil {
         return str;
     }
 
-    /**时间字符串格式转换
+    /**Thời gian字符串格式Chuyển đổi
      * 年 YYYY
      * 月 MM
      * 日 DD
      * 时 hh
      * 分 mm
-     * 秒 ss
-     * 毫秒 zzz*/
+     * giây ss
+     * 毫giây zzz*/
     public static converTimeStr(ms: number, format: string = "hh:mm:ss"): string {
         let date: Date = new Date(ms);
         let year: string = this.fillZero(date.getFullYear() + "", 4);
@@ -66,7 +66,7 @@ export default class DateUtil {
         return str;
     }
 
-    /**简易时间字符串格式转换*/
+    /**简易Thời gian字符串格式Chuyển đổi*/
     public static converSecondStr(ms: number, format: string = "hh:mm:ss"): string {
         let second: number = Math.floor(ms / 1000);
         let hour: number = Math.floor(second / 3600);
@@ -75,7 +75,7 @@ export default class DateUtil {
         second -= hour * 3600;
         let minute:number = Math.floor(second / 60);
         second -= minute * 60;
-        
+
         let str: string = format + "";
         if (hour > 0) {
             str = str.replace(/hh/, this.fillZero(hour + "", 2));

@@ -30,8 +30,8 @@ class mgr {
         for (let i = 0; i < events.length; i++) {
             const eh:EventHandler = events[i];
             if(eh.handler == handler && eh.target == target){
-                //已经添加过了
-                console.log("已经添加过了:", name, handler, target);
+                //Đã được thêm trước đó
+                console.log("Đã được thêm trước đó:", name, handler, target);
                 return;
             }
         }
@@ -93,7 +93,7 @@ class mgr {
                }
             }
         });
-        
+
         targetInName.clear();
     }
 }

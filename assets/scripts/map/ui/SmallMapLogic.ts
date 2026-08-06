@@ -47,13 +47,13 @@ export default class SmallMapLogic extends Component {
         AudioManager.instance.playClick();
         let x: number = Number(this.editBoxX.string);
         let y: number = Number(this.editBoxY.string);
-        if (x >= 0 
-            && y >= 0 
-            && x < MapUtil.mapSize.width 
+        if (x >= 0
+            && y >= 0
+            && x < MapUtil.mapSize.width
             && y < MapUtil.mapSize.height) {
                 EventMgr.emit(LogicEvent.scrollToMap, x, y);
         } else {
-            console.log("跳转无效位置", x, y);
+            console.log("Không thể đi đến vị trí này", x, y);
         }
     }
 }

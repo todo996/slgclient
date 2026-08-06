@@ -46,7 +46,7 @@ export default class MapBaseLayerLogic extends Component {
     }
 
     public updateItem(areaIndex: number, data: any, item: Node = null): void {
-        
+
         if (this._itemMap.has(areaIndex)) {
             let realItem: Node = item;
             if (item == null) {
@@ -109,7 +109,7 @@ export default class MapBaseLayerLogic extends Component {
     }
 
     public udpateShowAreas(addIndexs: number[], removeIndexs: number[]): void {
-       
+
         for (let i: number = 0; i < removeIndexs.length; i++) {
             this.removeArea(removeIndexs[i]);
         }

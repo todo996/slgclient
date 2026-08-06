@@ -1,5 +1,5 @@
-// /**http接口配置*/
-// //账号注册
+// /**http接口Thiết lập*/
+// //Tài khoảnĐăng ký
 
 import { _decorator } from 'cc';
 const HttpConfig = {

@@ -95,7 +95,7 @@ export default class UnionCommand {
             this._proxy.updateMemberList(data.msg.id,data.msg.Members);
             EventMgr.emit(LogicEvent.updateUnionMember,data.msg.Members);
         }
-        
+
     }
 
 
@@ -154,7 +154,7 @@ export default class UnionCommand {
             this._proxy.updateNotice(data.msg.id, data.msg.text)
             EventMgr.emit(LogicEvent.unionNotice, data.msg);
         }
-        
+
     }
 
     protected onUnionInfo(data: any, otherData: any): void {
@@ -174,7 +174,7 @@ export default class UnionCommand {
             EventMgr.emit(LogicEvent.unionLog, data.msg.logs);
         }
     }
-    
+
     protected onUnionApplyPush(data: any, otherData: any): void {
         console.log("onUnionApplyPush", data);
         let city:MapCityData = MapCommand.getInstance().cityProxy.getMyMainCity();
@@ -272,7 +272,7 @@ export default class UnionCommand {
         NetManager.getInstance().send(sendData);
     }
 
-    
+
     public unionExit():void{
         let sendData: any = {
             name: ServerConfig.union_exit,

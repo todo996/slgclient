@@ -64,7 +64,7 @@ export default class MapClickUILogic extends Component {
     protected _data: any = null;
     protected _pixelPos: Vec2 = null;
     protected _t = null;
-    
+
     protected onLoad(): void {
 
     }
@@ -85,7 +85,7 @@ export default class MapClickUILogic extends Component {
         t.start();
 
         this._t = t;
-    
+
     }
 
     protected onDisable(): void {
@@ -112,7 +112,7 @@ export default class MapClickUILogic extends Component {
         }else if (this._data instanceof MapCityData){
             EventMgr.emit(LogicEvent.openCityAbout, this._data);
         }
-       
+
         this.node.parent = null;
     }
 
@@ -146,7 +146,7 @@ export default class MapClickUILogic extends Component {
         if (MapCommand.getInstance().isCanMoveCell(this._data.x, this._data.y)) {
             EventMgr.emit(LogicEvent.openArmySelectUi, ArmyCmd.Garrison, this._data.x, this._data.y);
         } else {
-            console.log("只能驻军自己占领的地");
+            console.log("Chỉ có thể đồn trú trên lãnh địa của bạn");
         }
         this.node.parent = null;
     }
@@ -169,7 +169,7 @@ export default class MapClickUILogic extends Component {
         if (MapCommand.getInstance().isCanOccupyCell(this._data.x, this._data.y)) {
             EventMgr.emit(LogicEvent.openArmySelectUi, ArmyCmd.Attack, this._data.x, this._data.y);
         } else {
-            console.log("只能占领自己相邻的地");
+            console.log("Chỉ có thể chiếm lãnh địa liền kề");
         }
 
         this.node.parent = null;
@@ -184,14 +184,14 @@ export default class MapClickUILogic extends Component {
         this.btnEnter.node.active = false;
         this.bgSelect.getComponent(UITransform).width = 200;
         this.bgSelect.getComponent(UITransform).height = 100;
-    
+
         var isTag = MapCommand.getInstance().proxy.isPosTag(this._data.x, this._data.y);
 
         // console.log("isTag:", isTag);
 
         this.btnTagAdd.node.active = !isTag;
         this.btnTagRemove.node.active = isTag;
-        
+
         if (this._data instanceof MapResData) {
             //点击的是野外
             this.btnMove.node.active = false;
@@ -202,16 +202,16 @@ export default class MapClickUILogic extends Component {
             this.durableNode.active = false;
 
         } else if (this._data instanceof MapBuildData) {
-            //点击的是占领地
+            //点击的是Chiếm lĩnh地
             if ((this._data as MapBuildData).rid == MapCommand.getInstance().buildProxy.myId) {
-                //我自己的地
+                //TaBản thân的地
                 this.btnMove.node.active = true;
                 this.btnOccupy.node.active = false;
                 this.btnGiveUp.node.active = !this._data.isInGiveUp();
                 this.btnReclaim.node.active = this._data.isResBuild();
                 this.btnBuild.node.active = !this._data.isWarFree();
 
-                //是资源地
+                //是Tài nguyên地
                 if(this._data.isResBuild()){
                     this.btnTransfer.node.active = false;
                     this.btnEnter.node.active = false;
@@ -263,7 +263,7 @@ export default class MapClickUILogic extends Component {
         } else if (this._data instanceof MapCityData) {
             //点击其他城市
             if (this._data.rid == MapCommand.getInstance().cityProxy.myId) {
-                //我自己的城池
+                //TaBản thân的Thành trì
                 this.btnEnter.node.active = true;
                 this.btnMove.node.active = false;
                 this.btnOccupy.node.active = false;
@@ -275,7 +275,7 @@ export default class MapClickUILogic extends Component {
 
             } else if ((this._data as MapCityData).unionId > 0
                 && (this._data as MapCityData).unionId == MapCommand.getInstance().cityProxy.myUnionId) {
-                //盟友的城池
+                //盟友的Thành trì
                 this.btnMove.node.active = true;
                 this.btnOccupy.node.active = false;
                 this.btnGiveUp.node.active = false;
@@ -283,7 +283,7 @@ export default class MapClickUILogic extends Component {
                 this.btnTransfer.node.active = false;
             }else if ((this._data as MapCityData).parentId > 0
                 && (this._data as MapCityData).parentId == MapCommand.getInstance().cityProxy.myUnionId) {
-                //俘虏的城池
+                //俘虏的Thành trì
                 this.btnMove.node.active = true;
                 this.btnOccupy.node.active = false;
                 this.btnGiveUp.node.active = false;
@@ -301,10 +301,10 @@ export default class MapClickUILogic extends Component {
             this.durableNode.active = true;
             this.labelDurable.string = Math.ceil(this._data.curDurable/100) + "/" +  Math.ceil(this._data.maxDurable/100);
             this.progressBarDurable.progress = this._data.curDurable / this._data.maxDurable;
-      
+
         }
 
-       
+
 
         if(this._data.type == MapResType.SYS_CITY){
 
@@ -322,11 +322,11 @@ export default class MapClickUILogic extends Component {
 
             let resData: MapResData = MapCommand.getInstance().proxy.getResData(this._data.id);
             let resCfg: MapResConfig = MapCommand.getInstance().proxy.getResConfig(resData.type, resData.level);
-        
+
             let soldiers = MapUICommand.getInstance().proxy.getDefenseSoldiers(resData.level);
             this.labelYield.string = MapCommand.getInstance().proxy.getResYieldDesList(resCfg).join("\n");
-            this.labelSoldierCnt.string = "守备兵力 " + soldiers*3;
-            
+            this.labelSoldierCnt.string = "Binh lực phòng thủ " + soldiers*3;
+
             if (this._data.nickName){
                 this.labelName.string = this._data.nickName + ":" + this._data.name;
             }else{
@@ -338,23 +338,23 @@ export default class MapClickUILogic extends Component {
 
         //归属属性
         if (this._data.rid == null || this._data.rid == 0){
-            this.labelUnion.string = "未占领";
+            this.labelUnion.string = "Chưa chiếm lĩnh";
         }else{
             if (this._data.unionId > 0){
                 this.labelUnion.string = this._data.unionName;
             }else{
-                this.labelUnion.string = "在野";
+                this.labelUnion.string = "Vô chủ";
             }
         }
 
         if (this._data.parentId > 0){
-            this.labelLunxian.string = "沦陷";
+            this.labelLunxian.string = "Thất thủ";
         }else{
             this.labelLunxian.string = "";
         }
 
 
-        //免战信息
+        //Miễn chiến信息
         var limitTime = MapCommand.getInstance().proxy.getWarFree();
         var diff = DateUtil.getServerTime() - this._data.occupyTime;
         if (this._data instanceof MapBuildData){
@@ -384,10 +384,10 @@ export default class MapClickUILogic extends Component {
         var limitTime = MapCommand.getInstance().proxy.getWarFree();
         if (diff>limitTime){
             this.stopCountDown();
-            
+
         }else{
             var str = DateUtil.converSecondStr(limitTime-diff);
-            this.labelMian.string = "免战：" + str;
+            this.labelMian.string = "Miễn chiến：" + str;
         }
     }
 

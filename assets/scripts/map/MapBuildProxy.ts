@@ -6,7 +6,7 @@ import MapUtil from "./MapUtil";
 import { EventMgr } from '../utils/EventMgr';
 import { LogicEvent } from '../common/LogicEvent';
 
-/**地图建筑和占领数据*/
+/**地图Công trình和Chiếm lĩnh数据*/
 export class MapBuildData {
     id: number = 0;
     rid: number = 0;
@@ -113,19 +113,19 @@ export class MapBuildData {
         return diff > 0
     }
 
-    //正在建设中
+    //正在Đang xây dựng
     public isBuilding(): boolean {
         var diff = DateUtil.leftTime(this.endTime);
         return diff > 0 && this.level == 0
     }
 
-    //正在升级中
+    //正在Đang nâng cấp
     public isUping(): boolean {
         var diff = DateUtil.leftTime(this.endTime);
         return diff > 0 && this.level > 0 && this.opLevel > 0
     }
 
-    //正在拆除中
+    //正在Đang phá dỡ
     public isDestroying(): boolean {
         var diff = DateUtil.leftTime(this.endTime);
         return diff > 0 && this.opLevel == 0
@@ -143,7 +143,7 @@ export default class MapBuildProxy {
     public initData(): void {
         this._mapBuilds.length = MapUtil.mapCellCount;
         this._lastBuildCellIds.clear();
-        this.updateMyBuildIds();//建筑信息比加载更前 所以id需要根据加载的地图做更新
+        this.updateMyBuildIds();//Công trình信息比加载更前 所以id需要根据加载的地图做更新
     }
 
     public clearData(): void {
@@ -151,7 +151,7 @@ export default class MapBuildProxy {
         this._lastBuildCellIds.clear();
     }
 
-    /**我的建筑信息*/
+    /**Ta的Công trình信息*/
     public initMyBuilds(builds: any[]): void {
         this._myBuilds.length = 0;
         for (let i: number = 0; i < builds.length; i++) {
@@ -161,7 +161,7 @@ export default class MapBuildProxy {
         }
     }
 
-    /**更新建筑id*/
+    /**更新Công trìnhid*/
     public updateMyBuildIds(): void {
         for (let i: number = 0; i < this._myBuilds.length; i++) {
             let id: number = MapUtil.getIdByCellPoint(this._myBuilds[i].x, this._myBuilds[i].y);
@@ -170,15 +170,15 @@ export default class MapBuildProxy {
         }
     }
 
-    /**更新建筑*/
+    /**更新Công trình*/
     public updateBuild(build: any): void {
         if (build.rid == 0) {
-            //代表是放弃领地
+            //代表是Từ bỏlãnh địa
             if(build.type > MapResType.SYS_CITY){
                 this.removeBuild(build.x, build.y);
                 return;
             }
-            
+
         }
         let id: number = MapUtil.getIdByCellPoint(build.x, build.y);
         let buildData: MapBuildData = null;
@@ -192,7 +192,7 @@ export default class MapBuildProxy {
         }
         EventMgr.emit(LogicEvent.updateBuild, buildData);
         if (buildData.rid == this.myId) {
-            //代表是自己的领地
+            //代表是Bản thân的lãnh địa
         }
     }
 
@@ -206,7 +206,7 @@ export default class MapBuildProxy {
     public removeMyBuild(x: number, y:number):void {
         let index: number = -1;
         for (let i: number = 0; i < this._myBuilds.length; i++) {
-            if (this._myBuilds[i].x == x 
+            if (this._myBuilds[i].x == x
                 && this._myBuilds[i].y == y) {
                     index = i;
                     break;
@@ -231,8 +231,8 @@ export default class MapBuildProxy {
             for (let i: number = 0; i < rBuilds.length; i++) {
                 let areaIndex: number = MapUtil.getAreaIdByCellPoint(rBuilds[i].x, rBuilds[i].y);
                 if (areaIndex != areaId) {
-                    //代表服务端给过来的数据不在当前区域
-                    console.log("代表服务端给过来的数据不在当前区域");
+                    //Dữ liệu từ máy chủ không nằm trong khu vực hiện tại
+                    console.log("Dữ liệu từ máy chủ không nằm trong khu vực hiện tại");
                     continue;
                 }
                 let cellId: number = MapUtil.getIdByCellPoint(rBuilds[i].x, rBuilds[i].y);
@@ -242,7 +242,7 @@ export default class MapBuildProxy {
                     if (index != -1) {
                         //存在就列表中 就代表是已存在的数据
                         if (this._mapBuilds[cellId].equalsServerData(rBuilds[i]) == false) {
-                            //代表数据不一样需要刷新
+                            //代表数据不Một样Cần làm mới
                             this._mapBuilds[cellId] = MapBuildData.createBuildData(rBuilds[i], cellId, this._mapBuilds[cellId]);
                             updateBuildCellIds.push(cellId);
                         }else{

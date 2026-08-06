@@ -7,11 +7,11 @@ import SkillIconLogic from "./SkillIconLogic";
 @ccclass('SkillItemLogic')
 export default class SkillItemLogic extends Component {
 
-   
+
     @property(Label)
     nameLab: Label = null;
 
-       
+
     @property(Label)
     limitLab: Label = null;
 
@@ -24,11 +24,11 @@ export default class SkillItemLogic extends Component {
     _skill: Skill = null;
 
     protected onEnable():void{
-        
+
     }
 
     protected updateItem(skill:Skill):void{
-   
+
         var conf = SkillCommand.getInstance().proxy.getSkillCfg(skill.cfgId);
         this._skill = skill;
         this.nameLab.string = conf.name;

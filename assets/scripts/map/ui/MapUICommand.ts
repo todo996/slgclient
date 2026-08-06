@@ -41,15 +41,15 @@ export default class MapUICommand {
         EventMgr.on(ServerConfig.interior_openCollect, this.onOpenCollect, this);
 
         EventMgr.on(ServerConfig.roleRes_push, this.updataRoleRes, this);
-        
+
 
         setInterval(() => {
            let list: Map<number, Map<number, Facility>> = this._proxy.getMyAllFacilitys();
-           list.forEach((fs, key) => { 
+           list.forEach((fs, key) => {
                 fs.forEach(f => {
                     if(f.isNeedUpdateLevel()){
-                        //倒计时完，请求最新的等级
-                        console.log("有设施升级完了，需要刷新");
+                        //倒计时完，请求最新的Cấp độ
+                        console.log("Có công trình đã nâng cấp xong，Cần làm mới");
                         this.qryCityFacilities(key);
                         return
                     }
@@ -64,7 +64,7 @@ export default class MapUICommand {
             this._proxy.updateMyFacilityList(data.msg.cityId, data.msg.facilities);
             EventMgr.emit(LogicEvent.updateMyFacilities);
 
-            //刷新城池附加加成
+            //刷新Thành trì附加Cộng thêm
             let cityData: MapCityData = MapCommand.getInstance().cityProxy.getMyCityById(data.msg.cityId);
             let addition: CityAddition = this._proxy.updateMyCityAdditions(cityData.cityId);
             cityData.maxDurable = this._proxy.getMyCityMaxDurable(data.msg.cityId);
@@ -81,7 +81,7 @@ export default class MapUICommand {
             LoginCommand.getInstance().proxy.saveEnterData(data.msg);
             EventMgr.emit(LogicEvent.upateMyRoleRes);
 
-            //刷新城池附加加成
+            //刷新Thành trì附加Cộng thêm
             let cityData: MapCityData = MapCommand.getInstance().cityProxy.getMyCityById(data.msg.cityId);
             let addition: CityAddition = this._proxy.updateMyCityAdditions(data.msg.cityId);
             cityData.maxDurable = this._proxy.getMyCityMaxDurable(data.msg.cityId);
@@ -134,7 +134,7 @@ export default class MapUICommand {
             }else{
                 this._proxy.updateWarRead(id, true);
             }
-           
+
             EventMgr.emit(LogicEvent.upateWarReport);
         }
     }
@@ -163,8 +163,8 @@ export default class MapUICommand {
 
 
     /**
-     * 设施
-     * @param cityId 
+     * Công trình
+     * @param cityId
      */
     public qryCityFacilities(cityId: number = 0): void {
         let sendData: any = {
@@ -178,9 +178,9 @@ export default class MapUICommand {
 
 
     /**
-     * 升级设施
-     * @param cityId 
-     * @param ftype 
+     * Nâng cấpCông trình
+     * @param cityId
+     * @param ftype
      */
     public upFacility(cityId: number = 0, ftype: number = 0): void {
         let sendData: any = {
@@ -194,8 +194,8 @@ export default class MapUICommand {
     }
 
     /**
-     * 我的角色资源属性
-     * @param cityId 
+     * Ta的Nhân vậtTài nguyên属性
+     * @param cityId
      */
     public qryMyRoleRes(): void {
         let sendData: any = {
@@ -208,8 +208,8 @@ export default class MapUICommand {
 
 
     /**
-     * 我的角色资源属性(全)
-     * @param 
+     * Ta的Nhân vậtTài nguyên属性(全)
+     * @param
      */
     public updateMyProperty(data: any): void {
         LoginCommand.getInstance().proxy.saveEnterData(data.msg);
@@ -219,7 +219,7 @@ export default class MapUICommand {
 
 
     /**
-     * 战报查询
+     * Chiến báo查询
      */
     public qryWarReport(): void {
         let sendData: any = {
@@ -262,7 +262,7 @@ export default class MapUICommand {
         };
         NetManager.getInstance().send(sendData);
     }
-    
+
     public interiorTransform(from:number[],to:number[]): void {
         let sendData: any = {
             name: ServerConfig.interior_transform,

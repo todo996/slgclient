@@ -22,7 +22,7 @@ export class AudioManager {
     init (audioSource: AudioSource) {
         this.soundVolume = this.getConfiguration(false) ? 1 : 0;
         AudioManager._audioSource = audioSource;
-        
+
         if(this.getConfiguration(true)){
             this.openMusic();
         }else{
@@ -42,12 +42,12 @@ export class AudioManager {
     }
 
     /**
-     * 播放音乐
-     * @param {String} name 音乐名称可通过constants.AUDIO_MUSIC 获取
+     * 播放Nhạc
+     * @param {String} name NhạcTên可通过constants.AUDIO_MUSIC 获取
      * @param {Boolean} loop 是否循环播放
      */
     playMusic (loop: boolean) {
-        
+
         const audioSource = AudioManager._audioSource!;
         assert(audioSource, 'AudioManager not inited!');
 
@@ -58,8 +58,8 @@ export class AudioManager {
     }
 
     /**
-     * 播放音效
-     * @param {String} name 音效名称可通过constants.AUDIO_SOUND 获取
+     * 播放Hiệu ứng âm thanh
+     * @param {String} name Hiệu ứng âm thanhTên可通过constants.AUDIO_SOUND 获取
      */
     playSound (name:string) {
         const audioSource = AudioManager._audioSource!;

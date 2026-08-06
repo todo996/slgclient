@@ -84,7 +84,7 @@ export default class GeneralListLogic extends Component {
         if(data && data.length > 0){
             this._cunGeneral = data;
         }
-        
+
         this._type = type;
         this._position = position;
 

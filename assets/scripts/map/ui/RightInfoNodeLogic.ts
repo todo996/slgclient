@@ -88,7 +88,7 @@ export default class RightInfoNodeLogic extends Component {
         for (let i: number = 0; i < tags.length; i++) {
             var tag = tags[i];
 
-            
+
             let item: Node = instantiate(this.tagItemPrefabs);
             item.parent = this.tagsScrollView.content;
             item.getComponent(RightTagItemLogic).setData(tag);
