@@ -1,1 +1,174 @@
+name: Build Cocos Web Client for slgclient
 
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: cocos-web-build
+  cancel-in-progress: true
+
+jobs:
+  build-web:
+    name: Build and publish Web Mobile
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Setup Node.js 12
+        uses: actions/setup-node@v4
+        with:
+          node-version: "12"
+
+      - name: Install Linux dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          sudo apt-get update
+          sudo apt-get install -y \
+            xvfb \
+            libgtk-3-0 \
+            libnss3 \
+            libasound2 \
+            libgbm1 \
+            libxss1 \
+            libx11-xcb1 \
+            libxcomposite1 \
+            libxdamage1 \
+            libxrandr2 \
+            libatk1.0-0 \
+            libatk-bridge2.0-0 \
+            libcups2 \
+            libdrm2 \
+            libpangocairo-1.0-0 \
+            libpango-1.0-0 \
+            libcairo2 \
+            libatspi2.0-0 \
+            libxfixes3 \
+            libnotify4
+
+      - name: Install Cocos Creator CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          npm install --global \
+            cocos-creator@2.4.2-q \
+            --unsafe-perm=true
+
+          command -v cocos-creator
+          echo "Cocos Creator CLI installed."
+
+      - name: Install project dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ -f package.json ]; then
+            npm install
+          else
+            echo "No package.json. Skipping npm install."
+          fi
+
+      - name: Build Web Mobile
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          rm -rf "${GITHUB_WORKSPACE}/build"
+
+          xvfb-run \
+            --auto-servernum \
+            --server-args="-screen 0 1280x1024x24 -ac" \
+            cocos-creator build "${GITHUB_WORKSPACE}" \
+            --platform=web-mobile
+
+      - name: Validate build
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          OUTPUT="${GITHUB_WORKSPACE}/build/web-mobile"
+
+          if [ ! -f "${OUTPUT}/index.html" ]; then
+            echo "::error::Build failed: index.html was not generated."
+
+            if [ -d "${GITHUB_WORKSPACE}/build" ]; then
+              find "${GITHUB_WORKSPACE}/build" \
+                -maxdepth 4 \
+                -print \
+                | head -n 300
+            fi
+
+            exit 1
+          fi
+
+          echo "Build completed successfully."
+          du -sh "${OUTPUT}"
+
+      - name: Prepare deployment files
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          DEPLOY_DIR="${RUNNER_TEMP}/web-deploy"
+
+          rm -rf "${DEPLOY_DIR}"
+          mkdir -p "${DEPLOY_DIR}"
+
+          cp -a \
+            "${GITHUB_WORKSPACE}/build/web-mobile/." \
+            "${DEPLOY_DIR}/"
+
+          touch "${DEPLOY_DIR}/.nojekyll"
+
+          printf '%s\n' \
+            '{' \
+            '  "$schema": "https://openapi.vercel.sh/vercel.json",' \
+            '  "cleanUrls": false,' \
+            '  "trailingSlash": false' \
+            '}' > "${DEPLOY_DIR}/vercel.json"
+
+      - name: Push build to build-web branch
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          DEPLOY_DIR="${RUNNER_TEMP}/web-deploy"
+
+          git config user.name "${GITHUB_ACTOR}"
+          git config user.email \
+            "${GITHUB_ACTOR}@users.noreply.github.com"
+
+          git checkout --orphan build-web
+
+          find "${GITHUB_WORKSPACE}" \
+            -mindepth 1 \
+            -maxdepth 1 \
+            ! -name ".git" \
+            -exec rm -rf -- {} +
+
+          cp -a "${DEPLOY_DIR}/." "${GITHUB_WORKSPACE}/"
+
+          git add --all
+
+          git commit \
+            -m "build(web): ${GITHUB_SHA}" \
+            -m "Automatic Cocos Web Mobile build."
+
+          git push --force origin build-web
+
+          echo "Published successfully to build-web."
