@@ -35,21 +35,35 @@ VITE_GAME_WS_URL=wss://ten-backend.up.railway.app
 
 Không thêm `/api` hoặc `/ws` nếu backend không sử dụng prefix đó.
 
-## Trạng thái
+## Trạng thái chuyển đổi
 
-Mốc nền tảng đã có:
+### M1 — nền tảng web
 
 - Vite + TypeScript strict.
 - Phaser game canvas.
-- camera kéo map và wheel zoom nền tảng.
-- runtime config HTTP/WebSocket.
-- EventBus, timer, storage và asset adapter.
+- Camera kéo map và wheel zoom nền tảng.
+- Runtime config HTTP/WebSocket.
+- Asset, timer và storage adapter.
 - UI shell HTML/CSS cổ phong.
-- cấu hình Vercel và GitHub Actions.
+- Cấu hình Vercel và GitHub Actions.
 
-Bước tiếp theo:
+### M2 — network nền tảng
 
-1. Port `WebSock`, `NetNode`, `NetManager` và HTTP manager.
-2. Nối login thật với backend.
-3. Lập manifest và tải map thật từ `assets/resources`.
-4. Port HUD và panel theo prefab.
+Đã port sang browser mà không đổi protocol:
+
+- `EventMgr` tương thích API cũ.
+- `HttpInvoke` và `HttpManager`.
+- `WebSock`, `NetTimer`, `NetNode`, `NetManager`.
+- Envelope `name/msg/seq`.
+- Gzip level 9.
+- Handshake nhận key.
+- AES-CBC với key dùng làm IV và ZeroPadding.
+- Request queue, timeout, heartbeat và reconnect.
+- Trạng thái kết nối hiển thị trên app shell.
+
+Bước kế tiếp:
+
+1. Port config endpoint và `LoginCommand`/`LoginProxy` thuần TypeScript.
+2. Dựng panel đăng nhập HTML/CSS và đăng nhập bằng backend thật.
+3. Lập manifest rồi tải map thật từ `assets/resources`.
+4. Port HUD và panel theo từng prefab.

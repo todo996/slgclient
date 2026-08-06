@@ -1,7 +1,7 @@
 {
   "name": "tam-quoc-viet-nam-web",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "crypto-js": "^4.2.0",
+    "pako": "^2.1.0",
     "phaser": "^3.90.0"
   },
   "devDependencies": {
