@@ -1,0 +1,46 @@
+name: Áp dụng Việt hoá mã nguồn
+
+on:
+  push:
+    branches:
+      - agent/vercel-vietnamese
+    paths:
+      - '.github/workflows/localize-source.yml'
+      - 'scripts/localize-source.mjs'
+      - 'assets/scripts/i18n/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Lấy mã nguồn
+        uses: actions/checkout@v4
+        with:
+          ref: agent/vercel-vietnamese
+
+      - name: Cài Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+
+      - name: Áp dụng từ điển vào TypeScript
+        run: node scripts/localize-source.mjs
+
+      - name: Kiểm tra thay đổi
+        run: git diff --check
+
+      - name: Commit bản Việt hoá
+        run: |
+          if git diff --quiet; then
+            echo "Mã nguồn đã được Việt hoá, không có thay đổi mới."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/scripts
+          git commit -m "Việt hoá chuỗi TypeScript [source-localized]"
+          git push origin HEAD:agent/vercel-vietnamese
