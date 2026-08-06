@@ -22,15 +22,22 @@ jobs:
         with:
           node-version: '22.x'
 
+      - name: Cài TypeScript dùng cho kiểm tra cú pháp
+        run: npm install --no-save --no-package-lock typescript@5.2.2
+
       - name: Kiểm tra cấu hình Vercel
         run: node --check scripts/prepare-vercel.mjs
 
       - name: Kiểm tra công cụ Việt hoá
         run: node --check scripts/audit-vietnamese.mjs
 
+      - name: Kiểm tra cú pháp TypeScript
+        run: node scripts/check-typescript-syntax.mjs
+
       - name: Quét chuỗi chưa Việt hoá
         env:
           FAIL_ON_UNMAPPED_UI: 'true'
+          FAIL_ON_UNMAPPED_ALL: 'true'
         run: node scripts/audit-vietnamese.mjs
 
       - name: Lưu báo cáo Việt hoá
