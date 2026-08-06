@@ -25,10 +25,16 @@ jobs:
       - name: Kiểm tra cấu hình Vercel
         run: node --check scripts/prepare-vercel.mjs
 
+      - name: Kiểm tra công cụ Việt hoá
+        run: node --check scripts/audit-vietnamese.mjs
+
       - name: Quét chuỗi chưa Việt hoá
+        env:
+          FAIL_ON_UNMAPPED_UI: 'true'
         run: node scripts/audit-vietnamese.mjs
 
       - name: Lưu báo cáo Việt hoá
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: vietnamese-audit
