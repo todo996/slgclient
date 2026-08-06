@@ -18,7 +18,7 @@ import { Tools } from "./utils/Tools";
 import { EventMgr } from './utils/EventMgr';
 import { AudioManager } from './common/AudioManager';
 import { LogicEvent } from './common/LogicEvent';
-import { localizeNode, translateText } from './i18n/I18n';
+import { localizeData, localizeNode, translateText } from './i18n/I18n';
 
 @ccclass('Main')
 export default class Main extends Component {
@@ -126,16 +126,29 @@ export default class Main extends Component {
                     return;
                 }
                 console.log("Đã tải dữ liệu", paths, datas);
+
+                const mapConfig = datas[1] as JsonAsset;
+                const facilityConfigs = datas[2] as JsonAsset[];
+                const generalConfigs = datas[3] as JsonAsset[];
+                const basicConfig = datas[5] as JsonAsset;
+                const skillConfigs = datas[6] as JsonAsset[];
+
+                localizeData(mapConfig.json);
+                facilityConfigs.forEach(asset => localizeData(asset.json));
+                generalConfigs.forEach(asset => localizeData(asset.json));
+                localizeData(basicConfig.json);
+                skillConfigs.forEach(asset => localizeData(asset.json));
+
                 MapCommand.getInstance().proxy.tiledMapAsset = datas[0] as TiledMapAsset;
-                MapCommand.getInstance().proxy.initMapResConfig((datas[1] as JsonAsset).json);
+                MapCommand.getInstance().proxy.initMapResConfig(mapConfig.json);
 
-                MapUICommand.getInstance().proxy.setAllFacilityCfg(datas[2]);
-                GeneralCommand.getInstance().proxy.initGeneralConfig(datas[3], (datas[5] as JsonAsset).json);
+                MapUICommand.getInstance().proxy.setAllFacilityCfg(facilityConfigs);
+                GeneralCommand.getInstance().proxy.initGeneralConfig(generalConfigs, basicConfig.json);
                 GeneralCommand.getInstance().proxy.initGeneralTex(datas[4]);
-                MapUICommand.getInstance().proxy.setBasic(datas[5]);
-                SkillCommand.getInstance().proxy.initSkillConfig(datas[6]);
+                MapUICommand.getInstance().proxy.setBasic(basicConfig);
+                SkillCommand.getInstance().proxy.initSkillConfig(skillConfigs);
 
-                const basicData = (datas[5] as JsonAsset).json;
+                const basicData = basicConfig.json;
                 MapCommand.getInstance().proxy.setWarFree(basicData["build"].war_free);
 
                 const cityId: number = MapCommand.getInstance().cityProxy.getMyMainCity().cityId;
