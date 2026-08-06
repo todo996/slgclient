@@ -1,10 +1,9 @@
-name: Build Cocos Web Client for slgclient
+name: Build Cocos Creator 3.4.0 Web Client
 
 on:
   push:
     branches:
       - main
-      - master
   workflow_dispatch:
 
 permissions:
@@ -14,11 +13,18 @@ concurrency:
   group: cocos-web-build
   cancel-in-progress: true
 
+env:
+  COCOS_VERSION: "3.4.0"
+  COCOS_DOWNLOAD_URL: "https://download.cocos.com/CocosCreator/v3.4.0/CocosCreator-v3.4.0-win32-121822.zip"
+  COCOS_INSTALL_DIR: "C:\\CocosCreator-3.4.0"
+  WEB_OUTPUT_PATH: "build/web-desktop"
+  DEPLOY_BRANCH: "build-web"
+
 jobs:
   build-web:
-    name: Build and publish Web Mobile
-    runs-on: ubuntu-22.04
-    timeout-minutes: 60
+    name: Build and publish Web Desktop
+    runs-on: windows-2022
+    timeout-minutes: 120
 
     steps:
       - name: Checkout source code
@@ -27,148 +33,165 @@ jobs:
           fetch-depth: 0
           persist-credentials: true
 
-      - name: Setup Node.js 12
+      - name: Setup Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version: "12"
+          node-version: "22.x"
 
-      - name: Install Linux dependencies
-        shell: bash
+      - name: Validate project version
+        shell: pwsh
         run: |
-          set -euo pipefail
+          $ErrorActionPreference = "Stop"
+          $project = Get-Content "package.json" -Raw | ConvertFrom-Json
+          $actualVersion = [string]$project.creator.version
+          if ($actualVersion -ne $env:COCOS_VERSION) {
+            throw "Project requires Cocos Creator $actualVersion, but workflow is configured for $env:COCOS_VERSION."
+          }
+          Write-Host "Confirmed Cocos Creator version: $actualVersion"
 
-          sudo apt-get update
-          sudo apt-get install -y \
-            xvfb \
-            libgtk-3-0 \
-            libnss3 \
-            libasound2 \
-            libgbm1 \
-            libxss1 \
-            libx11-xcb1 \
-            libxcomposite1 \
-            libxdamage1 \
-            libxrandr2 \
-            libatk1.0-0 \
-            libatk-bridge2.0-0 \
-            libcups2 \
-            libdrm2 \
-            libpangocairo-1.0-0 \
-            libpango-1.0-0 \
-            libcairo2 \
-            libatspi2.0-0 \
-            libxfixes3 \
-            libnotify4
+      - name: Cache Cocos Creator 3.4.0
+        id: cache-cocos
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.COCOS_INSTALL_DIR }}
+          key: cocos-creator-${{ runner.os }}-${{ env.COCOS_VERSION }}-121822
 
-      - name: Install Cocos Creator CLI
-        shell: bash
+      - name: Download official Cocos Creator 3.4.0
+        if: steps.cache-cocos.outputs.cache-hit != 'true'
+        shell: pwsh
         run: |
-          set -euo pipefail
+          $ErrorActionPreference = "Stop"
+          $archive = Join-Path $env:RUNNER_TEMP "CocosCreator-v3.4.0-win32.zip"
 
-          npm install --global \
-            cocos-creator@2.4.2-q \
-            --unsafe-perm=true
+          if (Test-Path $env:COCOS_INSTALL_DIR) {
+            Remove-Item $env:COCOS_INSTALL_DIR -Recurse -Force
+          }
+          New-Item -ItemType Directory -Path $env:COCOS_INSTALL_DIR -Force | Out-Null
 
-          command -v cocos-creator
-          echo "Cocos Creator CLI installed."
+          Write-Host "Downloading Cocos Creator from the official Cocos server..."
+          & curl.exe --fail --location --retry 5 --retry-delay 10 --output $archive $env:COCOS_DOWNLOAD_URL
+          if ($LASTEXITCODE -ne 0) {
+            throw "Failed to download Cocos Creator. curl exit code: $LASTEXITCODE"
+          }
 
-      - name: Install project dependencies
-        shell: bash
+          Write-Host "Extracting Cocos Creator..."
+          Expand-Archive -LiteralPath $archive -DestinationPath $env:COCOS_INSTALL_DIR -Force
+
+      - name: Locate Cocos Creator executable
+        shell: pwsh
         run: |
-          set -euo pipefail
+          $ErrorActionPreference = "Stop"
+          $creator = Get-ChildItem -Path $env:COCOS_INSTALL_DIR -Filter "CocosCreator.exe" -File -Recurse | Select-Object -First 1
 
-          if [ -f package.json ]; then
-            npm install
-          else
-            echo "No package.json. Skipping npm install."
-          fi
+          if (-not $creator) {
+            Get-ChildItem $env:COCOS_INSTALL_DIR -Force -Recurse | Select-Object -First 200 | ForEach-Object { Write-Host $_.FullName }
+            throw "CocosCreator.exe was not found in the official archive."
+          }
 
-      - name: Build Web Mobile
-        shell: bash
+          "COCOS_EXE=$($creator.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          Write-Host "Cocos Creator executable: $($creator.FullName)"
+
+      - name: Run repository checks
+        shell: pwsh
         run: |
-          set -euo pipefail
+          $ErrorActionPreference = "Stop"
+          node --check scripts/prepare-vercel.mjs
+          node --check scripts/test-pwa-build.mjs
+          npm run test:pwa
+          node scripts/check-typescript-syntax.mjs
 
-          rm -rf "${GITHUB_WORKSPACE}/build"
-
-          xvfb-run \
-            --auto-servernum \
-            --server-args="-screen 0 1280x1024x24 -ac" \
-            cocos-creator build "${GITHUB_WORKSPACE}" \
-            --platform=web-mobile
-
-      - name: Validate build
-        shell: bash
+      - name: Build Cocos Web Desktop
+        shell: pwsh
         run: |
-          set -euo pipefail
+          $ErrorActionPreference = "Stop"
+          $output = Join-Path $env:GITHUB_WORKSPACE $env:WEB_OUTPUT_PATH
 
-          OUTPUT="${GITHUB_WORKSPACE}/build/web-mobile"
+          if (Test-Path $output) {
+            Remove-Item $output -Recurse -Force
+          }
 
-          if [ ! -f "${OUTPUT}/index.html" ]; then
-            echo "::error::Build failed: index.html was not generated."
+          $buildOptions = @(
+            "platform=web-desktop"
+            "buildPath=project://build"
+            "outputName=web-desktop"
+            "startScene=94681aa6-17dd-47fe-b1bd-f2e2ca8fd6ca"
+            "debug=false"
+            "md5Cache=true"
+          ) -join ";"
 
-            if [ -d "${GITHUB_WORKSPACE}/build" ]; then
-              find "${GITHUB_WORKSPACE}/build" \
-                -maxdepth 4 \
-                -print \
-                | head -n 300
-            fi
+          Write-Host "Starting Cocos Creator $env:COCOS_VERSION build..."
+          & $env:COCOS_EXE --project $env:GITHUB_WORKSPACE --build $buildOptions
+          $creatorExitCode = $LASTEXITCODE
 
-            exit 1
-          fi
+          # Cocos Creator 3.4 reports a successful build with exit code 36.
+          if ($creatorExitCode -notin @(0, 36)) {
+            throw "Cocos Creator build failed with exit code $creatorExitCode."
+          }
+          Write-Host "Cocos Creator finished with exit code $creatorExitCode."
 
-          echo "Build completed successfully."
-          du -sh "${OUTPUT}"
-
-      - name: Prepare deployment files
-        shell: bash
+      - name: Validate Web Desktop output
+        shell: pwsh
         run: |
-          set -euo pipefail
+          $ErrorActionPreference = "Stop"
+          $output = Join-Path $env:GITHUB_WORKSPACE $env:WEB_OUTPUT_PATH
+          $index = Join-Path $output "index.html"
 
-          DEPLOY_DIR="${RUNNER_TEMP}/web-deploy"
+          if (-not (Test-Path $index -PathType Leaf)) {
+            Write-Host "Files created under build:"
+            if (Test-Path "build") {
+              Get-ChildItem "build" -Force -Recurse | Select-Object -First 300 | ForEach-Object { Write-Host $_.FullName }
+            }
+            throw "Cocos Creator completed without producing $index."
+          }
 
-          rm -rf "${DEPLOY_DIR}"
-          mkdir -p "${DEPLOY_DIR}"
+          $size = (Get-ChildItem $output -File -Recurse | Measure-Object -Property Length -Sum).Sum
+          Write-Host "Web Desktop build is valid."
+          Write-Host ("Output size: {0:N2} MB" -f ($size / 1MB))
 
-          cp -a \
-            "${GITHUB_WORKSPACE}/build/web-mobile/." \
-            "${DEPLOY_DIR}/"
-
-          touch "${DEPLOY_DIR}/.nojekyll"
-
-          printf '%s\n' \
-            '{' \
-            '  "$schema": "https://openapi.vercel.sh/vercel.json",' \
-            '  "cleanUrls": false,' \
-            '  "trailingSlash": false' \
-            '}' > "${DEPLOY_DIR}/vercel.json"
-
-      - name: Push build to build-web branch
-        shell: bash
+      - name: Prepare build-web branch contents
+        shell: pwsh
         run: |
-          set -euo pipefail
+          $ErrorActionPreference = "Stop"
+          $deployDir = Join-Path $env:RUNNER_TEMP "slgclient-build-web"
 
-          DEPLOY_DIR="${RUNNER_TEMP}/web-deploy"
+          if (Test-Path $deployDir) {
+            Remove-Item $deployDir -Recurse -Force
+          }
 
-          git config user.name "${GITHUB_ACTOR}"
-          git config user.email \
-            "${GITHUB_ACTOR}@users.noreply.github.com"
+          New-Item -ItemType Directory -Path $deployDir -Force | Out-Null
+          New-Item -ItemType Directory -Path (Join-Path $deployDir "build") -Force | Out-Null
+          New-Item -ItemType Directory -Path (Join-Path $deployDir "scripts") -Force | Out-Null
 
-          git checkout --orphan build-web
+          Copy-Item -Path (Join-Path $env:GITHUB_WORKSPACE $env:WEB_OUTPUT_PATH) -Destination (Join-Path $deployDir "build/web-desktop") -Recurse -Force
+          Copy-Item "package.json" (Join-Path $deployDir "package.json") -Force
+          Copy-Item "vercel.json" (Join-Path $deployDir "vercel.json") -Force
+          Copy-Item "scripts/prepare-vercel.mjs" (Join-Path $deployDir "scripts/prepare-vercel.mjs") -Force
+          New-Item -ItemType File -Path (Join-Path $deployDir ".nojekyll") -Force | Out-Null
 
-          find "${GITHUB_WORKSPACE}" \
-            -mindepth 1 \
-            -maxdepth 1 \
-            ! -name ".git" \
-            -exec rm -rf -- {} +
+          $readme = @(
+            "# Generated deployment branch"
+            ""
+            "This branch is generated automatically from main by GitHub Actions."
+            "Do not edit it manually. Configure Vercel to deploy the build-web branch."
+          )
+          $readme | Set-Content -Path (Join-Path $deployDir "README.md") -Encoding utf8
 
-          cp -a "${DEPLOY_DIR}/." "${GITHUB_WORKSPACE}/"
+      - name: Push deployment to build-web
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $deployDir = Join-Path $env:RUNNER_TEMP "slgclient-build-web"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan $env:DEPLOY_BRANCH
+
+          Get-ChildItem $env:GITHUB_WORKSPACE -Force | Where-Object { $_.Name -ne ".git" } | Remove-Item -Recurse -Force
+          Copy-Item -Path (Join-Path $deployDir "*") -Destination $env:GITHUB_WORKSPACE -Recurse -Force
+          Copy-Item -Path (Join-Path $deployDir ".nojekyll") -Destination (Join-Path $env:GITHUB_WORKSPACE ".nojekyll") -Force
 
           git add --all
+          git commit -m "build(web): $env:GITHUB_SHA" -m "Generated automatically with Cocos Creator $env:COCOS_VERSION."
+          git push --force origin "HEAD:$env:DEPLOY_BRANCH"
 
-          git commit \
-            -m "build(web): ${GITHUB_SHA}" \
-            -m "Automatic Cocos Web Mobile build."
-
-          git push --force origin build-web
-
-          echo "Published successfully to build-web."
+          Write-Host "Published Web Desktop to branch $env:DEPLOY_BRANCH."
