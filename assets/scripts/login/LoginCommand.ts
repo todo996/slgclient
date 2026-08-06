@@ -9,7 +9,6 @@ import MapCommand from "../map/MapCommand";
 import { LocalCache } from "../utils/LocalCache";
 import DateUtil from "../utils/DateUtil";
 import { EventMgr } from "../utils/EventMgr";
-import { Md5 } from "../libs/crypto/md5";
 import { LogicEvent } from "../common/LogicEvent";
 
 export default class LoginCommand {
@@ -134,10 +133,9 @@ export default class LoginCommand {
     }
 
     public register(name: string, password: string): void {
-        const passwordValue = Md5.encrypt(password);
         const params = new URLSearchParams({
             username: name,
-            password: passwordValue,
+            password,
             hardware: Tools.getUUID(),
         }).toString();
 
@@ -155,7 +153,7 @@ export default class LoginCommand {
             name: ServerConfig.account_login,
             msg: {
                 username: name,
-                password: Md5.encrypt(password),
+                password,
                 hardware: Tools.getUUID(),
             },
         };
