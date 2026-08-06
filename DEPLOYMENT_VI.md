@@ -1,111 +1,193 @@
-# Triển khai Cocos Client lên Vercel
+# Triển khai Client lên Vercel
 
-Client sử dụng Cocos Creator 3.4.0 và được phát hành dưới dạng Web Desktop tĩnh.
+Client sử dụng Cocos Creator 3.4.0, được build dưới dạng Web Desktop và bổ sung lớp PWA cho máy tính, Android và iPhone.
 
-## 1. Cấu hình kết nối production
+## 1. Kiến trúc
 
-Vercel cần ba biến môi trường:
-
-```dotenv
-GAME_WS_URL=wss://domain-gate-railway
-GAME_HTTP_URL=https://domain-http-railway
-GAME_LOCALE=vi-VN
+```text
+Người chơi
+    │
+    ▼
+Vercel — Cocos Web/PWA
+    ├── HTTPS → Railway http-service
+    └── WSS   → Railway gate-service
 ```
 
-Không sửa trực tiếp URL production trong `GameConfig.ts`. Script `scripts/prepare-vercel.mjs` tạo `game-config.js` từ biến môi trường khi chuẩn bị bản deploy.
+Client không kết nối trực tiếp tới Supabase.
 
-Production bắt buộc dùng:
+## 2. Build Cocos trước khi đưa lên Vercel
 
-- `wss://` cho Gateway;
-- `https://` cho HTTP API;
-- domain Vercel thật phải được thêm vào `CORS_ALLOWED_ORIGINS` và `WS_ALLOWED_ORIGINS` của backend Railway.
+Vercel không có sẵn Cocos Creator 3.4.0. Vì vậy cần tạo bản Web Desktop trước:
 
-## 2. Build bằng Cocos Creator
-
-Repository là mã nguồn Cocos, không phải dự án web npm thông thường. Máy build phải có Cocos Creator 3.4.0.
-
-Trong Cocos Creator:
-
-1. Mở project.
-2. Chọn **Project > Build**.
+1. Mở repository bằng Cocos Creator 3.4.0.
+2. Chọn **Project → Build**.
 3. Chọn nền tảng **Web Desktop**.
-4. Đặt thư mục đầu ra là `build/web-desktop`.
-5. Build project.
+4. Đặt thư mục đầu ra: `build/web-desktop`.
+5. Nhấn **Build**.
+6. Kiểm tra thư mục có `index.html`, `assets`, `src` và các tệp ứng dụng Cocos.
+7. Commit thư mục `build/web-desktop` cùng mã nguồn.
 
-Sau khi build, thư mục phải chứa tối thiểu:
-
-```text
-build/web-desktop/
-├── index.html
-├── application.*
-├── assets/
-└── src/
-```
-
-## 3. Deploy Vercel
-
-1. Kết nối Vercel Project với repository `slgclient`.
-2. Chọn nhánh triển khai.
-3. Build Command: `npm run vercel-build`.
-4. Output Directory: `build/web-desktop`.
-5. Thêm ba biến môi trường ở mục 1.
-
-`vercel.json` đã chứa sẵn Build Command, Output Directory và quy tắc cache.
-
-## 4. Cách cập nhật
-
-Ở giai đoạn hiện tại, Cocos Creator phải tạo lại bản Web Desktop trước khi push:
+Quy trình cập nhật:
 
 ```text
-Sửa mã nguồn Cocos
-→ Build Web Desktop bằng Cocos Creator 3.4.0
-→ Commit mã nguồn và build/web-desktop
-→ Push GitHub một lần
+Sửa project Cocos
+→ Build lại build/web-desktop
+→ Commit và push GitHub
 → Vercel tự deploy
 ```
 
-Script build sẽ dừng nếu địa chỉ Railway không dùng `wss://` và `https://`.
+## 3. Tạo Vercel Project
 
-## 5. Việt hoá và phông chữ
+1. Vào Vercel và chọn **Add New → Project**.
+2. Import repository `slgclient`.
+3. Chọn nhánh `main`.
+4. Framework Preset: **Other**.
+5. Build Command: `npm run vercel-build`.
+6. Output Directory: `build/web-desktop`.
+7. Install Command có thể để mặc định hoặc để trống.
 
-- Ngôn ngữ mặc định: `vi-VN`.
-- Các `Label`, `RichText` và `EditBox` dùng phông hệ thống `Arial`, hỗ trợ đầy đủ dấu tiếng Việt trên trình duyệt.
-- Chuỗi giao diện, prefab, scene và dữ liệu JSON được xử lý qua `assets/scripts/i18n/`.
-- Tên võ tướng đã chuyển sang âm Hán–Việt có dấu.
-- Thuật ngữ công trình, kỹ năng, liên minh, chiến báo và trạng thái động đã được Việt hoá.
-- Workflow kiểm tra hiện xác nhận không còn chuỗi Hán tự thiếu ánh xạ trong dữ liệu người dùng nhìn thấy hoặc mã TypeScript.
+`vercel.json` đã chứa Build Command, Output Directory, cache PWA và các header bảo mật cơ bản.
 
-## 6. Bảo mật tài khoản phía client
+## 4. Biến môi trường Vercel
 
-- Đăng ký dùng HTTP `POST`, không đưa mật khẩu vào URL.
-- Đăng nhập gửi mật khẩu gốc qua kết nối TLS (`HTTPS`/`WSS`) để backend băm bằng bcrypt.
-- Không ghi mật khẩu, session hoặc nội dung yêu cầu nhạy cảm ra console.
-- Chỉ lưu tên tài khoản trong `localStorage`.
-- Nếu phiên bản cũ từng lưu mật khẩu, lần mở game tiếp theo sẽ tự loại bỏ trường đó.
-- Mật khẩu đăng ký mới phải dài từ 8 đến 72 byte; đăng nhập vẫn chấp nhận tài khoản cũ để backend tự nâng cấp hash.
+Thêm trong **Project Settings → Environment Variables** cho Production, Preview và Development nếu cần:
 
-## 7. Kiểm tra tự động
+```dotenv
+GAME_WS_URL=wss://domain-public-cua-gate-service
+GAME_HTTP_URL=https://domain-public-cua-http-service
+GAME_LOCALE=vi-VN
+GAME_APP_NAME=Tam Quốc Việt Nam
+GAME_SHORT_NAME=Tam Quốc
+```
 
-Workflow `.github/workflows/client-audit.yml` thực hiện:
+Ba biến bắt buộc:
 
-- kiểm tra cú pháp các script triển khai;
-- parse toàn bộ tệp TypeScript;
-- kiểm tra mọi chuỗi Hán tự đều có bản dịch;
-- lưu báo cáo Việt hoá dưới dạng artifact GitHub Actions.
+- `GAME_WS_URL`: domain WSS của `gate-service` Railway.
+- `GAME_HTTP_URL`: domain HTTPS của `http-service` Railway.
+- `GAME_LOCALE`: đặt `vi-VN`.
 
-Kiểm tra gần nhất đã xác nhận:
+Hai biến tên ứng dụng là tuỳ chọn; nếu bỏ trống sẽ dùng giá trị mặc định trong script.
 
-- 145 tệp TypeScript có cú pháp hợp lệ;
-- 775 khóa dịch;
-- 863 lần xuất hiện Hán tự đều được ánh xạ;
-- 0 chuỗi thiếu trong prefab, scene, JSON và TypeScript.
+Không thêm dấu `/` cuối URL. Production bắt buộc dùng `wss://` và `https://`.
 
-## 8. Kiểm tra thủ công trước khi phát hành
+## 5. Đồng bộ domain sang Railway
 
-- Mở bản build bằng web server local, không mở trực tiếp `index.html` bằng `file://`.
-- Kiểm tra đăng ký, đăng nhập, đăng nhập lại và đăng xuất.
-- Kiểm tra tạo nhân vật có dấu tiếng Việt.
-- Kiểm tra bản đồ, tướng, đội quân, liên minh, chat và chiến báo.
-- Kiểm tra kết nối HTTPS API và WSS Gateway.
-- Kiểm tra dấu tiếng Việt trên iOS Safari, Android Chrome và máy tính.
-- Kiểm tra bố cục vì chuỗi tiếng Việt thường dài hơn tiếng Trung.
+Sau khi Vercel cấp domain, ví dụ:
+
+```text
+https://tam-quoc-viet-nam.vercel.app
+```
+
+Cập nhật Railway:
+
+```dotenv
+CORS_ALLOWED_ORIGINS=https://tam-quoc-viet-nam.vercel.app
+WS_ALLOWED_ORIGINS=https://tam-quoc-viet-nam.vercel.app
+```
+
+Nếu có cả domain Vercel và custom domain, phân cách bằng dấu phẩy:
+
+```dotenv
+CORS_ALLOWED_ORIGINS=https://tam-quoc-viet-nam.vercel.app,https://game.example.com
+WS_ALLOWED_ORIGINS=https://tam-quoc-viet-nam.vercel.app,https://game.example.com
+```
+
+Sau đó redeploy `http-service` và `gate-service`.
+
+## 6. PWA được tạo tự động
+
+Lệnh `npm run vercel-build` không build lại Cocos. Lệnh này lấy bản Cocos đã có trong `build/web-desktop` và tạo thêm:
+
+```text
+manifest.webmanifest
+service-worker.js
+pwa-register.js
+mobile-shell.css
+offline.html
+icons/icon-192.png
+icons/icon-512.png
+icons/icon-maskable-512.png
+icons/apple-touch-icon.png
+game-config.js
+```
+
+PWA có:
+
+- chế độ toàn màn hình;
+- hướng ngang ưu tiên;
+- cache tài nguyên đã tải;
+- trang thông báo khi mất mạng;
+- nút cài ứng dụng trên trình duyệt hỗ trợ;
+- hướng dẫn cài thủ công trên iPhone;
+- biểu tượng Android, maskable và Apple Touch Icon.
+
+`game-config.js` luôn dùng `no-store` để không giữ URL backend cũ sau khi đổi môi trường.
+
+## 7. Hỗ trợ Android và iPhone
+
+Game dùng thiết kế ngang `1280 × 720`.
+
+- Khi màn hình đủ rộng, game giữ chiều cao và mở rộng vùng nhìn ngang.
+- Khi màn hình hẹp hoặc dọc, game hiển thị toàn bộ khung thiết kế.
+- CSS dùng `env(safe-area-inset-*)` để tránh tai thỏ, Dynamic Island và Home Indicator.
+- `visualViewport` giúp cập nhật chiều cao khi Safari thu gọn thanh công cụ hoặc bàn phím ảo mở.
+- Người chơi được nhắc xoay ngang nếu mở dọc.
+
+### Cài trên iPhone/iPad
+
+1. Mở domain game bằng Safari.
+2. Nhấn **Chia sẻ**.
+3. Chọn **Thêm vào Màn hình chính**.
+4. Xác nhận tên ứng dụng.
+5. Mở game từ biểu tượng mới để chạy ở chế độ ứng dụng.
+
+### Cài trên Android
+
+1. Mở game bằng Chrome hoặc trình duyệt hỗ trợ PWA.
+2. Nhấn nút **Cài game** khi xuất hiện.
+3. Hoặc mở menu trình duyệt và chọn **Cài đặt ứng dụng**.
+
+## 8. Kiểm tra trước khi phát hành
+
+Chạy:
+
+```bash
+npm run test:pwa
+node scripts/check-typescript-syntax.mjs
+node scripts/audit-vietnamese.mjs
+```
+
+Kiểm tra thủ công:
+
+- đăng ký, đăng nhập, đăng nhập lại và đăng xuất;
+- tạo tên nhân vật tiếng Việt có dấu;
+- bản đồ, thành trì, võ tướng, đội quân, liên minh, chat và chiến báo;
+- iPhone Safari khi mở trực tiếp và khi mở từ màn hình chính;
+- Android Chrome ở chế độ trình duyệt và PWA;
+- xoay ngang/dọc;
+- thiết bị có tai thỏ hoặc Dynamic Island;
+- mất mạng và kết nối lại;
+- domain HTTPS/WSS không có lỗi CORS hoặc Origin.
+
+## 9. Khắc phục lỗi thường gặp
+
+### Không tìm thấy `build/web-desktop/index.html`
+
+Build Web Desktop bằng Cocos Creator trước khi Vercel chạy `npm run vercel-build`.
+
+### Website mở được nhưng không kết nối server
+
+Kiểm tra:
+
+- `GAME_WS_URL` có đúng `wss://`;
+- `GAME_HTTP_URL` có đúng `https://`;
+- domain Vercel đã nằm trong `CORS_ALLOWED_ORIGINS` và `WS_ALLOWED_ORIGINS`;
+- `gate-service` và `http-service` Railway đang hoạt động.
+
+### iPhone chưa cập nhật bản mới
+
+Đóng PWA hoàn toàn rồi mở lại. Nếu vẫn còn bản cũ, xoá ứng dụng khỏi màn hình chính, xoá dữ liệu website trong Safari và cài lại.
+
+### Không thấy nút cài trên iPhone
+
+Safari iPhone dùng quy trình **Chia sẻ → Thêm vào Màn hình chính**, không dùng sự kiện cài đặt giống Chrome Android.
