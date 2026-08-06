@@ -8,6 +8,7 @@ import GeneralCommand from "./general/GeneralCommand";
 import LoginCommand from "./login/LoginCommand";
 import MapCommand from "./map/MapCommand";
 import MapUICommand from "./map/ui/MapUICommand";
+import { initMobileSupport } from './mobile/MobileSupport';
 import { HttpManager } from "./network/http/HttpManager";
 import { NetEvent } from "./network/socket/NetInterface";
 import { NetManager } from "./network/socket/NetManager";
@@ -52,6 +53,7 @@ export default class Main extends Component {
 
     protected onLoad(): void {
         console.log("Khởi tạo trò chơi");
+        initMobileSupport();
         localizeNode(this.node);
 
         const audioSource = this.getComponent(AudioSource)!;
