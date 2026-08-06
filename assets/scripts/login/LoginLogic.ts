@@ -1,4 +1,4 @@
-import { _decorator, Component, EditBox, Label } from 'cc';
+import { _decorator, Component, EditBox } from 'cc';
 const { ccclass, property } = _decorator;
 
 import { LocalCache } from "../utils/LocalCache";
@@ -14,7 +14,7 @@ export default class LoginLogic extends Component {
     editName: EditBox = null;
 
     @property(EditBox)
-    editPass: Label = null;
+    editPass: EditBox = null;
 
     protected onLoad(): void {
         EventMgr.on(LogicEvent.loginComplete, this.onLoginComplete, this);
@@ -45,6 +45,18 @@ export default class LoginLogic extends Component {
             return;
         }
 
+        const usernameLength = Array.from(username).length;
+        if (usernameLength < 3 || usernameLength > 20) {
+            EventMgr.emit(LogicEvent.showToast, "Tài khoản phải có từ 3 đến 20 ký tự.");
+            return;
+        }
+
+        const passwordBytes = new TextEncoder().encode(password).length;
+        if (passwordBytes < 8 || passwordBytes > 72) {
+            EventMgr.emit(LogicEvent.showToast, "Mật khẩu phải có từ 8 đến 72 byte.");
+            return;
+        }
+
         LoginCommand.getInstance().register(username, password);
     }
 
@@ -58,6 +70,8 @@ export default class LoginLogic extends Component {
             return;
         }
 
+        // Không áp giới hạn tối thiểu khi đăng nhập để tài khoản cũ có mật khẩu
+        // ngắn vẫn vào được và được server tự nâng cấp sang bcrypt.
         LoginCommand.getInstance().accountLogin(username, password);
     }
 
