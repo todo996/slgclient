@@ -9,11 +9,16 @@ Người chơi
     │
     ▼
 Vercel — Cocos Web/PWA
-    ├── HTTPS → Railway http-service
-    └── WSS   → Railway gate-service
+    ├── HTTPS ─┐
+    └── WSS ───┤
+               ▼
+     Một Railway Service duy nhất
+               │
+               ▼
+      Supabase PostgreSQL
 ```
 
-Client không kết nối trực tiếp tới Supabase.
+Client không kết nối trực tiếp tới Supabase. HTTP API và WebSocket cùng sử dụng một domain Railway.
 
 ## 2. Build Cocos trước khi đưa lên Vercel
 
@@ -36,6 +41,8 @@ Sửa project Cocos
 → Vercel tự deploy
 ```
 
+Nếu không có máy tính, cần dùng một máy Windows/macOS trên cloud có cài Cocos Creator 3.4.0 hoặc nhờ một máy khác thực hiện lần build Cocos. GitHub/Vercel chỉ tự động hoá được sau khi có môi trường Cocos hợp lệ.
+
 ## 3. Tạo Vercel Project
 
 1. Vào Vercel và chọn **Add New → Project**.
@@ -50,11 +57,17 @@ Sửa project Cocos
 
 ## 4. Biến môi trường Vercel
 
-Thêm trong **Project Settings → Environment Variables** cho Production, Preview và Development nếu cần:
+Giả sử Railway cấp domain:
+
+```text
+https://tam-quoc-server-production.up.railway.app
+```
+
+Thêm trong **Project Settings → Environment Variables**:
 
 ```dotenv
-GAME_WS_URL=wss://domain-public-cua-gate-service
-GAME_HTTP_URL=https://domain-public-cua-http-service
+GAME_HTTP_URL=https://tam-quoc-server-production.up.railway.app
+GAME_WS_URL=wss://tam-quoc-server-production.up.railway.app
 GAME_LOCALE=vi-VN
 GAME_APP_NAME=Tam Quốc Việt Nam
 GAME_SHORT_NAME=Tam Quốc
@@ -62,15 +75,13 @@ GAME_SHORT_NAME=Tam Quốc
 
 Ba biến bắt buộc:
 
-- `GAME_WS_URL`: domain WSS của `gate-service` Railway.
-- `GAME_HTTP_URL`: domain HTTPS của `http-service` Railway.
+- `GAME_HTTP_URL`: domain HTTPS duy nhất của Railway.
+- `GAME_WS_URL`: cùng domain đó nhưng dùng `wss://`.
 - `GAME_LOCALE`: đặt `vi-VN`.
 
-Hai biến tên ứng dụng là tuỳ chọn; nếu bỏ trống sẽ dùng giá trị mặc định trong script.
+Hai biến tên ứng dụng là tuỳ chọn. Không thêm dấu `/` cuối URL và không thêm `/api` hoặc `/ws`.
 
-Không thêm dấu `/` cuối URL. Production bắt buộc dùng `wss://` và `https://`.
-
-## 5. Đồng bộ domain sang Railway
+## 5. Đồng bộ domain Vercel sang Railway
 
 Sau khi Vercel cấp domain, ví dụ:
 
@@ -78,7 +89,7 @@ Sau khi Vercel cấp domain, ví dụ:
 https://tam-quoc-viet-nam.vercel.app
 ```
 
-Cập nhật Railway:
+Cập nhật service Railway duy nhất:
 
 ```dotenv
 CORS_ALLOWED_ORIGINS=https://tam-quoc-viet-nam.vercel.app
@@ -92,7 +103,7 @@ CORS_ALLOWED_ORIGINS=https://tam-quoc-viet-nam.vercel.app,https://game.example.c
 WS_ALLOWED_ORIGINS=https://tam-quoc-viet-nam.vercel.app,https://game.example.com
 ```
 
-Sau đó redeploy `http-service` và `gate-service`.
+Sau đó Railway chỉ redeploy một service.
 
 ## 6. PWA được tạo tự động
 
@@ -173,7 +184,7 @@ Kiểm tra thủ công:
 
 ### Không tìm thấy `build/web-desktop/index.html`
 
-Build Web Desktop bằng Cocos Creator trước khi Vercel chạy `npm run vercel-build`.
+Cần build Web Desktop bằng Cocos Creator 3.4.0 trước. Vercel không thể tự thay thế Cocos Editor chỉ từ mã nguồn project.
 
 ### Website mở được nhưng không kết nối server
 
@@ -181,8 +192,9 @@ Kiểm tra:
 
 - `GAME_WS_URL` có đúng `wss://`;
 - `GAME_HTTP_URL` có đúng `https://`;
+- hai biến dùng cùng một domain Railway;
 - domain Vercel đã nằm trong `CORS_ALLOWED_ORIGINS` và `WS_ALLOWED_ORIGINS`;
-- `gate-service` và `http-service` Railway đang hoạt động.
+- `/healthz` của Railway trả đủ năm thành phần ở trạng thái `ok`.
 
 ### iPhone chưa cập nhật bản mới
 
