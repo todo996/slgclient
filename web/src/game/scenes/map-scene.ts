@@ -3,10 +3,12 @@ import Phaser from "phaser";
 const GRID_SIZE = 96;
 const GRID_COLUMNS = 30;
 const GRID_ROWS = 30;
+const MAP_READY_EVENT = "legacy-map-bootstrap-ready";
 
 export class MapScene extends Phaser.Scene {
   private dragPointerId: number | null = null;
   private lastPointerPosition = new Phaser.Math.Vector2();
+  private statusText: Phaser.GameObjects.Text | null = null;
 
   constructor() {
     super("MapScene");
@@ -16,6 +18,20 @@ export class MapScene extends Phaser.Scene {
     this.drawFoundationGrid();
     this.configureCamera();
     this.configureInput();
+
+    this.game.events.on(
+      MAP_READY_EVENT,
+      this.onMapBootstrapReady,
+      this,
+    );
+
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.game.events.off(
+        MAP_READY_EVENT,
+        this.onMapBootstrapReady,
+        this,
+      );
+    });
   }
 
   private drawFoundationGrid(): void {
@@ -25,7 +41,6 @@ export class MapScene extends Phaser.Scene {
 
     graphics.fillStyle(0x2f3b27, 1);
     graphics.fillRect(0, 0, width, height);
-
     graphics.lineStyle(1, 0xb8995e, 0.24);
 
     for (let column = 0; column <= GRID_COLUMNS; column += 1) {
@@ -38,8 +53,8 @@ export class MapScene extends Phaser.Scene {
       graphics.lineBetween(0, y, width, y);
     }
 
-    this.add
-      .text(72, 72, "Nền tảng bản đồ web\nSẵn sàng nhận dữ liệu map Cocos", {
+    this.statusText = this.add
+      .text(72, 72, "Nền tảng bản đồ web\nĐang chờ đăng nhập", {
         color: "#f1e5c8",
         fontFamily: "system-ui, sans-serif",
         fontSize: "30px",
@@ -49,6 +64,12 @@ export class MapScene extends Phaser.Scene {
       })
       .setDepth(10);
   }
+
+  private readonly onMapBootstrapReady = (): void => {
+    this.statusText?.setText(
+      "Đăng nhập thành công\nĐã nhận cấu hình map và dữ liệu nhân vật",
+    );
+  };
 
   private configureCamera(): void {
     const width = GRID_COLUMNS * GRID_SIZE;

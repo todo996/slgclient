@@ -1,7 +1,7 @@
 {
   "name": "tam-quoc-viet-nam-web",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.3.0",
   "type": "module",
   "scripts": {
     "dev": "vite --configLoader native",

@@ -1,7 +1,10 @@
 export type AppShell = Readonly<{
   gameCanvasId: string;
+  panelRoot: HTMLElement;
   setConnectionStatus: (status: string) => void;
-  setEnvironment: (httpUrl: string, wsUrl: string) => void;
+  setPhase: (phase: string) => void;
+  showWaiting: (visible: boolean) => void;
+  showToast: (message: string) => void;
 }>;
 
 function requireRoot(root: HTMLElement | null): HTMLElement {
@@ -29,6 +32,7 @@ export function createAppShell(rootElement: HTMLElement | null): AppShell {
           <div>
             <p class="top-hud__eyebrow">CLIENT WEB</p>
             <h1 class="top-hud__title">Tam Quốc Truyền Kỳ</h1>
+            <p class="top-hud__phase" data-field="phase">Đang khởi tạo</p>
           </div>
 
           <div class="connection-badge" data-field="connection">
@@ -36,34 +40,14 @@ export function createAppShell(rootElement: HTMLElement | null): AppShell {
           </div>
         </header>
 
-        <aside class="game-panel migration-panel">
-          <header class="game-panel__header">
-            <h2 class="game-panel__title">Chuyển đổi không đổi gameplay</h2>
-          </header>
-
-          <div class="game-panel__body">
-            <p class="text-box">
-              Phaser đã quản lý vùng bản đồ. Menu và khung chữ dùng HTML/CSS
-              để chuyển prefab nhanh, rõ chữ và tối ưu thao tác trên iPhone.
-            </p>
-
-            <dl class="environment-list">
-              <div>
-                <dt>HTTP</dt>
-                <dd data-field="http-url">Chưa cấu hình</dd>
-              </div>
-              <div>
-                <dt>WebSocket</dt>
-                <dd data-field="ws-url">Chưa cấu hình</dd>
-              </div>
-            </dl>
-
-            <p class="migration-panel__note">
-              Bước kế tiếp: nối NetManager/WebSock cũ và tải map thật từ
-              assets/resources.
-            </p>
-          </div>
-        </aside>
+        <div class="panel-layer" data-layer="panels"></div>
+        <div class="overlay-layer" data-layer="overlay"></div>
+        <div
+          class="toast-stack"
+          data-layer="toasts"
+          aria-live="polite"
+          aria-atomic="true"
+        ></div>
       </section>
     </main>
   `;
@@ -71,25 +55,67 @@ export function createAppShell(rootElement: HTMLElement | null): AppShell {
   const connectionElement = root.querySelector<HTMLElement>(
     '[data-field="connection"]',
   );
-  const httpElement = root.querySelector<HTMLElement>(
-    '[data-field="http-url"]',
+  const phaseElement = root.querySelector<HTMLElement>(
+    '[data-field="phase"]',
   );
-  const wsElement = root.querySelector<HTMLElement>(
-    '[data-field="ws-url"]',
+  const panelRoot = root.querySelector<HTMLElement>(
+    '[data-layer="panels"]',
+  );
+  const overlayRoot = root.querySelector<HTMLElement>(
+    '[data-layer="overlay"]',
+  );
+  const toastRoot = root.querySelector<HTMLElement>(
+    '[data-layer="toasts"]',
   );
 
-  if (!connectionElement || !httpElement || !wsElement) {
+  if (
+    !connectionElement ||
+    !phaseElement ||
+    !panelRoot ||
+    !overlayRoot ||
+    !toastRoot
+  ) {
     throw new Error("Không tạo được app shell");
   }
 
   return {
     gameCanvasId,
+    panelRoot,
     setConnectionStatus(status: string): void {
       connectionElement.textContent = status;
     },
-    setEnvironment(httpUrl: string, wsUrl: string): void {
-      httpElement.textContent = httpUrl;
-      wsElement.textContent = wsUrl;
+    setPhase(phase: string): void {
+      phaseElement.textContent = phase;
+    },
+    showWaiting(visible: boolean): void {
+      overlayRoot.replaceChildren();
+      if (!visible) return;
+
+      const waiting = document.createElement("div");
+      waiting.className = "waiting-overlay";
+      waiting.setAttribute("role", "status");
+      waiting.setAttribute("aria-label", "Đang xử lý yêu cầu");
+      waiting.innerHTML = `
+        <div class="waiting-card">
+          <span class="waiting-spinner" aria-hidden="true"></span>
+          <span>Đang xử lý...</span>
+        </div>
+      `;
+      overlayRoot.appendChild(waiting);
+    },
+    showToast(message: string): void {
+      if (!message.trim()) return;
+
+      const toast = document.createElement("button");
+      toast.type = "button";
+      toast.className = "game-toast";
+      toast.textContent = message;
+      toast.addEventListener("click", () => toast.remove(), {
+        once: true,
+      });
+      toastRoot.appendChild(toast);
+
+      window.setTimeout(() => toast.remove(), 3600);
     },
   };
 }

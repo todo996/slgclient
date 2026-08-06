@@ -23,12 +23,12 @@ function readUrl(
 export function loadRuntimeConfig(): RuntimeConfig {
   return {
     httpUrl: readUrl(
-      import.meta.env.VITE_GAME_HTTP_URL,
+      import.meta.env.VITE_GAME_HTTP_URL || __GAME_HTTP_URL__,
       "http://localhost:8088",
       ["http:", "https:"],
     ),
     wsUrl: readUrl(
-      import.meta.env.VITE_GAME_WS_URL,
+      import.meta.env.VITE_GAME_WS_URL || __GAME_WS_URL__,
       "ws://localhost:8088",
       ["ws:", "wss:"],
     ),
