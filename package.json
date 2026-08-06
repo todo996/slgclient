@@ -8,6 +8,7 @@
     "version": "3.4.0"
   },
   "scripts": {
-    "vercel-build": "node scripts/prepare-vercel.mjs"
+    "vercel-build": "node scripts/prepare-vercel.mjs",
+    "test:pwa": "node scripts/test-pwa-build.mjs"
   }
 }
