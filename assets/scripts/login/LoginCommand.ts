@@ -13,8 +13,8 @@ import { Md5 } from "../libs/crypto/md5";
 import { LogicEvent } from "../common/LogicEvent";
 
 export default class LoginCommand {
-    //单例
     protected static _instance: LoginCommand;
+
     public static getInstance(): LoginCommand {
         if (this._instance == null) {
             this._instance = new LoginCommand();
@@ -23,15 +23,14 @@ export default class LoginCommand {
     }
 
     public static destory(): boolean {
-        if (this._instance) {
-            this._instance.onDestory();
-            this._instance = null;
-            return true;
+        if (!this._instance) {
+            return false;
         }
-        return false;
+        this._instance.onDestory();
+        this._instance = null;
+        return true;
     }
 
-    //数据model
     protected _proxy: LoginProxy = new LoginProxy();
 
     constructor() {
@@ -42,247 +41,168 @@ export default class LoginCommand {
         EventMgr.on(ServerConfig.account_reLogin, this.onAccountRelogin, this);
         EventMgr.on(ServerConfig.role_create, this.onRoleCreate, this);
         EventMgr.on(ServerConfig.account_logout, this.onAccountLogout, this);
-        EventMgr.on(ServerConfig.account_robLogin, this.onAccountRobLogin, this)
-        EventMgr.on(ServerConfig.chat_login, this.onChatLogin, this)
-
+        EventMgr.on(ServerConfig.account_robLogin, this.onAccountRobLogin, this);
+        EventMgr.on(ServerConfig.chat_login, this.onChatLogin, this);
     }
 
     public onDestory(): void {
         EventMgr.targetOff(this);
     }
 
-    //抢Đăng nhập
-    private onAccountRobLogin(): void{
-        console.log("onAccountRobLogin")
+    private onAccountRobLogin(): void {
         EventMgr.emit(LogicEvent.robLoginUI);
     }
 
-    /**Đăng ký回调*/
-    private onRegister(data: any, otherData: any): void {
-        console.log("LoginProxy register:", data, otherData);
-        if (data.code == 0) {
+    private onRegister(data: any, otherData: { username: string; password: string }): void {
+        if (data.code === 0) {
+            this.rememberUsername(otherData.username);
             this.accountLogin(otherData.username, otherData.password);
-            LocalCache.setLoginValidation(otherData);
         }
     }
 
-    /**Đăng nhập回调*/
-    private onAccountLogin(data: any, otherData:any): void {
-        console.log("LoginProxy  login:", data , otherData);
-        if (data.code == 0) {
-            // this._proxy.loginData = data.msg;
-            this._proxy.saveLoginData(data.msg);
-            LocalCache.setLoginValidation(otherData);
-
-
-            this.role_enterServer(this._proxy.getSession());
-            EventMgr.emit(LogicEvent.loginComplete, data.code);
+    private onAccountLogin(data: any, otherData: { username: string }): void {
+        if (data.code !== 0) {
+            return;
         }
 
+        this._proxy.saveLoginData(data.msg);
+        this.rememberUsername(otherData.username);
+        this.role_enterServer(this._proxy.getSession());
+        EventMgr.emit(LogicEvent.loginComplete, data.code);
     }
 
-    /**Vào服务器回调*/
-    private onEnterServer(data: any,isLoadMap:boolean): void {
-        console.log("LoginProxy  enter:", data,isLoadMap);
-        //没有Tạo打开Tạo
-        if (data.code == 9) {
+    private onEnterServer(data: any, isLoadMap: boolean): void {
+        if (data.code === 9) {
             EventMgr.emit(LogicEvent.createRole);
             DateUtil.setServerTime(data.msg.time);
-        } else {
-            if(data.code == 0){
-                this._proxy.saveEnterData(data.msg);
-                DateUtil.setServerTime(data.msg.time);
-
-                // var roleData = this._proxy.getRoleData();
-                // this.chatLogin(roleData.rid, data.msg.token, roleData.nickName);
-
-                 //Vào game
-                if(isLoadMap == true){
-                    console.log("enterServerComplete");
-                    MapCommand.getInstance().enterMap();
-                    EventMgr.emit(LogicEvent.enterServerComplete);
-                }else{
-                    EventMgr.emit(NetEvent.ServerHandShake);
-                }
-
-            }
+            return;
         }
-    }
 
-    /**重连回调*/
-    private onServerConneted(): void {
-        //重新连接成功 重新Đăng nhập
-        var loginData = this._proxy.getLoginData();
-        var roleData = this._proxy.getRoleData();
-        console.log("LoginProxy  conneted:", loginData,roleData);
+        if (data.code !== 0) {
+            return;
+        }
 
-        if (loginData) {
-            this.account_reLogin(loginData.session);
-        }else{
+        this._proxy.saveEnterData(data.msg);
+        DateUtil.setServerTime(data.msg.time);
+
+        if (isLoadMap) {
+            MapCommand.getInstance().enterMap();
+            EventMgr.emit(LogicEvent.enterServerComplete);
+        } else {
             EventMgr.emit(NetEvent.ServerHandShake);
         }
     }
 
-    /**重新Đăng nhập回调回调*/
-    private onAccountRelogin(data: any): void {
-        //断线重新Đăng nhập
-        console.log("LoginProxy  relogin:", data);
-        if(data.code == 0){
-            // EventMgr.emit(NetEvent.ServerHandShake);
-            this.role_enterServer(this._proxy.getSession(),false);
+    private onServerConneted(): void {
+        const loginData = this._proxy.getLoginData();
+        if (loginData) {
+            this.account_reLogin(loginData.session);
+        } else {
+            EventMgr.emit(NetEvent.ServerHandShake);
         }
     }
 
-    /**Tạo nhân vật回调*/
+    private onAccountRelogin(data: any): void {
+        if (data.code === 0) {
+            this.role_enterServer(this._proxy.getSession(), false);
+        }
+    }
+
     private onRoleCreate(data: any): void {
-        //重换成功再次调用
-        if (data.code == 0) {
+        if (data.code === 0) {
             this.role_enterServer(this._proxy.getSession());
         }
     }
 
-
-
-    /**登出回调*/
     private onAccountLogout(data: any): void {
-        //重换成功再次调用
-        if (data.code == 0) {
+        if (data.code === 0) {
             this._proxy.clear();
             EventMgr.emit(LogicEvent.enterLogin);
         }
     }
 
+    private onChatLogin(_data: any): void {
+        // Kết nối chat dùng chung gateway; không ghi token hoặc dữ liệu nhạy cảm ra console.
+    }
 
-
-
-    //Trò chuyệnĐăng nhập
-    private onChatLogin(data: any): void{
-        console.log("onChatLogin:",data);
+    private rememberUsername(username: string): void {
+        LocalCache.setLoginValidation({ username });
     }
 
     public get proxy(): LoginProxy {
         return this._proxy;
     }
 
-    /**
-     * register
-     * @param data
-     */
-    public register(name: string, password: string) {
+    public register(name: string, password: string): void {
+        const passwordValue = Md5.encrypt(password);
+        const params = new URLSearchParams({
+            username: name,
+            password: passwordValue,
+            hardware: Tools.getUUID(),
+        }).toString();
 
-        var pwd =  Md5.encrypt(password);
-        var params = "username=" + name
-            + "&password=" + pwd
-            + "&hardware=" + Tools.getUUID();
-
-        console.log("register:", params);
-        var otherData = { username: name, password: password };
-        HttpManager.getInstance().doGet(HttpConfig.register.name, HttpConfig.register.url, params, otherData);
+        const otherData = { username: name, password };
+        HttpManager.getInstance().doPost(
+            HttpConfig.register.name,
+            HttpConfig.register.url,
+            params,
+            otherData,
+        );
     }
 
-    /**
-     * login
-     * @param data
-     */
-    public accountLogin(name: string, password: string) {
-
-        var api_name = ServerConfig.account_login;
-        var pwd =  Md5.encrypt(password);
-
-        var send_data = {
-            name: api_name,
+    public accountLogin(name: string, password: string): void {
+        const sendData = {
+            name: ServerConfig.account_login,
             msg: {
                 username: name,
-                password: pwd,
-                hardware: Tools.getUUID()
-            }
+                password: Md5.encrypt(password),
+                hardware: Tools.getUUID(),
+            },
         };
-
-        console.log("accountLogin:", send_data);
-        var otherData = { username: name, password: password };
-        NetManager.getInstance().send(send_data,otherData);
+        NetManager.getInstance().send(sendData, { username: name });
     }
 
-
-    /**
-     * create
-     * @param uid
-     * @param nickName
-     * @param sex
-     * @param sid
-     * @param headId
-     */
-    public role_create(uid: string, nickName: string, sex: number = 0, sid: number = 0, headId: number = 0) {
-        var api_name = ServerConfig.role_create;
-        var send_data = {
-            name: api_name,
-            msg: {
-                uid: uid,
-                nickName: nickName,
-                sex: sex,
-                sid: sid,
-                headId: headId
-            }
-        };
-        NetManager.getInstance().send(send_data);
+    public role_create(
+        uid: string,
+        nickName: string,
+        sex: number = 0,
+        sid: number = 0,
+        headId: number = 0,
+    ): void {
+        NetManager.getInstance().send({
+            name: ServerConfig.role_create,
+            msg: { uid, nickName, sex, sid, headId },
+        });
     }
 
-
-    public role_enterServer(session: string,isLoadMap:boolean = true) {
-        var api_name = ServerConfig.role_enterServer;
-        var send_data = {
-            name: api_name,
-            msg: {
-                session: session,
-            }
-        };
-        NetManager.getInstance().send(send_data,isLoadMap);
+    public role_enterServer(session: string, isLoadMap: boolean = true): void {
+        NetManager.getInstance().send({
+            name: ServerConfig.role_enterServer,
+            msg: { session },
+        }, isLoadMap);
     }
 
-    /**
-     * 重新Đăng nhập
-     * @param session
-     */
-    public account_reLogin(session: string) {
-        var api_name = ServerConfig.account_reLogin;
-        var send_data = {
-            name: api_name,
+    public account_reLogin(session: string): void {
+        NetManager.getInstance().send({
+            name: ServerConfig.account_reLogin,
             msg: {
-                session: session,
-                hardware: Tools.getUUID()
-            }
-        };
-        NetManager.getInstance().send(send_data);
+                session,
+                hardware: Tools.getUUID(),
+            },
+        });
     }
 
-
-    /**
-     * logout
-     */
-    public account_logout():void{
-        var api_name = ServerConfig.account_logout;
-        var send_data = {
-            name: api_name,
-            msg: {
-
-            }
-        };
-        NetManager.getInstance().send(send_data);
+    public account_logout(): void {
+        NetManager.getInstance().send({
+            name: ServerConfig.account_logout,
+            msg: {},
+        });
     }
 
-
-    public chatLogin(rid:number, token: string, nick_name:string = ''):void{
-        var api_name = ServerConfig.chat_login;
-        var send_data = {
-            name: api_name,
-            msg: {
-                rid:rid,
-                token:token,
-                nickName:nick_name
-            }
-        };
-
-        console.log("send_data:", send_data);
-        NetManager.getInstance().send(send_data);
+    public chatLogin(rid: number, token: string, nickName: string = ""): void {
+        NetManager.getInstance().send({
+            name: ServerConfig.chat_login,
+            msg: { rid, token, nickName },
+        });
     }
 }
