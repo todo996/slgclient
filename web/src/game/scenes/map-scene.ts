@@ -4,6 +4,7 @@ import { MapCoordinate } from "../map/map-coordinate";
 import { MapInputController } from "../map/map-input-controller";
 import { MapResourceCatalog } from "../map/map-resource-catalog";
 import { MapResourceLayer } from "../map/map-resource-layer";
+import { MapEntityStore } from "../../legacy/map/map-entity-store";
 import { MapScanController } from "../../legacy/map/map-scan-controller";
 import { NetManager } from "../../legacy/network/socket/net-manager";
 import type { MapBootstrapSnapshot } from "../../legacy/map/map-bootstrap-command";
@@ -37,6 +38,7 @@ export class MapScene extends Phaser.Scene {
   private coordinate: MapCoordinate | null = null;
   private resourceLayer: MapResourceLayer | null = null;
   private scanController: MapScanController | null = null;
+  private entityStore: MapEntityStore | null = null;
   private mapBootstrapReady = false;
   private lastCenterCellId = -1;
 
@@ -124,6 +126,7 @@ export class MapScene extends Phaser.Scene {
       throw new Error("mapRes_0 không cùng kích thước với map TMX");
     }
 
+    this.entityStore = new MapEntityStore(this.map.width);
     this.resourceLayer = new MapResourceLayer(
       this,
       this.coordinate,
@@ -212,8 +215,9 @@ export class MapScene extends Phaser.Scene {
   };
 
   private readonly onMapBootstrapReady = (
-    _snapshot?: MapBootstrapSnapshot,
+    snapshot?: MapBootstrapSnapshot,
   ): void => {
+    if (snapshot) this.entityStore?.seedRoleProperty(snapshot.roleProperty);
     this.mapBootstrapReady = true;
     this.lastCenterCellId = -1;
     this.syncMapCenter();
@@ -223,8 +227,10 @@ export class MapScene extends Phaser.Scene {
     this.game.events.off(MAP_READY_EVENT, this.onMapBootstrapReady, this);
     this.resourceLayer?.destroy();
     this.scanController?.destroy();
+    this.entityStore?.destroy();
     this.resourceLayer = null;
     this.scanController = null;
+    this.entityStore = null;
     this.marker = null;
     this.groundLayer = null;
     this.map = null;

@@ -9,6 +9,7 @@ export const MAP_SCAN_CACHE_MS = 10_000;
 export const MapRuntimeEvent = {
   visibleAreasChanged: "map_visible_areas_changed",
   scanBlockUpdated: "map_scan_block_updated",
+  entitiesChanged: "map_entities_changed",
 } as const;
 
 type SendRequest = (
