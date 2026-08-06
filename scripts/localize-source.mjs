@@ -31,6 +31,16 @@ const entries = [...translations.entries()]
 let changedFiles = 0;
 let replacementCount = 0;
 
+function cleanTrailingWhitespace(content) {
+  const hasFinalNewline = content.endsWith('\n');
+  const lines = content.split(/\r?\n/).map(line => line.replace(/[ \t]+$/g, ''));
+  let cleaned = lines.join('\n');
+  if (hasFinalNewline && !cleaned.endsWith('\n')) {
+    cleaned += '\n';
+  }
+  return cleaned;
+}
+
 async function walk(directory) {
   const items = await readdir(directory, { withFileTypes: true });
   for (const item of items) {
@@ -57,6 +67,8 @@ async function walk(directory) {
       replacementCount += parts.length - 1;
       localized = parts.join(target);
     }
+
+    localized = cleanTrailingWhitespace(localized);
 
     if (localized !== original) {
       await writeFile(fullPath, localized, 'utf8');
