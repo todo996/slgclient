@@ -1,0 +1,36 @@
+name: Kiểm tra client và Việt hoá
+
+on:
+  push:
+    branches:
+      - main
+      - 'agent/**'
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Lấy mã nguồn
+        uses: actions/checkout@v4
+
+      - name: Cài Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+
+      - name: Kiểm tra cấu hình Vercel
+        run: node --check scripts/prepare-vercel.mjs
+
+      - name: Quét chuỗi chưa Việt hoá
+        run: node scripts/audit-vietnamese.mjs
+
+      - name: Lưu báo cáo Việt hoá
+        uses: actions/upload-artifact@v4
+        with:
+          name: vietnamese-audit
+          path: artifacts/vietnamese-audit.json
+          retention-days: 7
