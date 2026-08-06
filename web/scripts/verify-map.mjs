@@ -33,6 +33,9 @@ for (const [name, visible] of requiredLayers) {
   assert.ok(layer, `Thiếu layer ${name}`);
   assert.equal(layer.visible, visible, `Sai visible của layer ${name}`);
   assert.equal(layer.data.length, 40_000, `Sai số tile của layer ${name}`);
+  if (name === "base") {
+    assert.equal(layer.data.filter((gid) => gid === 0).length, 0, "Layer base có tile trống");
+  }
 }
 
 assert.deepEqual(

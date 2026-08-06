@@ -25,6 +25,7 @@ import { UIManager } from "../ui/ui-manager";
 import { MapHud } from "../ui/map-hud";
 import { MapUiCommand } from "../legacy/map/map-ui-command";
 import { loadRuntimeConfig } from "./runtime-config";
+import { respondToDemoRequest, seedDemoClientData } from "../demo/demo-mode";
 
 type ServerResponse = {
   code?: number;
@@ -55,23 +56,43 @@ export class Bootstrap {
     MapBootstrapCommand.getInstance();
     MapUiCommand.getInstance();
 
-    HttpManager.getInstance().setWebUrl(
-      runtimeConfig.httpUrl,
-    );
-
-    this.enterLogin();
-
-    NetManager.getInstance().connect({
-      url: runtimeConfig.wsUrl,
-      autoReconnect: 3,
-      type: NetNodeType.BaseServer,
-    });
+    if (runtimeConfig.demoMode) {
+      NetManager.getInstance().enableDemoMode(respondToDemoRequest);
+      void this.startDemoMode();
+    } else {
+      HttpManager.getInstance().setWebUrl(runtimeConfig.httpUrl);
+      this.enterLogin();
+      NetManager.getInstance().connect({
+        url: runtimeConfig.wsUrl,
+        autoReconnect: 3,
+        type: NetNodeType.BaseServer,
+      });
+    }
 
     window.addEventListener(
       "beforeunload",
       this.destroy,
       { once: true },
     );
+  }
+
+  private async startDemoMode(): Promise<void> {
+    this.shell.setConnectionStatus("Demo ngoại tuyến");
+    this.shell.setPhase("Đang chuẩn bị bản đồ demo");
+    this.shell.showWaiting(true);
+
+    try {
+      const mapReady = new Promise<void>((resolve) => {
+        this.gameRuntime?.game.events.once("web-map-scene-ready", resolve);
+      });
+      const [snapshot] = await Promise.all([seedDemoClientData(), mapReady]);
+      this.onEnterMap(snapshot);
+      this.shell.showToast("Đang chạy chế độ demo ngoại tuyến. Không cần tài khoản hoặc backend.");
+    } catch (error) {
+      this.shell.showWaiting(false);
+      this.shell.setPhase("Không thể mở bản đồ demo");
+      this.shell.showToast(error instanceof Error ? error.message : "Không thể khởi tạo demo");
+    }
   }
 
   private registerEvents(): void {

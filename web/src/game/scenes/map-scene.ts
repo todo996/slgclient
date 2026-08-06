@@ -103,6 +103,7 @@ export class MapScene extends Phaser.Scene {
     this.game.events.on(MAP_READY_EVENT, this.onMapBootstrapReady, this);
     EventMgr.on(LogicEvent.scrollToMap, this.scrollToCell, this);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.shutdown, this);
+    this.game.events.emit("web-map-scene-ready");
   }
 
   update(): void {
@@ -122,8 +123,14 @@ export class MapScene extends Phaser.Scene {
       const layer = map.createLayer(layerName, tilesets, 0, 0);
       if (!layer) throw new Error(`Không tạo được layer ${layerName}`);
       layer.setDepth(index);
-      layer.setCullPadding(4, 8);
-      if (layerName === "base") this.groundLayer = layer;
+      if (layerName === "base") {
+        // Phaser culling có thể bỏ nhầm tile isometric ở mức zoom mobile.
+        // Layer nền chỉ có 40.000 tile và được giữ nguyên để không tạo lỗ đen.
+        layer.setCullPadding(map.width, map.height);
+        this.groundLayer = layer;
+      } else {
+        layer.setCullPadding(24, 24);
+      }
     }
 
     this.map = map;

@@ -1,6 +1,7 @@
 export type RuntimeConfig = Readonly<{
   httpUrl: string;
   wsUrl: string;
+  demoMode: boolean;
 }>;
 
 function readUrl(
@@ -20,6 +21,18 @@ function readUrl(
   return parsed.toString().replace(/\/$/, "");
 }
 
+function readBoolean(value: string | undefined, fallback: boolean): boolean {
+  if (value === undefined || value.trim() === "") return fallback;
+  return ["1", "true", "yes", "on"].includes(value.trim().toLowerCase());
+}
+
+function readDemoMode(): boolean {
+  const query = typeof window === "undefined"
+    ? null
+    : new URLSearchParams(window.location.search).get("demo");
+  return readBoolean(query ?? import.meta.env.VITE_DEMO_MODE, true);
+}
+
 export function loadRuntimeConfig(): RuntimeConfig {
   return {
     httpUrl: readUrl(
@@ -32,5 +45,6 @@ export function loadRuntimeConfig(): RuntimeConfig {
       "ws://localhost:8088",
       ["ws:", "wss:"],
     ),
+    demoMode: readDemoMode(),
   };
 }
