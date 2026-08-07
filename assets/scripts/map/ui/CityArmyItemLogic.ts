@@ -69,82 +69,82 @@ export default class CityArmyItemLogic extends Component {
     protected onClickItem(): void {
         AudioManager.instance.playClick();
         if (this.maskNode.active == false) {
-            if (this._isOut) {
-                if (this._data) {
+            if(this._isOut){
+                if(this._data){
                     EventMgr.emit(LogicEvent.openArmySetting, this._cityId, this._data.order);
                 }
-            } else {
+            }else{
                 EventMgr.emit(LogicEvent.openArmySetting, this._cityId, this.order);
             }
         }
     }
 
     protected updateItem(): void {
-        if (this._isOpened == false) {
-            return;
+
+        if(this._isOpened == false){
+            return
         }
 
         if (this._data && this._data.generals[0] != 0) {
             this.tipNode.active = false;
             this.infoNode.active = true;
-            const generals: GeneralData[] = ArmyCommand.getInstance().getArmyGenerals(this._data);
-            const firstGeneralCfg: GeneralConfig = GeneralCommand.getInstance().proxy.getGeneralCfg(generals[0].cfgId);
-            const curSoldierCnt: number = ArmyCommand.getInstance().getArmyCurSoldierCnt(this._data);
-            const totalSoldierCnt: number = ArmyCommand.getInstance().getArmyTotalSoldierCntByGenerals(generals);
-
+            let generals: GeneralData[] = ArmyCommand.getInstance().getArmyGenerals(this._data);
+            let firstGeneralCfg: GeneralConfig = GeneralCommand.getInstance().proxy.getGeneralCfg(generals[0].cfgId);
+            let curSoldierCnt: number = ArmyCommand.getInstance().getArmyCurSoldierCnt(this._data);
+            let totalSoldierCnt: number = ArmyCommand.getInstance().getArmyTotalSoldierCntByGenerals(generals);
             if (this._data.cmd == ArmyCmd.Reclaim) {
                 this.labelState.string = "Đang đồn điền...";
-            } else if (this._data.cmd == ArmyCmd.Conscript) {
+            } else if(this._data.cmd == ArmyCmd.Conscript){
                 this.labelState.string = "Đang chiêu mộ...";
             } else if (this._data.cmd > 0) {
                 this.labelState.string = "Đội quân đang làm nhiệm vụ...";
             } else {
                 this.labelState.string = "";
             }
-
-            this.labelId.string = `${this.order}`;
+            this.labelId.string = this.order + "";
             this.headIcon.getComponent(GeneralHeadLogic).setHeadId(generals[0].cfgId);
-            this.labelLv.string = `${generals[0].level}`;
+            this.labelLv.string = generals[0].level + "";
             this.labelName.string = firstGeneralCfg.name;
-            this.labelSoldierCnt.string = `${curSoldierCnt}/${totalSoldierCnt}`;
+            this.labelSoldierCnt.string = curSoldierCnt + "/" + totalSoldierCnt;
 
             if (generals[1]) {
-                const secondGeneralCfg: GeneralConfig = GeneralCommand.getInstance().proxy.getGeneralCfg(generals[1].cfgId);
-                this.labelVice1.string = secondGeneralCfg.name;
+                let sencondGeneralCfg: GeneralConfig = GeneralCommand.getInstance().proxy.getGeneralCfg(generals[1].cfgId);
+                this.labelVice1.string = sencondGeneralCfg.name;
             } else {
                 this.labelVice1.string = "Không";
             }
 
             if (generals[2]) {
-                const thirdGeneralCfg: GeneralConfig = GeneralCommand.getInstance().proxy.getGeneralCfg(generals[2].cfgId);
+                let thirdGeneralCfg: GeneralConfig = GeneralCommand.getInstance().proxy.getGeneralCfg(generals[2].cfgId);
                 this.labelVice2.string = thirdGeneralCfg.name;
             } else {
                 this.labelVice2.string = "Không";
             }
-        } else if (this._isOut) {
-            this.tipNode.active = true;
-            this.infoNode.active = false;
-            this.labelTip.string = "Chưa có đội quân";
         } else {
-            this.tipNode.active = true;
-            this.infoNode.active = false;
-            this.labelTip.string = "Nhấn để biên chế đội quân";
+            if(this._isOut){
+                this.tipNode.active = true;
+                this.infoNode.active = false;
+                this.labelTip.string = "Chưa có đội quân";
+            }else{
+                this.tipNode.active = true;
+                this.infoNode.active = false;
+                this.labelTip.string = "Nhấn để biên chế đội quân";
+            }
         }
     }
 
-    public isOpenedArmy(isOpened: boolean, isOut: boolean): void {
-        this._isOpened = isOpened;
+    public isOpenedArmy(bool: boolean, isOut: boolean): void {
+        this._isOpened = bool;
         this.infoNode.active = false;
         this.maskNode.active = !this._isOpened;
         this.tipNode.active = !this._isOpened;
         this._isOut = isOut;
-
-        if (!this._isOpened) {
-            if (this._isOut) {
-                this.labelTip.string = `Mở khóa đội hình ở cấp ${this.order}`;
-            } else {
-                const facilityName: string = MapUICommand.getInstance().proxy.getFacilityCfgByType(13).name;
-                this.labelTip.string = `${facilityName} cấp ${this.order} để mở khóa`;
+        if (this._isOpened == false) {
+            if (this._isOut){
+                this.labelTip.string = "Mở khóa đội hình ở cấp " + this.order;
+            }else{
+                let desName: string = MapUICommand.getInstance().proxy.getFacilityCfgByType(13).name;
+                this.labelTip.string = desName + " cấp " + this.order + " để mở khóa";
             }
         }
     }
