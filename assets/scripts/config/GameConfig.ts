@@ -1,4 +1,4 @@
-/** Cấu hình kết nối giữa Cocos Client và backend Railway. */
+/** Cấu hình kết nối giữa Cocos Client và backend. */
 
 type RuntimeGameConfig = {
     serverUrl?: string;
@@ -19,12 +19,25 @@ const runtimeConfig: RuntimeGameConfig =
 
 const trimTrailingSlash = (value: string): string => value.replace(/\/+$/, '');
 
-const GameConfig = {
-    /** WebSocket public của gate-service trên Railway. */
-    serverUrl: trimTrailingSlash(runtimeConfig.serverUrl || 'ws://127.0.0.1:8004'),
+const isLocalWeb =
+    typeof window === 'undefined'
+    || window.location.hostname === 'localhost'
+    || window.location.hostname === '127.0.0.1';
 
-    /** HTTPS public của http-service trên Railway. */
-    webUrl: trimTrailingSlash(runtimeConfig.webUrl || 'http://127.0.0.1:8088'),
+const defaultServerUrl = isLocalWeb
+    ? 'ws://127.0.0.1:8004'
+    : 'wss://slgserver-production.up.railway.app';
+
+const defaultWebUrl = isLocalWeb
+    ? 'http://127.0.0.1:8088'
+    : 'https://slgserver-production.up.railway.app';
+
+const GameConfig = {
+    /** WebSocket: localhost khi phát triển, Railway khi chạy trên web production. */
+    serverUrl: trimTrailingSlash(runtimeConfig.serverUrl || defaultServerUrl),
+
+    /** HTTP API: localhost khi phát triển, Railway khi chạy trên web production. */
+    webUrl: trimTrailingSlash(runtimeConfig.webUrl || defaultWebUrl),
 
     /** Ngôn ngữ mặc định của bản Việt hoá. */
     locale: runtimeConfig.locale || 'vi-VN',
