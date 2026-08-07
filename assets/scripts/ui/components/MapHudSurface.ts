@@ -1,0 +1,202 @@
+import {
+    Button,
+    Color,
+    Graphics,
+    Label,
+    Node,
+    UITransform,
+} from 'cc';
+import { GameTheme } from '../theme/GameTheme';
+import { ensureChild, ensureTransform } from './GameSurface';
+
+const HUD_SURFACE = '__ModernHudSurface';
+const PANEL_SURFACE = '__ModernPanelSurface';
+
+function drawSurface(
+    parent: Node,
+    name: string,
+    width: number,
+    height: number,
+    radius: number,
+    fill: Color,
+    stroke: Color,
+): void {
+    if (width <= 0 || height <= 0) {
+        return;
+    }
+
+    const surface = ensureChild(parent, name);
+    surface.setPosition(0, 0, 0);
+    surface.setSiblingIndex(0);
+    ensureTransform(surface, width, height);
+
+    const graphics = surface.getComponent(Graphics) || surface.addComponent(Graphics);
+    graphics.clear();
+    const halfW = width / 2;
+    const halfH = height / 2;
+
+    graphics.fillColor = new Color(0, 0, 0, 105);
+    graphics.roundRect(-halfW - 3, -halfH - 3, width + 6, height + 6, radius + 2);
+    graphics.fill();
+
+    graphics.fillColor = fill;
+    graphics.roundRect(-halfW, -halfH, width, height, radius);
+    graphics.fill();
+
+    graphics.strokeColor = stroke;
+    graphics.lineWidth = 2;
+    graphics.roundRect(-halfW, -halfH, width, height, radius);
+    graphics.stroke();
+
+    graphics.strokeColor = new Color(245, 210, 137, 80);
+    graphics.lineWidth = 1;
+    graphics.roundRect(-halfW + 5, -halfH + 5, width - 10, height - 10, Math.max(3, radius - 4));
+    graphics.stroke();
+}
+
+function styleLabels(root: Node): void {
+    for (const label of root.getComponentsInChildren(Label)) {
+        label.useSystemFont = true;
+        label.fontFamily = label.fontSize >= GameTheme.typography.titleMinSize
+            ? GameTheme.typography.titleFont
+            : GameTheme.typography.bodyFont;
+        label.enableWrapText = false;
+        label.overflow = Label.Overflow.SHRINK;
+
+        const neutral = Math.abs(label.color.r - label.color.g) < 38
+            && Math.abs(label.color.g - label.color.b) < 38;
+        if (label.fontSize >= GameTheme.typography.titleMinSize) {
+            label.color = GameTheme.colors.gold300;
+        } else if (neutral && label.color.a > 0) {
+            label.color = GameTheme.colors.ivory;
+        }
+    }
+}
+
+function styleButtons(root: Node): void {
+    for (const button of root.getComponentsInChildren(Button)) {
+        button.transition = Button.Transition.SCALE;
+        button.zoomScale = 0.96;
+        button.duration = GameTheme.motion.fast;
+
+        const transform = button.node.getComponent(UITransform);
+        if (transform) {
+            const size = transform.contentSize;
+            const width = Math.max(size.width, 44);
+            const height = Math.max(size.height, 44);
+            if (width !== size.width || height !== size.height) {
+                transform.setContentSize(width, height);
+            }
+        }
+    }
+}
+
+function findPanelCandidate(root: Node): Node | null {
+    let best: Node | null = null;
+    let bestArea = 0;
+
+    const visit = (node: Node, depth: number): void => {
+        const transform = node.getComponent(UITransform);
+        if (transform) {
+            const { width, height } = transform.contentSize;
+            const isPopupSize = width >= 280 && width <= 1000 && height >= 180 && height <= 760;
+            const area = width * height;
+            if (isPopupSize && area > bestArea) {
+                best = node;
+                bestArea = area;
+            }
+        }
+        if (depth >= 3) {
+            return;
+        }
+        for (const child of node.children) {
+            visit(child, depth + 1);
+        }
+    };
+
+    visit(root, 0);
+    return best;
+}
+
+/**
+ * Chuẩn hoá HUD trên bản đồ mà không thay sprite bản đồ, camera hoặc handler.
+ * Chỉ thêm nền bán trong suốt vào các cụm UI có kích thước hợp lý.
+ */
+export function styleModernHudCluster(root: Node | null): void {
+    if (!root) {
+        return;
+    }
+
+    styleLabels(root);
+    styleButtons(root);
+
+    const transform = root.getComponent(UITransform);
+    if (!transform) {
+        return;
+    }
+    const { width, height } = transform.contentSize;
+    if (width < 80 || height < 36 || width > 1100 || height > 260) {
+        return;
+    }
+
+    drawSurface(
+        root,
+        HUD_SURFACE,
+        width,
+        height,
+        Math.min(14, height * 0.18),
+        new Color(18, 16, 14, 220),
+        new Color(151, 108, 52, 210),
+    );
+}
+
+/** Tạo khung popup thành kiểu mực tối - đồng - vàng, giữ nguyên dữ liệu và ảnh tướng. */
+export function styleModernCityPanel(root: Node): void {
+    styleLabels(root);
+    styleButtons(root);
+
+    const panel = findPanelCandidate(root);
+    if (!panel) {
+        return;
+    }
+
+    const transform = panel.getComponent(UITransform);
+    if (!transform) {
+        return;
+    }
+    const { width, height } = transform.contentSize;
+    drawSurface(
+        panel,
+        PANEL_SURFACE,
+        width,
+        height,
+        GameTheme.radius.large,
+        new Color(23, 19, 16, 246),
+        GameTheme.colors.bronze500,
+    );
+}
+
+/** Bề mặt thẻ đội quân; không can thiệp GeneralHead/SpriteFrame và dữ liệu đội hình. */
+export function styleModernArmyCard(root: Node): void {
+    styleLabels(root);
+    styleButtons(root);
+
+    const transform = root.getComponent(UITransform);
+    if (!transform) {
+        return;
+    }
+    const { width, height } = transform.contentSize;
+    if (width < 120 || height < 48 || width > 1000 || height > 240) {
+        return;
+    }
+
+    drawSurface(
+        root,
+        HUD_SURFACE,
+        width,
+        height,
+        Math.min(GameTheme.radius.medium, height * 0.12),
+        new Color(28, 24, 20, 228),
+        new Color(119, 82, 41, 205),
+    );
+}
