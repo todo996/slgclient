@@ -1,6 +1,7 @@
 import { _decorator, Component, Node } from 'cc';
 import { localizeNode } from '../i18n/I18n';
 import { styleModernCityPanel, styleModernMapScene } from './components/MapHudSurface';
+import { styleRightSelectorTree } from './screens/RightSelectorPresenter';
 
 const { ccclass } = _decorator;
 
@@ -16,6 +17,7 @@ export default class ModernUIRuntime extends Component {
     protected onLoad(): void {
         this.markSubtree(this.node);
         styleModernMapScene(this.node);
+        styleRightSelectorTree(this.node);
         this.schedule(this.scanForNewUi, 0.2);
     }
 
@@ -42,6 +44,7 @@ export default class ModernUIRuntime extends Component {
                 localizeNode(child);
                 styleModernCityPanel(child);
                 styleModernMapScene(child);
+                styleRightSelectorTree(child);
                 this.markSubtree(child);
                 continue;
             }
