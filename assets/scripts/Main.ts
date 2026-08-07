@@ -14,13 +14,14 @@ import { NetEvent } from "./network/socket/NetInterface";
 import { NetManager } from "./network/socket/NetManager";
 import { NetNodeType } from "./network/socket/NetNode";
 import SkillCommand from "./skill/SkillCommand";
+import ModernUIRuntime from './ui/ModernUIRuntime';
+import { styleModernMapScene } from './ui/components/MapHudSurface';
 import Toast from "./utils/Toast";
 import { Tools } from "./utils/Tools";
 import { EventMgr } from './utils/EventMgr';
 import { AudioManager } from './common/AudioManager';
 import { LogicEvent } from './common/LogicEvent';
 import { localizeData, localizeNode, translateText } from './i18n/I18n';
-import { styleModernMapScene } from './ui/components/MapHudSurface';
 
 @ccclass('Main')
 export default class Main extends Component {
@@ -170,6 +171,9 @@ export default class Main extends Component {
                 this._mapUIScene.parent = this.node;
                 localizeNode(this._mapUIScene);
                 styleModernMapScene(this._mapUIScene);
+                if (!this._mapUIScene.getComponent(ModernUIRuntime)) {
+                    this._mapUIScene.addComponent(ModernUIRuntime);
+                }
 
                 this.addLoadingNode();
             },
