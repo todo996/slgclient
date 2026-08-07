@@ -3,6 +3,8 @@ const { ccclass, property } = _decorator;
 
 import ArmyCommand from "../../general/ArmyCommand";
 import { ArmyData } from "../../general/ArmyProxy";
+import { localizeNode } from "../../i18n/I18n";
+import { styleModernArmyCard, styleModernCityPanel } from "../../ui/components/MapHudSurface";
 import { MapCityData } from "../MapCityProxy";
 import CityArmyItemLogic from "./CityArmyItemLogic";
 import MapUICommand from "./MapUICommand";
@@ -18,11 +20,13 @@ export default class CityAboutLogic extends Component {
     @property(Prefab)
     armyItem: Prefab = null;
 
-    protected _armyCnt: number = 5;//Đội hìnhSố lượng 固定值
+    protected _armyCnt: number = 5;
     protected _cityData: MapCityData = null;
     protected _armyComps: CityArmyItemLogic[] = [];
 
     protected onEnable(): void {
+        localizeNode(this.node);
+        styleModernCityPanel(this.node);
         this.initView();
         EventMgr.on(LogicEvent.updateCityAddition, this.onUpdateCityAdditon, this);
     }
@@ -36,29 +40,32 @@ export default class CityAboutLogic extends Component {
         this._armyComps = [];
 
         for (let i: number = 0; i < this._armyCnt; i++) {
-            let item = instantiate(this.armyItem);
+            const item = instantiate(this.armyItem);
             item.parent = this.armyLayer;
-            let comp: CityArmyItemLogic = item.getComponent(CityArmyItemLogic);
+            styleModernArmyCard(item);
+            const comp: CityArmyItemLogic = item.getComponent(CityArmyItemLogic);
             comp.order = i + 1;
             this._armyComps.push(comp);
         }
     }
 
     protected onUpdateCityAdditon(cityId: number): void {
-        if (this._cityData.cityId == cityId) {
+        if (this._cityData && this._cityData.cityId == cityId) {
             this.updateArmyList();
         }
     }
 
     protected updateArmyList(): void {
-        let additon: CityAddition = MapUICommand.getInstance().proxy.getMyCityAddition(this._cityData.cityId);
-        let armyList: ArmyData[] = ArmyCommand.getInstance().proxy.getArmyList(this._cityData.cityId);
+        if (!this._cityData) {
+            return;
+        }
+
+        const additon: CityAddition = MapUICommand.getInstance().proxy.getMyCityAddition(this._cityData.cityId);
+        const armyList: ArmyData[] = ArmyCommand.getInstance().proxy.getArmyList(this._cityData.cityId);
         for (let i: number = 0; i < this._armyComps.length; i++) {
             if (i >= additon.armyCnt) {
-                //未Mở khóa
                 this._armyComps[i].isOpenedArmy(false, false);
             } else {
-                //已Mở khóa
                 this._armyComps[i].isOpenedArmy(true, false);
                 this._armyComps[i].setArmyData(this._cityData.cityId, armyList[i]);
             }
@@ -71,19 +78,14 @@ export default class CityAboutLogic extends Component {
         MapUICommand.getInstance().qryCityFacilities(this._cityData.cityId);
     }
 
-
     protected onClickFacility(): void {
         AudioManager.instance.playClick();
-        //Công trình
         EventMgr.emit(LogicEvent.openFacility, this._cityData);
     }
-
 
     protected onClickClose(): void {
         AudioManager.instance.playClick();
         this.node.active = false;
-
         EventMgr.emit(LogicEvent.closeCityAbout, this._cityData);
-
     }
 }
