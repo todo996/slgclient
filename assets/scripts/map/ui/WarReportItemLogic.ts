@@ -1,4 +1,4 @@
-import { _decorator, Component, Node, Label } from 'cc';
+import { _decorator, Color, Component, Graphics, HorizontalTextAlignment, Label, Node, Sprite, UITransform } from 'cc';
 const { ccclass, property } = _decorator;
 
 import LoginCommand from "../../login/LoginCommand";
@@ -10,6 +10,8 @@ import { EventMgr } from '../../utils/EventMgr';
 import GeneralItemLogic from './GeneralItemLogic';
 import { AudioManager } from '../../common/AudioManager';
 import { LogicEvent } from '../../common/LogicEvent';
+import { ensureChild, ensureTransform } from '../../ui/components/GameSurface';
+import { GameTheme } from '../../ui/theme/GameTheme';
 
 @ccclass('WarReportItemLogic')
 export default class WarReportItemLogic extends Component {
@@ -45,6 +47,69 @@ export default class WarReportItemLogic extends Component {
 
     protected onLoad():void{
         this.winNode.active = this.loseNode.active = false;
+        this.applyVisualLayout();
+    }
+
+    private applyVisualLayout(): void {
+        const legacyBg = this.node.getChildByName('New Sprite');
+        if (legacyBg) {
+            for (const sprite of legacyBg.getComponents(Sprite)) {
+                sprite.enabled = false;
+            }
+        }
+
+        const rootTransform = this.node.getComponent(UITransform) || this.node.addComponent(UITransform);
+        const width = Math.max(980, rootTransform.width || 980);
+        const height = Math.max(190, rootTransform.height || 190);
+
+        const surface = ensureChild(this.node, '__WarReportCardSurface');
+        surface.setSiblingIndex(0);
+        surface.setPosition(0, 0, 0);
+        ensureTransform(surface, width, height);
+        const graphics = surface.getComponent(Graphics) || surface.addComponent(Graphics);
+        graphics.clear();
+        graphics.fillColor = new Color(14, 12, 10, 242);
+        graphics.roundRect(-width / 2, -height / 2, width, height, 12);
+        graphics.fill();
+        graphics.fillColor = new Color(52, 38, 25, 80);
+        graphics.roundRect(-width / 2 + 7, -height / 2 + 7, width - 14, height - 14, 8);
+        graphics.fill();
+        graphics.strokeColor = new Color(154, 107, 52, 225);
+        graphics.lineWidth = 2;
+        graphics.roundRect(-width / 2, -height / 2, width, height, 12);
+        graphics.stroke();
+
+        for (const label of [this.timeLabel, this.leftLabel, this.rightLabel, this.posLabel]) {
+            if (!label) {
+                continue;
+            }
+            label.useSystemFont = true;
+            label.fontFamily = GameTheme.typography.bodyFont;
+            label.enableWrapText = false;
+            label.overflow = Label.Overflow.SHRINK;
+        }
+
+        if (this.timeLabel) {
+            this.timeLabel.fontSize = 15;
+            this.timeLabel.lineHeight = 20;
+            this.timeLabel.color = GameTheme.colors.muted;
+            this.timeLabel.horizontalAlign = HorizontalTextAlignment.CENTER;
+        }
+        if (this.leftLabel) {
+            this.leftLabel.fontSize = 21;
+            this.leftLabel.lineHeight = 27;
+            this.leftLabel.color = GameTheme.colors.gold300;
+        }
+        if (this.rightLabel) {
+            this.rightLabel.fontSize = 21;
+            this.rightLabel.lineHeight = 27;
+            this.rightLabel.color = GameTheme.colors.gold300;
+        }
+        if (this.posLabel) {
+            this.posLabel.fontSize = 16;
+            this.posLabel.lineHeight = 22;
+            this.posLabel.color = GameTheme.colors.ivory;
+        }
     }
 
     protected updateItem(data:any):void{
