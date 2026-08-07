@@ -16,8 +16,6 @@ import MapSysCityLogic from "../map/MapSysCityLogic";
 import { EventMgr } from '../utils/EventMgr';
 import { LogicEvent } from '../common/LogicEvent';
 import { CoreEvent } from '../core/coreEvent';
-import { localizeNode } from '../i18n/I18n';
-import { styleModernMapScene } from '../ui/components/MapHudSurface';
 
 @ccclass('MapScene')
 export default class MapScene extends Component {
@@ -32,7 +30,7 @@ export default class MapScene extends Component {
     protected onLoad(): void {
         this._cmd = MapCommand.getInstance();
 
-        // Giữ nguyên bản đồ gốc; chỉ bổ sung lớp trình bày HUD ở cuối frame.
+        // Giữ nguyên bản đồ gốc và toàn bộ logic hiển thị tile.
         let tiledMap: TiledMap = this.mapLayer.addComponent(TiledMap);
         tiledMap.tmxAsset = this._cmd.proxy.tiledMapAsset;
 
@@ -40,11 +38,6 @@ export default class MapScene extends Component {
         this._cmd.initData();
         EventMgr.on(LogicEvent.mapShowAreaChange, this.onMapShowAreaChange, this);
         EventMgr.on(LogicEvent.scrollToMap, this.onScrollToMap, this);
-
-        this.scheduleOnce(() => {
-            localizeNode(this.node);
-            styleModernMapScene(this.node);
-        }, 0);
 
         this.scheduleOnce(() => {
             let myCity: MapCityData = this._cmd.cityProxy.getMyMainCity();
