@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <title>Cocos Creator | tam-quoc-viet-nam-client</title>
+
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="full-screen" content="yes"/>
+    <meta name="screen-orientation" content="landscape"/>
+    <meta name="x5-fullscreen" content="true"/>
+    <meta name="360-fullscreen" content="true"/>
+    
+    <meta name="renderer" content="webkit"/>
+    <meta name="force-rendering" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    
+    <link rel="stylesheet" type="text/css" href="style.6990a.css"/>
+    <link rel="icon" href="favicon.ico"/>
+  <style id="mobile-web-shell">
+html,body{margin:0!important;padding:0!important;width:100%!important;height:100%!important;overflow:hidden!important;background:#000!important;position:fixed!important;inset:0!important;touch-action:none;-webkit-user-select:none;user-select:none}
+#GameDiv{position:fixed!important;inset:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-area-inset-bottom,0) env(safe-area-inset-left,0)!important;width:auto!important;height:auto!important;margin:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;background:#000!important;overflow:hidden!important}
+#Cocos3dGameContainer{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;margin:0!important;overflow:hidden!important}
+#GameCanvas{display:block!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;margin:0!important;object-fit:contain!important;touch-action:none!important;background:#000!important}
+.header,.footer{display:none!important}
+#rotateHint{display:none;position:fixed;z-index:999999;inset:0;background:#07111f;color:#fff8df;align-items:center;justify-content:center;text-align:center;padding:28px;font:700 20px/1.5 Arial,sans-serif;box-sizing:border-box}
+@media (orientation:portrait) and (max-width:900px){#rotateHint{display:flex}}
+</style>
+</head>
+  <body>
+    <div id="rotateHint">Vui lòng xoay ngang điện thoại để chơi game.</div>
+
+    <div id="GameDiv">
+      <div id="Cocos3dGameContainer">
+        <canvas id="GameCanvas" width="1280" height="960" tabindex="0"></canvas>
+      </div>
+    </div>
+    <!-- Polyfills bundle. -->
+<script src="src/polyfills.bundle.5adbf.js" charset="utf-8"> </script>
+
+<!-- SystemJS support. -->
+<script src="src/system.bundle.fcca2.js" charset="utf-8"> </script>
+
+<!-- Import map -->
+<script src="src/import-map.25da2.json" type="systemjs-importmap" charset="utf-8"> </script>
+
+<script>
+    System.import('./index.81360.js').catch(function(err) { console.error(err); })
+</script>
+  </body>
+</html>
+
