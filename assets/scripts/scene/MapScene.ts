@@ -30,7 +30,8 @@ export default class MapScene extends Component {
     protected onLoad(): void {
         this._cmd = MapCommand.getInstance();
 
-        // Giữ nguyên bản đồ gốc và toàn bộ logic hiển thị tile.
+
+        //初始化地图
         let tiledMap: TiledMap = this.mapLayer.addComponent(TiledMap);
         tiledMap.tmxAsset = this._cmd.proxy.tiledMapAsset;
 
@@ -43,7 +44,7 @@ export default class MapScene extends Component {
             let myCity: MapCityData = this._cmd.cityProxy.getMyMainCity();
             this.node.getComponent(MapLogic).setTiledMap(tiledMap);
             this.node.getComponent(MapLogic).scrollToMapPoint(new Vec2(myCity.x, myCity.y));
-            this.onTimer();
+            this.onTimer();//立即执行Một次
         }, 0.1);
 
         this.schedule(this.onTimer, 0.2);
@@ -71,6 +72,7 @@ export default class MapScene extends Component {
         let nowTime: number = Date.now();
         if (nowTime - this._lastUpPosTime > 1000) {
             this._lastUpPosTime = nowTime;
+            //间隔Mộtgiây检测中心点是否改变
             let point: Vec2 = MapCommand.getInstance().proxy.getCurCenterPoint();
             if (point != null && (this._centerX != point.x || this._centerY != point.y)) {
                 this._centerX = point.x;
@@ -82,6 +84,7 @@ export default class MapScene extends Component {
 
     protected onMapShowAreaChange(centerPoint: Vec2, centerAreaId: number, addIds: number[], removeIds: number[]): void {
 
+
         let resLogic: MapResLogic = this.node.getComponent(MapResLogic);
         let buildResLogic: MapResBuildLogic = this.node.getComponent(MapResBuildLogic);
         let buildFacilityLogic: MapFacilityBuildLogic = this.node.getComponent(MapFacilityBuildLogic);
@@ -90,6 +93,7 @@ export default class MapScene extends Component {
         let cityLogic: MapCityLogic = this.node.getComponent(MapCityLogic);
         let sysCityLogic: MapSysCityLogic = this.node.getComponent(MapSysCityLogic);
 
+        //更新展示区域
         resLogic.udpateShowAreas(addIds, removeIds);
         buildResLogic.udpateShowAreas(addIds, removeIds);
         buildFacilityLogic.udpateShowAreas(addIds, removeIds);
@@ -98,11 +102,14 @@ export default class MapScene extends Component {
         cityLogic.udpateShowAreas(addIds, removeIds);
         sysCityLogic.udpateShowAreas(addIds, removeIds);
 
+        //更新区域内的具体节点
         for (let i: number = 0; i < addIds.length; i++) {
             let areaData: MapAreaData = this._cmd.proxy.getMapAreaData(addIds[i]);
+            // console.log("areaData", areaData);
             for (let x: number = areaData.startCellX; x < areaData.endCellX; x++) {
                 for (let y: number = areaData.startCellY; y < areaData.endCellY; y++) {
                     let cellId: number = MapUtil.getIdByCellPoint(x, y);
+                    //Tài nguyên
                     if (this._cmd.proxy.getResData(cellId)) {
                         resLogic.addItem(addIds[i], this._cmd.proxy.getResData(cellId));
                     }
@@ -111,11 +118,14 @@ export default class MapScene extends Component {
                         sysCityLogic.addItem(addIds[i], this._cmd.proxy.getResData(cellId));
                     }
 
+                    //Công trình
                     if (this._cmd.buildProxy.getBuild(cellId) != null) {
                         var build = this._cmd.buildProxy.getBuild(cellId);
                         if(build.type == MapResType.SYS_CITY){
+                            //Hệ thốngThành trì
                             sysCityLogic.addItem(addIds[i], build);
                         }else if(build.type == MapResType.SYS_FORTRESS){
+                            console.log("MapResType.SYS_FORTRESS");
                             resLogic.addItem(addIds[i], build);
                         } else{
                             buildResLogic.addItem(addIds[i], build);
@@ -126,7 +136,9 @@ export default class MapScene extends Component {
                         buildFacilityLogic.addItem(addIds[i], this._cmd.buildProxy.getBuild(cellId));
                     }
 
+                    //Đánh dấu
                     if (this._cmd.proxy.getResData(cellId).type <= MapResType.FORTRESS) {
+
                         tagLogic.addItem(addIds[i], this._cmd.proxy.getResData(cellId));
                     }
 
@@ -134,9 +146,11 @@ export default class MapScene extends Component {
                         buildTipsLogic.addItem(addIds[i], this._cmd.buildProxy.getBuild(cellId));
                     }
 
+                    //Thành trì
                     if (this._cmd.cityProxy.getCity(cellId) != null) {
                         cityLogic.addItem(addIds[i], this._cmd.cityProxy.getCity(cellId));
                     }
+
                 }
             }
         }
