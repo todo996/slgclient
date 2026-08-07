@@ -7,7 +7,6 @@ import {
     Layout,
     Node,
     Sprite,
-    UITransform,
     VerticalTextAlignment,
 } from 'cc';
 import {
@@ -247,18 +246,44 @@ function styleSettings(root: Node): void {
     ensureTransform(node, 142, 52);
 }
 
+function findResourceLayout(root: Node): Layout | null {
+    const layouts = root.getComponentsInChildren(Layout);
+    return layouts.find((layout) => {
+        const labels = layout.node.getComponentsInChildren(Label);
+        return layout.node.children.length >= 6
+            && labels.some((label) => label.string.includes('Lệnh'));
+    }) || layouts.find((layout) => layout.node.children.length >= 10) || null;
+}
+
+function findRoleLabels(root: Node): { name: Label | null; rid: Label | null } {
+    let name: Label | null = null;
+    let rid: Label | null = null;
+    for (const label of root.getComponentsInChildren(Label)) {
+        const text = label.string.trim();
+        if (!name && (text.startsWith('Tên nhân vật:') || /nickname/i.test(label.node.name))) {
+            name = label;
+        }
+        if (!rid && (text.startsWith('Nhân vậtID:') || /^ID\s*:/i.test(text))) {
+            rid = label;
+        }
+    }
+    return { name, rid };
+}
+
 /**
  * Bố cục HUD bản đồ theo concept người dùng cung cấp.
  * Chỉ di chuyển/thay presentation của node hiện có; không tạo handler hay dữ liệu giả.
  */
-export function applyMapHUDLayout(
-    root: Node,
-    resourceLayout: Layout,
-    nameLabel: Label,
-    ridLabel: Label,
-): void {
-    styleProfile(nameLabel, ridLabel);
-    styleResourceBar(resourceLayout);
+export function applyMapHUDLayout(root: Node): void {
+    const resourceLayout = findResourceLayout(root);
+    const roleLabels = findRoleLabels(root);
+
+    if (roleLabels.name && roleLabels.rid) {
+        styleProfile(roleLabels.name, roleLabels.rid);
+    }
+    if (resourceLayout) {
+        styleResourceBar(resourceLayout);
+    }
     styleLeftMenu(root);
     styleSettings(root);
 }
