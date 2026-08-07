@@ -20,6 +20,7 @@ import { EventMgr } from './utils/EventMgr';
 import { AudioManager } from './common/AudioManager';
 import { LogicEvent } from './common/LogicEvent';
 import { localizeData, localizeNode, translateText } from './i18n/I18n';
+import { styleModernMapScene } from './ui/components/MapHudSurface';
 
 @ccclass('Main')
 export default class Main extends Component {
@@ -168,6 +169,7 @@ export default class Main extends Component {
                 this._mapUIScene = instantiate(this.mapUIScenePrefab);
                 this._mapUIScene.parent = this.node;
                 localizeNode(this._mapUIScene);
+                styleModernMapScene(this._mapUIScene);
 
                 this.addLoadingNode();
             },
