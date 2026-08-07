@@ -5,6 +5,8 @@ import { ArmyCmd, ArmyData } from "../../general/ArmyProxy";
 import GeneralCommand from "../../general/GeneralCommand";
 import ArmyCommand from "../../general/ArmyCommand";
 import { GeneralConfig, GeneralData } from "../../general/GeneralProxy";
+import { localizeNode } from "../../i18n/I18n";
+import { styleModernArmyCard } from "../../ui/components/MapHudSurface";
 import MapUICommand from "./MapUICommand";
 import GeneralHeadLogic from "./GeneralHeadLogic";
 import { EventMgr } from '../../utils/EventMgr';
@@ -47,6 +49,8 @@ export default class CityArmyItemLogic extends Component {
     protected _isOut: boolean = true;
 
     protected onLoad(): void {
+        localizeNode(this.node);
+        styleModernArmyCard(this.node);
         EventMgr.on(LogicEvent.updateArmy, this.onUpdateArmy, this);
         this.tipNode.active = false;
     }
@@ -65,87 +69,82 @@ export default class CityArmyItemLogic extends Component {
     protected onClickItem(): void {
         AudioManager.instance.playClick();
         if (this.maskNode.active == false) {
-            if(this._isOut){
-                if(this._data){
+            if (this._isOut) {
+                if (this._data) {
                     EventMgr.emit(LogicEvent.openArmySetting, this._cityId, this._data.order);
                 }
-            }else{
+            } else {
                 EventMgr.emit(LogicEvent.openArmySetting, this._cityId, this.order);
             }
         }
     }
 
     protected updateItem(): void {
-
-        // console.log("cityarmyitem:", this._data);
-
-        if(this._isOpened == false){
-            return
+        if (this._isOpened == false) {
+            return;
         }
 
         if (this._data && this._data.generals[0] != 0) {
-            //有数据 并且Thiết lập了Hiệp Một个Tướng
             this.tipNode.active = false;
             this.infoNode.active = true;
-            let generals: GeneralData[] = ArmyCommand.getInstance().getArmyGenerals(this._data);
-            let firstGeneralCfg: GeneralConfig = GeneralCommand.getInstance().proxy.getGeneralCfg(generals[0].cfgId);
-            let curSoldierCnt: number = ArmyCommand.getInstance().getArmyCurSoldierCnt(this._data);
-            let totalSoldierCnt: number = ArmyCommand.getInstance().getArmyTotalSoldierCntByGenerals(generals);
+            const generals: GeneralData[] = ArmyCommand.getInstance().getArmyGenerals(this._data);
+            const firstGeneralCfg: GeneralConfig = GeneralCommand.getInstance().proxy.getGeneralCfg(generals[0].cfgId);
+            const curSoldierCnt: number = ArmyCommand.getInstance().getArmyCurSoldierCnt(this._data);
+            const totalSoldierCnt: number = ArmyCommand.getInstance().getArmyTotalSoldierCntByGenerals(generals);
+
             if (this._data.cmd == ArmyCmd.Reclaim) {
-                //Đang đồn điền
                 this.labelState.string = "Đang đồn điền...";
-            } else if(this._data.cmd == ArmyCmd.Conscript){
+            } else if (this._data.cmd == ArmyCmd.Conscript) {
                 this.labelState.string = "Đang chiêu mộ...";
             } else if (this._data.cmd > 0) {
                 this.labelState.string = "Đội quân đang làm nhiệm vụ...";
             } else {
                 this.labelState.string = "";
             }
-            this.labelId.string = this.order + "";
+
+            this.labelId.string = `${this.order}`;
             this.headIcon.getComponent(GeneralHeadLogic).setHeadId(generals[0].cfgId);
-            this.labelLv.string = generals[0].level + "";
+            this.labelLv.string = `${generals[0].level}`;
             this.labelName.string = firstGeneralCfg.name;
-            this.labelSoldierCnt.string = curSoldierCnt + "/" + totalSoldierCnt;
-            // this.labelArms.string = "";
+            this.labelSoldierCnt.string = `${curSoldierCnt}/${totalSoldierCnt}`;
 
             if (generals[1]) {
-                let sencondGeneralCfg: GeneralConfig = GeneralCommand.getInstance().proxy.getGeneralCfg(generals[1].cfgId);
-                this.labelVice1.string = sencondGeneralCfg.name;
+                const secondGeneralCfg: GeneralConfig = GeneralCommand.getInstance().proxy.getGeneralCfg(generals[1].cfgId);
+                this.labelVice1.string = secondGeneralCfg.name;
             } else {
                 this.labelVice1.string = "Không";
             }
 
             if (generals[2]) {
-                let thirdGeneralCfg: GeneralConfig = GeneralCommand.getInstance().proxy.getGeneralCfg(generals[2].cfgId);
+                const thirdGeneralCfg: GeneralConfig = GeneralCommand.getInstance().proxy.getGeneralCfg(generals[2].cfgId);
                 this.labelVice2.string = thirdGeneralCfg.name;
             } else {
                 this.labelVice2.string = "Không";
             }
+        } else if (this._isOut) {
+            this.tipNode.active = true;
+            this.infoNode.active = false;
+            this.labelTip.string = "Chưa có đội quân";
         } else {
-            if(this._isOut){
-                this.tipNode.active = true;
-                this.infoNode.active = false;
-                this.labelTip.string = "Chưa có đội quân";
-            }else{
-                this.tipNode.active = true;
-                this.infoNode.active = false;
-                this.labelTip.string = "Nhấn để biên chế đội quân";
-            }
+            this.tipNode.active = true;
+            this.infoNode.active = false;
+            this.labelTip.string = "Nhấn để biên chế đội quân";
         }
     }
 
-    public isOpenedArmy(bool: boolean, isOut: boolean): void {
-        this._isOpened = bool;
+    public isOpenedArmy(isOpened: boolean, isOut: boolean): void {
+        this._isOpened = isOpened;
         this.infoNode.active = false;
         this.maskNode.active = !this._isOpened;
         this.tipNode.active = !this._isOpened;
         this._isOut = isOut;
-        if (this._isOpened == false) {
-            if (this._isOut){
-                this.labelTip.string = " Cấp độ" + this.order + "Mở khóa";
-            }else{
-                let desName: string = MapUICommand.getInstance().proxy.getFacilityCfgByType(13).name;
-                this.labelTip.string = desName + " Cấp độ" + this.order + "Mở khóa";
+
+        if (!this._isOpened) {
+            if (this._isOut) {
+                this.labelTip.string = `Mở khóa đội hình ở cấp ${this.order}`;
+            } else {
+                const facilityName: string = MapUICommand.getInstance().proxy.getFacilityCfgByType(13).name;
+                this.labelTip.string = `${facilityName} cấp ${this.order} để mở khóa`;
             }
         }
     }
