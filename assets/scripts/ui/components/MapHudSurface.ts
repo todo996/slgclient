@@ -150,6 +150,42 @@ export function styleModernHudCluster(root: Node | null): void {
     );
 }
 
+/**
+ * Tự nhận diện thanh tài nguyên/menu trên scene bản đồ dựa trên mật độ UI.
+ * Không đụng TiledMap, SpriteFrame tướng, toạ độ camera hoặc node gameplay.
+ */
+export function styleModernMapScene(root: Node): void {
+    styleLabels(root);
+    styleButtons(root);
+
+    const visit = (node: Node, depth: number): void => {
+        const children = [...node.children];
+        if (node !== root && !node.name.startsWith('__')) {
+            const transform = node.getComponent(UITransform);
+            if (transform) {
+                const { width, height } = transform.contentSize;
+                const compact = width >= 120 && width <= 1100 && height >= 40 && height <= 220;
+                if (compact) {
+                    const buttonCount = node.getComponentsInChildren(Button).length;
+                    const labelCount = node.getComponentsInChildren(Label).length;
+                    if (buttonCount >= 2 || labelCount >= 3) {
+                        styleModernHudCluster(node);
+                    }
+                }
+            }
+        }
+
+        if (depth >= 5) {
+            return;
+        }
+        for (const child of children) {
+            visit(child, depth + 1);
+        }
+    };
+
+    visit(root, 0);
+}
+
 /** Tạo khung popup thành kiểu mực tối - đồng - vàng, giữ nguyên dữ liệu và ảnh tướng. */
 export function styleModernCityPanel(root: Node): void {
     styleLabels(root);
