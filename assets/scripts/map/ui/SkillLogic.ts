@@ -1,5 +1,5 @@
 import { _decorator, Component, ScrollView } from 'cc';
-const {ccclass, property} = _decorator;
+const { ccclass, property } = _decorator;
 
 import { GeneralData } from "../../general/GeneralProxy";
 import SkillCommand from "../../skill/SkillCommand";
@@ -8,6 +8,8 @@ import { EventMgr } from '../../utils/EventMgr';
 import { AudioManager } from '../../common/AudioManager';
 import ListLogic from '../../utils/ListLogic';
 import { LogicEvent } from '../../common/LogicEvent';
+import { localizeNode } from '../../i18n/I18n';
+import { styleModernCityPanel } from '../../ui/components/MapHudSurface';
 
 @ccclass('SkillLogic')
 export default class SkillLogic extends Component {
@@ -17,22 +19,20 @@ export default class SkillLogic extends Component {
 
     _general: GeneralData = null;
     _type: number = 0;
-    _skillPos : number = -1;
+    _skillPos: number = -1;
 
-
-
-    protected onEnable():void{
-
+    protected onEnable(): void {
+        localizeNode(this.node);
+        styleModernCityPanel(this.node);
         EventMgr.on(LogicEvent.skillListInfo, this.onSkillList, this);
         SkillCommand.getInstance().qrySkillList();
     }
 
-    protected onDisable():void {
-        EventMgr.targetOff(this)
+    protected onDisable(): void {
+        EventMgr.targetOff(this);
     }
 
-    protected onSkillList(){
-
+    protected onSkillList() {
         var skills = SkillCommand.getInstance().proxy.skills;
         var skillConfs = SkillCommand.getInstance().proxy.skillConfs;
 
@@ -47,13 +47,13 @@ export default class SkillLogic extends Component {
 
             for (let j = 0; j < skills.length; j++) {
                 var skill = skills[j];
-                if (skill.cfgId == cfg.cfgId){
+                if (skill.cfgId == cfg.cfgId) {
                     found = true;
                     arr.push(skill);
-                    break
+                    break;
                 }
             }
-            if(found == false){
+            if (found == false) {
                 arr.push(dSkill);
             }
         }
@@ -72,12 +72,10 @@ export default class SkillLogic extends Component {
         EventMgr.emit(LogicEvent.openSkillInfo, data, this._type, this._general, this._skillPos);
     }
 
-
-    /** type:0普通展示、type:1 Học、2:Võ tướng查看 **/
-    public setData(type:number, general:GeneralData, skillPos: number) {
+    /** type: 0 hiển thị, 1 học, 2 xem từ tướng. */
+    public setData(type: number, general: GeneralData, skillPos: number) {
         this._type = type;
         this._general = general;
         this._skillPos = skillPos;
     }
-
 }
