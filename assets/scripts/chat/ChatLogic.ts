@@ -1,4 +1,4 @@
-import { _decorator, Component, EditBox, ScrollView } from 'cc';
+import { _decorator, Component, EditBox, ScrollView, UITransform } from 'cc';
 const { ccclass, property } = _decorator;
 
 import { MapCityData } from "../map/MapCityProxy";
@@ -28,9 +28,9 @@ export default class ChatLogic extends Component {
         localizeNode(this.node);
         styleModernCityPanel(this.node);
         if (this.editConent) {
-            const transform = this.editConent.node.getComponent('cc.UITransform') as any;
-            const width = transform?.contentSize?.width || 420;
-            const height = transform?.contentSize?.height || 52;
+            const transform = this.editConent.node.getComponent(UITransform);
+            const width = transform?.contentSize.width || 420;
+            const height = transform?.contentSize.height || 52;
             styleGameInput(this.editConent, 'Nhập nội dung trò chuyện', 'none', width, height);
         }
         EventMgr.on(LogicEvent.updateChatHistory, this.updateChat, this);
@@ -57,7 +57,7 @@ export default class ChatLogic extends Component {
         }
     }
 
-    protected updateChat(_data: any[]): void {
+    protected updateChat(data: any[]) {
         if (this._type == 0) {
             var comp = this.chatView.node.getComponent(ListLogic);
             var list: ChatMsg[] = ChatCommand.getInstance().proxy.getWorldChatList();
@@ -80,18 +80,17 @@ export default class ChatLogic extends Component {
 
     protected onClickChat(): void {
         AudioManager.instance.playClick();
-        const content = this.editConent.string.trim();
-        if (content == "") {
+        if (this.editConent.string == "") {
             EventMgr.emit(LogicEvent.showToast, "Nội dung trò chuyện không được để trống");
             return;
         }
 
         if (this._type == 0) {
-            ChatCommand.getInstance().chat(content, this._type);
+            ChatCommand.getInstance().chat(this.editConent.string, this._type);
         } else if (this._type == 1) {
             let city: MapCityData = MapCommand.getInstance().cityProxy.getMyMainCity();
             if (city.unionId > 0) {
-                ChatCommand.getInstance().chat(content, this._type);
+                ChatCommand.getInstance().chat(this.editConent.string, this._type);
             }
         }
         this.editConent.string = "";
