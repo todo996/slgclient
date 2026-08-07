@@ -26,6 +26,7 @@ const LEFT_MENU: MenuSpec[] = [
     { handler: 'openDraw', label: 'Chiêu mộ' },
     { handler: 'openWarReport', label: 'Chiến báo' },
     { handler: 'openUnion', label: 'Liên minh' },
+    { handler: 'openTr', label: 'Chợ' },
     { handler: 'openChat', label: 'Trò chuyện' },
     { handler: 'onClickSkillBtn', label: 'Kỹ năng' },
     { handler: 'onClickCollection', label: 'Thu thuế' },
@@ -204,8 +205,6 @@ function styleResourceBar(resourceLayout: Layout): void {
     const children = node.children;
     for (let index = 0; index < children.length; index += 1) {
         const child = children[index];
-        // HUD mẫu chỉ giữ Lệnh + 5 tài nguyên chính. Sản lượng vẫn còn trong dữ liệu
-        // và logic, chỉ không chiếm diện tích bản đồ ở thanh chính.
         child.active = index <= 5;
         if (child.active) {
             drawResourceChip(child);
@@ -216,8 +215,8 @@ function styleResourceBar(resourceLayout: Layout): void {
 
 function styleLeftMenu(root: Node): void {
     const menuRoot = ensureChild(root, '__ModernLeftMenu');
-    ensureTransform(menuRoot, 180, 454);
-    menuRoot.setPosition(-548, 70, 0);
+    ensureTransform(menuRoot, 180, 520);
+    menuRoot.setPosition(-548, 38, 0);
 
     let visibleIndex = 0;
     for (const spec of LEFT_MENU) {
@@ -228,7 +227,7 @@ function styleLeftMenu(root: Node): void {
         const buttonNode = button.node;
         buttonNode.setParent(menuRoot);
         buttonNode.active = true;
-        buttonNode.setPosition(0, 196 - visibleIndex * 62, 0);
+        buttonNode.setPosition(0, 217 - visibleIndex * 60, 0);
         drawHudButton(buttonNode, spec.label);
         visibleIndex += 1;
     }
