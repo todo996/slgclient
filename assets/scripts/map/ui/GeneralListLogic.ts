@@ -8,7 +8,7 @@ import ListLogic from '../../utils/ListLogic';
 import { AudioManager } from '../../common/AudioManager';
 import { LogicEvent } from '../../common/LogicEvent';
 import { localizeNode } from '../../i18n/I18n';
-import { styleModernCityPanel } from '../../ui/components/MapHudSurface';
+import { applyGeneralScreenLayout } from '../../ui/screens/GeneralScreenPresenter';
 
 @ccclass('GeneralListLogic')
 export default class GeneralListLogic extends Component {
@@ -25,7 +25,7 @@ export default class GeneralListLogic extends Component {
 
     protected onEnable(): void {
         localizeNode(this.node);
-        styleModernCityPanel(this.node);
+        applyGeneralScreenLayout(this.node, this.scrollView, this.cntLab);
         EventMgr.on(LogicEvent.updateMyGenerals, this.initGeneralCfg, this);
         EventMgr.on(LogicEvent.generalConvert, this.initGeneralCfg, this);
         EventMgr.on(LogicEvent.chosedGeneral, this.onClickClose, this);
