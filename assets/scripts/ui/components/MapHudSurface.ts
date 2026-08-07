@@ -3,14 +3,36 @@ import {
     Color,
     Graphics,
     Label,
+    Layout,
     Node,
     UITransform,
 } from 'cc';
 import { GameTheme } from '../theme/GameTheme';
-import { ensureChild, ensureTransform } from './GameSurface';
+import { createGameText, ensureChild, ensureTransform } from './GameSurface';
 
 const HUD_SURFACE = '__ModernHudSurface';
 const PANEL_SURFACE = '__ModernPanelSurface';
+const ACTION_PLATE = '__MapActionPlate';
+const ACTION_LABEL = '__MapActionLabel';
+
+const ACTIONS: Record<string, { label: string; priority: number }> = {
+    onClickGeneral: { label: 'Tướng', priority: 10 },
+    openGeneral: { label: 'Tướng', priority: 10 },
+    openDraw: { label: 'Chiêu mộ', priority: 20 },
+    onClickDraw: { label: 'Chiêu mộ', priority: 20 },
+    openWarReport: { label: 'Chiến báo', priority: 30 },
+    onClickWarReport: { label: 'Chiến báo', priority: 30 },
+    openUnion: { label: 'Liên minh', priority: 40 },
+    onClickUnion: { label: 'Liên minh', priority: 40 },
+    openChat: { label: 'Trò chuyện', priority: 50 },
+    onClickChat: { label: 'Trò chuyện', priority: 50 },
+    onClickSkillBtn: { label: 'Kỹ năng', priority: 60 },
+    onOpenSkill: { label: 'Kỹ năng', priority: 60 },
+    onClickCollection: { label: 'Thu thuế', priority: 70 },
+    openTr: { label: 'Chuyển đổi', priority: 80 },
+    onClickSetting: { label: 'Cài đặt', priority: 90 },
+    onBack: { label: 'Đăng xuất', priority: 100 },
+};
 
 function drawSurface(
     parent: Node,
@@ -91,6 +113,122 @@ function styleButtons(root: Node): void {
     }
 }
 
+function getAction(button: Button): { label: string; priority: number } | null {
+    const clickEvents = button.clickEvents || [];
+    for (const event of clickEvents as any[]) {
+        const handler = typeof event?.handler === 'string' ? event.handler : '';
+        if (ACTIONS[handler]) {
+            return ACTIONS[handler];
+        }
+    }
+    return null;
+}
+
+function drawActionPlate(button: Button, action: { label: string; priority: number }): void {
+    const transform = button.node.getComponent(UITransform);
+    if (!transform) {
+        return;
+    }
+
+    const width = Math.max(48, transform.contentSize.width);
+    const height = Math.max(48, transform.contentSize.height);
+    const plateWidth = Math.max(44, width - 6);
+    const plateHeight = Math.min(28, Math.max(22, height * 0.3));
+    const plateY = -height / 2 + plateHeight / 2 + 3;
+
+    const plate = ensureChild(button.node, ACTION_PLATE);
+    plate.setPosition(0, plateY, 0);
+    plate.setSiblingIndex(button.node.children.length - 1);
+    ensureTransform(plate, plateWidth, plateHeight);
+
+    const graphics = plate.getComponent(Graphics) || plate.addComponent(Graphics);
+    graphics.clear();
+    graphics.fillColor = new Color(15, 13, 11, 225);
+    graphics.roundRect(-plateWidth / 2, -plateHeight / 2, plateWidth, plateHeight, 6);
+    graphics.fill();
+    graphics.strokeColor = new Color(184, 129, 58, 220);
+    graphics.lineWidth = 1;
+    graphics.roundRect(-plateWidth / 2, -plateHeight / 2, plateWidth, plateHeight, 6);
+    graphics.stroke();
+
+    const label = createGameText(
+        button.node,
+        ACTION_LABEL,
+        action.label,
+        Math.min(16, Math.max(12, Math.round(plateHeight * 0.58))),
+        GameTheme.colors.gold300,
+        plateWidth - 6,
+        plateHeight,
+    );
+    label.node.setPosition(0, plateY, 0);
+    label.node.setSiblingIndex(button.node.children.length - 1);
+}
+
+/**
+ * Dùng chính handler đã serialize trong Button.clickEvents để xác định chức năng.
+ * Nhờ vậy UI không tạo nút giả và không cần đoán tên node/prefab.
+ */
+function labelRealActionButtons(root: Node): void {
+    for (const button of root.getComponentsInChildren(Button)) {
+        const action = getAction(button);
+        if (action) {
+            drawActionPlate(button, action);
+        }
+    }
+}
+
+/**
+ * Chỉ đổi thứ tự hiển thị khi các nút chức năng thật nằm trong cùng một Layout.
+ * Không sửa clickEvents, target, component hoặc dữ liệu gameplay.
+ */
+function reorderRealActionLayouts(root: Node): void {
+    const visit = (parent: Node, depth: number): void => {
+        const layout = parent.getComponent(Layout);
+        if (layout && parent.children.length >= 4) {
+            const ranked = parent.children.map((child, originalIndex) => {
+                const buttons = child.getComponentsInChildren(Button);
+                let action: { label: string; priority: number } | null = null;
+                for (const button of buttons) {
+                    action = getAction(button);
+                    if (action) {
+                        break;
+                    }
+                }
+                return { child, originalIndex, action };
+            });
+
+            const recognized = ranked.filter(item => item.action !== null);
+            if (recognized.length >= 4) {
+                ranked.sort((left, right) => {
+                    if (left.action && right.action) {
+                        return left.action.priority - right.action.priority;
+                    }
+                    if (left.action) {
+                        return -1;
+                    }
+                    if (right.action) {
+                        return 1;
+                    }
+                    return left.originalIndex - right.originalIndex;
+                });
+                ranked.forEach((item, index) => item.child.setSiblingIndex(index));
+            }
+        }
+
+        if (depth >= 5) {
+            return;
+        }
+        const children = [...parent.children];
+        for (const child of children) {
+            if (!child.name.startsWith('__')) {
+                visit(child, depth + 1);
+            }
+        }
+    };
+
+    visit(root, 0);
+}
+
 function findPanelCandidate(root: Node): Node | null {
     let best: Node | null = null;
     let bestArea = 0;
@@ -157,6 +295,8 @@ export function styleModernHudCluster(root: Node | null): void {
 export function styleModernMapScene(root: Node): void {
     styleLabels(root);
     styleButtons(root);
+    labelRealActionButtons(root);
+    reorderRealActionLayouts(root);
 
     const visit = (node: Node, depth: number): void => {
         const children = [...node.children];
@@ -164,7 +304,7 @@ export function styleModernMapScene(root: Node): void {
             const transform = node.getComponent(UITransform);
             if (transform) {
                 const { width, height } = transform.contentSize;
-                const compact = width >= 120 && width <= 1100 && height >= 40 && height <= 220;
+                const compact = width >= 120 && width <= 1180 && height >= 36 && height <= 220;
                 if (compact) {
                     const buttonCount = node.getComponentsInChildren(Button).length;
                     const labelCount = node.getComponentsInChildren(Label).length;
