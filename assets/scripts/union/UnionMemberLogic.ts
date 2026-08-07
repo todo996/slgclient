@@ -28,11 +28,14 @@ export default class UnionMemberLogic extends Component {
     protected _op: Node = null;
 
     protected onLoad():void{
+
         EventMgr.on(LogicEvent.updateUnionMember,this.updateMember,this);
         EventMgr.on(LogicEvent.kickUnionSuccess,this.getMember,this);
         EventMgr.on(LogicEvent.unionAppoint,this.getMember,this);
         EventMgr.on(LogicEvent.unionAbdicate,this.getMember,this);
         EventMgr.on(LogicEvent.clickUnionMemberItem,this.onClickItem,this);
+
+
     }
 
     protected onDestroy():void{
@@ -58,12 +61,15 @@ export default class UnionMemberLogic extends Component {
     }
 
     protected updateMember(data:any[]){
+
         let city:MapCityData = MapCommand.getInstance().cityProxy.getMyMainCity();
         let unionData:Union = UnionCommand.getInstance().proxy.getUnion(city.unionId);
 
         var comp = this.memberView.node.getComponent("ListLogic");
         var list:Member[] = UnionCommand.getInstance().proxy.getMemberList(unionData.id).concat();
+
         comp.setData(list);
+
         this.updateBtn();
     }
 
@@ -99,4 +105,6 @@ export default class UnionMemberLogic extends Component {
         AudioManager.instance.playClick();
         UnionCommand.getInstance().unionExit();
     }
+
+
 }

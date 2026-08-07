@@ -27,10 +27,12 @@ export default class RightInfoNodeLogic extends Component {
     armyItemPrefabs: Prefab = null;
     @property(Prefab)
     cityItemPrefabs: Prefab = null;
+
     @property(Prefab)
     tagItemPrefabs: Prefab = null;
 
     protected _armys: Node[] = [];
+
 
     protected onLoad(): void {
         EventMgr.on(LogicEvent.updateArmyList, this.onUpdateArmyList, this);
@@ -55,6 +57,7 @@ export default class RightInfoNodeLogic extends Component {
         let cityId: number = MapCommand.getInstance().cityProxy.getMyMainCity().cityId;
         let datas: ArmyData[] = ArmyCommand.getInstance().proxy.getArmyList(cityId);
         this.armyScrollView.content.removeAllChildren();
+        console.log("datas", datas);
         if (datas) {
             this._armys.length = datas.length;
             for (let i: number = 0; i < datas.length; i++) {
@@ -83,9 +86,12 @@ export default class RightInfoNodeLogic extends Component {
         let tags = MapCommand.getInstance().proxy.getPosTags();
         this.tagsScrollView.content.removeAllChildren();
         for (let i: number = 0; i < tags.length; i++) {
+            var tag = tags[i];
+
+
             let item: Node = instantiate(this.tagItemPrefabs);
             item.parent = this.tagsScrollView.content;
-            item.getComponent(RightTagItemLogic).setData(tags[i]);
+            item.getComponent(RightTagItemLogic).setData(tag);
         }
     }
 
@@ -95,10 +101,7 @@ export default class RightInfoNodeLogic extends Component {
 
     protected onUpdateArmy(data: ArmyData): void {
         if (MapCommand.getInstance().cityProxy.getMyMainCity().cityId == data.cityId) {
-            const item = this._armys[data.order - 1];
-            if (item) {
-                item.getComponent(RightArmyItemLogic).setArmyData(data);
-            }
+            this._armys[data.order - 1].getComponent(RightArmyItemLogic).setArmyData(data);
         }
     }
 
@@ -113,17 +116,14 @@ export default class RightInfoNodeLogic extends Component {
             this.armyScrollView.node.active = false;
             this.cityScrollView.node.active = true;
             this.tagsScrollView.node.active = false;
-            this.initCitys();
         } else if(index == 0){
             this.armyScrollView.node.active = true;
             this.cityScrollView.node.active = false;
             this.tagsScrollView.node.active = false;
-            this.initArmys();
         }else{
             this.armyScrollView.node.active = false;
             this.cityScrollView.node.active = false;
             this.tagsScrollView.node.active = true;
-            this.initTags();
         }
     }
 }

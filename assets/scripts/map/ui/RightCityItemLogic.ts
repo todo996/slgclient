@@ -15,6 +15,11 @@ export default class RightCityItemLogic extends Component {
 
     protected _data: MapCityData = null;
 
+
+    protected onLoad(): void {
+
+    }
+
     protected onDestroy(): void {
         this._data = null;
     }
@@ -30,7 +35,7 @@ export default class RightCityItemLogic extends Component {
         this._data = data;
         if (this._data) {
             this.labelInfo.string = this._data.name;
-            this.labelPos.string = "Tọa độ " + this._data.x + ", " + this._data.y;
+            this.labelPos.string = "(" + this._data.x + ", " + this._data.y + ")";
         }
     }
 }

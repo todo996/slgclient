@@ -3,8 +3,6 @@ const { ccclass, property } = _decorator;
 
 import ArmyCommand from "../../general/ArmyCommand";
 import { ArmyData } from "../../general/ArmyProxy";
-import { localizeNode } from "../../i18n/I18n";
-import { styleModernArmyCard, styleModernCityPanel } from "../../ui/components/MapHudSurface";
 import { MapCityData } from "../MapCityProxy";
 import CityArmyItemLogic from "./CityArmyItemLogic";
 import MapUICommand from "./MapUICommand";
@@ -25,8 +23,6 @@ export default class CityAboutLogic extends Component {
     protected _armyComps: CityArmyItemLogic[] = [];
 
     protected onEnable(): void {
-        localizeNode(this.node);
-        styleModernCityPanel(this.node);
         this.initView();
         EventMgr.on(LogicEvent.updateCityAddition, this.onUpdateCityAdditon, this);
     }
@@ -42,7 +38,6 @@ export default class CityAboutLogic extends Component {
         for (let i: number = 0; i < this._armyCnt; i++) {
             let item = instantiate(this.armyItem);
             item.parent = this.armyLayer;
-            styleModernArmyCard(item);
             let comp: CityArmyItemLogic = item.getComponent(CityArmyItemLogic);
             comp.order = i + 1;
             this._armyComps.push(comp);

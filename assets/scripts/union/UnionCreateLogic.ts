@@ -1,3 +1,4 @@
+
 import { _decorator, Component, EditBox } from 'cc';
 const { ccclass, property } = _decorator;
 
@@ -11,7 +12,6 @@ import { LogicEvent } from '../common/LogicEvent';
 export default class UnionCreateLogic extends Component {
     @property(EditBox)
     editName: EditBox | null = null;
-
     protected onLoad():void{
         EventMgr.on(LogicEvent.createUnionSuccess, this.onUnCreateOk,this)
         this.editName.string = this.getRandomName();
@@ -26,11 +26,10 @@ export default class UnionCreateLogic extends Component {
         AudioManager.instance.playClick();
         this.editName.string = this.getRandomName();
     }
-
     protected getRandomName():string{
         let name = createName("boy");
         return name
-    }
+     }
 
     protected onDestroy():void{
         EventMgr.targetOff(this);

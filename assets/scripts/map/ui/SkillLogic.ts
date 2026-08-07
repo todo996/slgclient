@@ -19,16 +19,20 @@ export default class SkillLogic extends Component {
     _type: number = 0;
     _skillPos : number = -1;
 
+
+
     protected onEnable():void{
+
         EventMgr.on(LogicEvent.skillListInfo, this.onSkillList, this);
         SkillCommand.getInstance().qrySkillList();
     }
 
     protected onDisable():void {
-        EventMgr.targetOff(this);
+        EventMgr.targetOff(this)
     }
 
     protected onSkillList(){
+
         var skills = SkillCommand.getInstance().proxy.skills;
         var skillConfs = SkillCommand.getInstance().proxy.skillConfs;
 
@@ -46,7 +50,7 @@ export default class SkillLogic extends Component {
                 if (skill.cfgId == cfg.cfgId){
                     found = true;
                     arr.push(skill);
-                    break;
+                    break
                 }
             }
             if(found == false){
@@ -68,10 +72,12 @@ export default class SkillLogic extends Component {
         EventMgr.emit(LogicEvent.openSkillInfo, data, this._type, this._general, this._skillPos);
     }
 
-    /** type: 0 hiển thị, 1 học, 2 xem từ tướng. */
+
+    /** type:0普通展示、type:1 Học、2:Võ tướng查看 **/
     public setData(type:number, general:GeneralData, skillPos: number) {
         this._type = type;
         this._general = general;
         this._skillPos = skillPos;
     }
+
 }

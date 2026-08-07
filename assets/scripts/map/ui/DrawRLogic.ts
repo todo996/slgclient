@@ -1,76 +1,83 @@
-import { _decorator, Component, Layout, Prefab, Vec3, instantiate } from 'cc';
-import { AudioManager } from '../../common/AudioManager';
-import GeneralItemLogic, { GeneralItemType } from './GeneralItemLogic';
-
+import { _decorator, Component, Prefab, Layout, instantiate, Vec3 } from 'cc';
 const { ccclass, property } = _decorator;
+
+import GeneralItemLogic, { GeneralItemType } from "./GeneralItemLogic";
+import { AudioManager } from '../../common/AudioManager';
 
 @ccclass('DrawRLogic')
 export default class DrawRLogic extends Component {
+
+
     @property(Prefab)
     generalItemPrefab: Prefab = null;
 
     @property(Layout)
-    tenLayout: Layout = null;
+    tenLayout:Layout = null;
 
     @property(Layout)
-    oneLayout: Layout = null;
+    oneLayout:Layout = null;
 
-    private readonly _maxSize = 10;
-    private readonly _scale = 0.4;
+    private _maxSize:number = 10;
+    private _scale:number = 0.4;
 
-    protected onLoad(): void {
-        for (let i = 0; i < this._maxSize; i++) {
-            const generalNode = instantiate(this.generalItemPrefab);
-            generalNode.parent = this.tenLayout.node;
-            generalNode.scale = new Vec3(this._scale, this._scale, this._scale);
-            generalNode.active = false;
+    protected onLoad():void{
+
+        for(var i = 0; i < this._maxSize;i++){
+            let _generalNode = instantiate(this.generalItemPrefab);
+            _generalNode.parent = this.tenLayout.node;
+            _generalNode.scale = new Vec3(this._scale, this._scale, this._scale);
+            _generalNode.active = false;
         }
 
-        const generalNode = instantiate(this.generalItemPrefab);
-        generalNode.parent = this.oneLayout.node;
-        generalNode.scale = new Vec3(this._scale, this._scale, this._scale);
-        generalNode.active = false;
+
+        let _generalNode = instantiate(this.generalItemPrefab);
+        _generalNode.parent = this.oneLayout.node;
+        _generalNode.scale = new Vec3(this._scale, this._scale, this._scale);
+        _generalNode.active = false;
+
     }
 
-    public setData(data: any[]): void {
-        this.tenLayout.node.active = false;
-        this.oneLayout.node.active = false;
 
-        if (data.length === 1) {
+
+    public setData(data:any):void{
+        this.tenLayout.node.active = this.oneLayout.node.active = false;
+        if(data.length == 1){
             this.oneLayout.node.active = true;
-            const child = this.oneLayout.node.children[0];
-            if (!child) {
-                return;
+            var children = this.oneLayout.node.children;
+            let com = children[0].getComponent(GeneralItemLogic);
+            children[0].active = true;
+            if(com){
+                com.setData(data[0],GeneralItemType.GeneralNoThing);
             }
-            child.active = true;
-            const component = child.getComponent(GeneralItemLogic);
-            if (component) {
-                component.setData(data[0], GeneralItemType.GeneralNoThing);
+
+        }else{
+            this.tenLayout.node.active = true;
+            var children = this.tenLayout.node.children;
+            for(var i = 0; i < this._maxSize;i++){
+                var child = children[i];
+                if(data[i]){
+                    child.active = true;
+                    let com = child.getComponent(GeneralItemLogic);
+                    if(com){
+                        com.setData(data[i],GeneralItemType.GeneralNoThing);
+                    }
+                }
+                else{
+                    child.active = false;
+                }
             }
-            return;
         }
 
-        this.tenLayout.node.active = true;
-        const children = this.tenLayout.node.children;
-        for (let i = 0; i < this._maxSize; i++) {
-            const child = children[i];
-            if (!child) {
-                continue;
-            }
-            if (data[i]) {
-                child.active = true;
-                const component = child.getComponent(GeneralItemLogic);
-                if (component) {
-                    component.setData(data[i], GeneralItemType.GeneralNoThing);
-                }
-            } else {
-                child.active = false;
-            }
-        }
     }
+
 
     protected onClickClose(): void {
         this.node.active = false;
         AudioManager.instance.playClick();
     }
+
+
+
+
+
 }

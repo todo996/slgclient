@@ -5,8 +5,6 @@ import { ArmyCmd, ArmyData } from "../../general/ArmyProxy";
 import GeneralCommand from "../../general/GeneralCommand";
 import ArmyCommand from "../../general/ArmyCommand";
 import { GeneralConfig, GeneralData } from "../../general/GeneralProxy";
-import { localizeNode } from "../../i18n/I18n";
-import { styleModernArmyCard } from "../../ui/components/MapHudSurface";
 import MapUICommand from "./MapUICommand";
 import GeneralHeadLogic from "./GeneralHeadLogic";
 import { EventMgr } from '../../utils/EventMgr';
@@ -49,8 +47,6 @@ export default class CityArmyItemLogic extends Component {
     protected _isOut: boolean = true;
 
     protected onLoad(): void {
-        localizeNode(this.node);
-        styleModernArmyCard(this.node);
         EventMgr.on(LogicEvent.updateArmy, this.onUpdateArmy, this);
         this.tipNode.active = false;
     }
@@ -81,11 +77,14 @@ export default class CityArmyItemLogic extends Component {
 
     protected updateItem(): void {
 
+        // console.log("cityarmyitem:", this._data);
+
         if(this._isOpened == false){
             return
         }
 
         if (this._data && this._data.generals[0] != 0) {
+            //有数据 并且Thiết lập了Hiệp Một个Tướng
             this.tipNode.active = false;
             this.infoNode.active = true;
             let generals: GeneralData[] = ArmyCommand.getInstance().getArmyGenerals(this._data);
@@ -93,6 +92,7 @@ export default class CityArmyItemLogic extends Component {
             let curSoldierCnt: number = ArmyCommand.getInstance().getArmyCurSoldierCnt(this._data);
             let totalSoldierCnt: number = ArmyCommand.getInstance().getArmyTotalSoldierCntByGenerals(generals);
             if (this._data.cmd == ArmyCmd.Reclaim) {
+                //Đang đồn điền
                 this.labelState.string = "Đang đồn điền...";
             } else if(this._data.cmd == ArmyCmd.Conscript){
                 this.labelState.string = "Đang chiêu mộ...";
@@ -106,6 +106,7 @@ export default class CityArmyItemLogic extends Component {
             this.labelLv.string = generals[0].level + "";
             this.labelName.string = firstGeneralCfg.name;
             this.labelSoldierCnt.string = curSoldierCnt + "/" + totalSoldierCnt;
+            // this.labelArms.string = "";
 
             if (generals[1]) {
                 let sencondGeneralCfg: GeneralConfig = GeneralCommand.getInstance().proxy.getGeneralCfg(generals[1].cfgId);
@@ -141,10 +142,10 @@ export default class CityArmyItemLogic extends Component {
         this._isOut = isOut;
         if (this._isOpened == false) {
             if (this._isOut){
-                this.labelTip.string = "Mở khóa đội hình ở cấp " + this.order;
+                this.labelTip.string = " Cấp độ" + this.order + "Mở khóa";
             }else{
                 let desName: string = MapUICommand.getInstance().proxy.getFacilityCfgByType(13).name;
-                this.labelTip.string = desName + " cấp " + this.order + " để mở khóa";
+                this.labelTip.string = desName + " Cấp độ" + this.order + "Mở khóa";
             }
         }
     }

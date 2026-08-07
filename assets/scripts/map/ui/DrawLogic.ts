@@ -1,3 +1,4 @@
+
 import { _decorator, Component, Label } from 'cc';
 const { ccclass, property } = _decorator;
 
@@ -8,11 +9,10 @@ import MapUICommand from "./MapUICommand";
 import { EventMgr } from '../../utils/EventMgr';
 import { AudioManager } from '../../common/AudioManager';
 import { LogicEvent } from '../../common/LogicEvent';
-import { localizeNode } from '../../i18n/I18n';
-import { applyDrawScreenLayout } from '../../ui/screens/DrawScreenPresenter';
 
 @ccclass('DrawLogic')
 export default class DrawLogic extends Component {
+
 
     @property(Label)
     labelOnce: Label = null;
@@ -23,15 +23,15 @@ export default class DrawLogic extends Component {
     @property(Label)
     cntLab: Label = null;
 
-    protected onEnable(): void {
-        localizeNode(this.node);
-        applyDrawScreenLayout(this.node, this.labelOnce, this.labelTen, this.cntLab);
+
+    protected onEnable():void{
         EventMgr.on(LogicEvent.upateMyRoleRes, this.updateRoleRes, this);
         EventMgr.on(LogicEvent.updateMyGenerals, this.updateRoleRes, this);
         this.updateRoleRes();
     }
 
-    protected onDisable(): void {
+
+    protected onDisable():void{
         EventMgr.targetOff(this);
     }
 
@@ -40,26 +40,32 @@ export default class DrawLogic extends Component {
         AudioManager.instance.playClick();
     }
 
-    protected updateRoleRes(): void {
+
+    protected updateRoleRes():void{
         let commonCfg: GeneralCommonConfig = GeneralCommand.getInstance().proxy.getCommonCfg();
         var roleResData = LoginCommand.getInstance().proxy.getRoleResData();
-        this.labelOnce.string = "Tiêu hao: " + commonCfg.draw_general_cost + "/" + roleResData.gold;
-        this.labelTen.string = "Tiêu hao: " + commonCfg.draw_general_cost * 10 + "/" + roleResData.gold;
+        this.labelOnce.string = "Tiêu hao:"+commonCfg.draw_general_cost +"/"+ roleResData.gold;
+        this.labelTen.string = "Tiêu hao:"+commonCfg.draw_general_cost * 10 +"/"+ roleResData.gold;
 
         var basic = MapUICommand.getInstance().proxy.getBasicGeneral();
         var cnt = GeneralCommand.getInstance().proxy.getMyActiveGeneralCnt();
         this.cntLab.string = "(" + cnt + "/" + basic.limit + ")";
     }
 
-    protected drawGeneralOnce(): void {
+
+
+    protected drawGeneralOnce():void{
         AudioManager.instance.playClick();
         GeneralCommand.getInstance().drawGenerals();
+
         EventMgr.emit(LogicEvent.showWaiting);
     }
 
-    protected drawGeneralTen(): void {
+    protected drawGeneralTen():void{
         AudioManager.instance.playClick();
         GeneralCommand.getInstance().drawGenerals(10);
         EventMgr.emit(LogicEvent.showWaiting);
     }
+
+
 }

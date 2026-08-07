@@ -1,14 +1,16 @@
-import { _decorator, Button, Component, Node } from 'cc';
+import { _decorator, Component, Button, Node } from 'cc';
 import { AudioManager } from '../common/AudioManager';
-import { MapCityData } from '../map/MapCityProxy';
-import MapCommand from '../map/MapCommand';
-import UnionCommand from './UnionCommand';
-import { Member, Union } from './UnionProxy';
-
 const { ccclass, property } = _decorator;
+
+import { MapCityData } from "../map/MapCityProxy";
+import MapCommand from "../map/MapCommand";
+import UnionCommand from "./UnionCommand";
+import { Member, Union } from "./UnionProxy";
 
 @ccclass('UnionMemberItemOpLogic')
 export default class UnionMemberItemOpLogic extends Component {
+
+
     @property(Button)
     kickButton: Button = null;
 
@@ -18,91 +20,85 @@ export default class UnionMemberItemOpLogic extends Component {
     @property(Button)
     appointButton: Button = null;
 
+
     @property(Button)
     unAppointButton: Button = null;
 
-    protected _menberData: Member | null = null;
 
-    protected onLoad(): void {
+    protected _menberData:Member = null;
+
+    protected onLoad():void{
         this.node.on(Node.EventType.TOUCH_END, this.click, this);
     }
 
-    protected onDestroy(): void {
+    protected onDestroy():void{
         this.node.off(Node.EventType.TOUCH_END, this.click, this);
     }
 
-    protected click(): void {
+    protected click():void{
         this.node.active = false;
         AudioManager.instance.playClick();
     }
 
-    public setData(data: Member): void {
+    public setData(data):void{
         this._menberData = data;
-        this.kickButton.node.active = false;
-        this.abdicateButton.node.active = false;
-        this.appointButton.node.active = false;
-        this.unAppointButton.node.active = false;
-
-        const city: MapCityData = MapCommand.getInstance().cityProxy.getMyMainCity();
-        const unionData: Union = UnionCommand.getInstance().proxy.getUnion(city.unionId);
-        if (!unionData || data.rid === city.rid) {
-            this.node.active = false;
-            return;
-        }
-
-        const chairman = unionData.getChairman();
-        const viceChairman = unionData.getViceChairman();
-        if (chairman.rid === city.rid) {
-            this.unAppointButton.node.active = viceChairman.rid === data.rid;
-            this.kickButton.node.active = unionData.isMajor(city.rid);
-            this.abdicateButton.node.active = true;
-            this.appointButton.node.active = viceChairman.rid !== data.rid;
-            this.node.active = true;
-            return;
-        }
-
-        if (viceChairman.rid === city.rid) {
-            if (chairman.rid === data.rid) {
+        let city:MapCityData = MapCommand.getInstance().cityProxy.getMyMainCity();
+        let unionData:Union = UnionCommand.getInstance().proxy.getUnion(city.unionId);
+        if (unionData){
+            if(this._menberData.rid == city.rid){
                 this.node.active = false;
-                return;
+            }else{
+                if(unionData.getChairman().rid == city.rid){
+                    console.log("unionData:", unionData, unionData.getViceChairman(), this._menberData);
+
+                    this.unAppointButton.node.active = unionData.getViceChairman().rid == this._menberData.rid;
+                    this.kickButton.node.active = unionData.isMajor(city.rid);
+                    this.abdicateButton.node.active = unionData.getChairman().rid == city.rid;
+                    this.appointButton.node.active = unionData.getChairman().rid == city.rid && unionData.getViceChairman().rid != this._menberData.rid;
+                }else if(unionData.getViceChairman().rid == city.rid){
+                    if(unionData.getChairman().rid == this._menberData.rid){
+                        this.node.active = false;
+                    }else{
+                        this.unAppointButton.node.active = false;
+                        this.kickButton.node.active = true;
+                        this.abdicateButton.node.active = unionData.getViceChairman().rid != this._menberData.rid;
+                        this.appointButton.node.active = false;
+                        this.node.active = true;
+                    }
+                }else{
+                    this.node.active = false;
+                }
             }
-            this.kickButton.node.active = true;
-            this.node.active = true;
-            return;
+        }else{
+            this.node.active = false;
         }
 
-        this.node.active = false;
     }
 
-    protected kick(): void {
+    protected kick():void{
         AudioManager.instance.playClick();
-        if (this._menberData) {
-            UnionCommand.getInstance().unionKick(this._menberData.rid);
-        }
+        UnionCommand.getInstance().unionKick(this._menberData.rid);
         this.node.active = false;
     }
 
-    protected appoint(): void {
+
+    protected appoint():void{
         AudioManager.instance.playClick();
-        if (this._menberData) {
-            UnionCommand.getInstance().unionAppoint(this._menberData.rid, 1);
-        }
+        UnionCommand.getInstance().unionAppoint(this._menberData.rid, 1);
         this.node.active = false;
     }
 
-    protected unAppoint(): void {
+    protected unAppoint():void{
         AudioManager.instance.playClick();
-        if (this._menberData) {
-            UnionCommand.getInstance().unionAppoint(this._menberData.rid, 2);
-        }
+        UnionCommand.getInstance().unionAppoint(this._menberData.rid, 2);
         this.node.active = false;
     }
 
-    protected abdicate(): void {
+    protected abdicate():void{
         AudioManager.instance.playClick();
-        if (this._menberData) {
-            UnionCommand.getInstance().unionAbdicate(this._menberData.rid);
-        }
+        UnionCommand.getInstance().unionAbdicate(this._menberData.rid);
         this.node.active = false;
     }
+
+
 }

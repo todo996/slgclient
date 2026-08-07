@@ -34,6 +34,7 @@ export default class CollectLogic extends Component {
     _data: any = null;
 
     protected onEnable():void{
+        console.log("add interior_openCollect");
         EventMgr.on(LogicEvent.interiorOpenCollect, this.onOpenCollect, this);
         EventMgr.on(LogicEvent.interiorCollect, this.onCollect, this);
 
@@ -43,16 +44,19 @@ export default class CollectLogic extends Component {
         MapUICommand.getInstance().interiorOpenCollect();
     }
 
+
     protected onDisable():void{
         EventMgr.targetOff(this);
     }
 
     protected onOpenCollect(msg:any):void{
+        console.log("onOpenCollect:", msg);
         this._data = msg;
         this.startCountDown();
     }
 
     protected onCollect(msg:any):void{
+        console.log("onOpenCollect:", msg);
         this._data = msg;
         this.startCountDown();
     }

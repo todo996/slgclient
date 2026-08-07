@@ -1,3 +1,4 @@
+
 import { _decorator, Component, ScrollView, Label } from 'cc';
 const { ccclass, property } = _decorator;
 
@@ -12,22 +13,23 @@ import { LogicEvent } from '../../common/LogicEvent';
 export default class GeneralListLogic extends Component {
 
     @property(ScrollView)
-    scrollView: ScrollView = null;
+    scrollView:ScrollView = null;
 
     @property(Label)
-    cntLab: Label = null;
+    cntLab:Label = null;
 
-    private _cunGeneral: number[] = [];
-    private _type: number = 0;
-    private _position: number = 0;
+    private _cunGeneral:number[] = [];
+    private _type:number = 0;
+    private _position:number = 0;
 
-    protected onEnable(): void {
+    protected onEnable():void{
         EventMgr.on(LogicEvent.updateMyGenerals, this.initGeneralCfg, this);
         EventMgr.on(LogicEvent.generalConvert, this.initGeneralCfg, this);
         EventMgr.on(LogicEvent.chosedGeneral, this.onClickClose, this);
     }
 
-    protected onDisable(): void {
+
+    protected onDisable():void{
         EventMgr.targetOff(this);
     }
 
@@ -48,35 +50,38 @@ export default class GeneralListLogic extends Component {
         this.node.active = false;
     }
 
-    protected initGeneralCfg(): void {
-        const basic = MapUICommand.getInstance().proxy.getBasicGeneral();
-        const cnt = GeneralCommand.getInstance().proxy.getMyActiveGeneralCnt();
+    protected initGeneralCfg():void{
+
+        var basic = MapUICommand.getInstance().proxy.getBasicGeneral();
+        var cnt = GeneralCommand.getInstance().proxy.getMyActiveGeneralCnt();
         this.cntLab.string = "(" + cnt + "/" + basic.limit + ")";
 
-        const list: any[] = GeneralCommand.getInstance().proxy.getUseGenerals();
-        const listTemp = list.concat();
+        let list:any[] = GeneralCommand.getInstance().proxy.getUseGenerals();
+        let listTemp = list.concat();
+
 
         listTemp.forEach(item => {
             item.type = this._type;
             item.position = this._position;
-        });
+        })
 
-        for (let i = 0; i < listTemp.length; i++) {
-            if (this._cunGeneral.indexOf(listTemp[i].id) >= 0) {
-                listTemp.splice(i, 1);
+
+        for(var i = 0; i < listTemp.length ;i++){
+            if(this._cunGeneral.indexOf(listTemp[i].id) >= 0 ){
+                listTemp.splice(i,1);
                 i--;
             }
         }
 
-        const comp = this.scrollView.node.getComponent(ListLogic);
-        if (comp) {
-            comp.setData(listTemp);
-        }
+        var comp = this.scrollView.node.getComponent(ListLogic);
+        comp.setData(listTemp);
     }
 
-    public setData(data: number[], type: number = 0, position: number = 0): void {
+
+
+    public setData(data:number[],type:number = 0,position:number = 0):void{
         this._cunGeneral = [];
-        if (data && data.length > 0) {
+        if(data && data.length > 0){
             this._cunGeneral = data;
         }
 
@@ -86,4 +91,5 @@ export default class GeneralListLogic extends Component {
         this.initGeneralCfg();
         GeneralCommand.getInstance().qryMyGenerals();
     }
+
 }

@@ -7,8 +7,10 @@ import SkillIconLogic from "./SkillIconLogic";
 @ccclass('SkillItemLogic')
 export default class SkillItemLogic extends Component {
 
+
     @property(Label)
     nameLab: Label = null;
+
 
     @property(Label)
     limitLab: Label = null;
@@ -21,11 +23,19 @@ export default class SkillItemLogic extends Component {
 
     _skill: Skill = null;
 
+    protected onEnable():void{
+
+    }
+
     protected updateItem(skill:Skill):void{
+
         var conf = SkillCommand.getInstance().proxy.getSkillCfg(skill.cfgId);
         this._skill = skill;
         this.nameLab.string = conf.name;
+
         this.icon.getComponent(SkillIconLogic).setData(skill, null);
-        this.limitLab.string = "Đã dùng: " + this._skill.generals.length + "/" + conf.limit;
+
+        this.limitLab.string = this._skill.generals.length + "/" + conf.limit;
     }
+
 }

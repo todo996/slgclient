@@ -1,46 +1,42 @@
-import { _decorator, Component, ScrollView } from 'cc';
-import { LogicEvent } from '../common/LogicEvent';
-import { MapCityData } from '../map/MapCityProxy';
-import MapCommand from '../map/MapCommand';
-import { EventMgr } from '../utils/EventMgr';
-import ListLogic from '../utils/ListLogic';
-import UnionCommand from './UnionCommand';
-import { Union } from './UnionProxy';
 
-const { ccclass, property } = _decorator;
+
+import { _decorator, Component, ScrollView } from 'cc';
+const {ccclass, property} = _decorator;
+
+import UnionCommand from "./UnionCommand";
+import { Union } from "./UnionProxy";
+import { MapCityData } from "../map/MapCityProxy";
+import MapCommand from "../map/MapCommand";
+import { EventMgr } from '../utils/EventMgr';
+import { LogicEvent } from '../common/LogicEvent';
+import ListLogic from '../utils/ListLogic';
 
 @ccclass('UnionLogLogic')
 export default class UnionLogLogic extends Component {
     @property(ScrollView)
-    logView: ScrollView | null = null;
-
-    protected onLoad(): void {
-        EventMgr.on(LogicEvent.unionLog, this.updateLog, this);
+    logView:ScrollView | null = null;
+    protected onLoad():void{
+        EventMgr.on(LogicEvent.unionLog,this.updateLog,this);
     }
 
-    protected onDestroy(): void {
+    protected onDestroy():void{
         EventMgr.targetOff(this);
     }
+    protected updateLog(data:any[]){
 
-    protected updateLog(data: any[]): void {
-        if (!this.logView) {
-            return;
-        }
-        const comp = this.logView.node.getComponent(ListLogic);
-        if (comp) {
-            comp.setData(data || []);
-        }
+        var comp = this.logView.node.getComponent(ListLogic);
+        comp.setData(data?data:[]);
     }
-
-    protected getLog(): void {
-        const city: MapCityData = MapCommand.getInstance().cityProxy.getMyMainCity();
-        const unionData: Union = UnionCommand.getInstance().proxy.getUnion(city.unionId);
-        if (unionData && unionData.isMajor(city.rid)) {
+    protected getLog():void{
+        let city:MapCityData = MapCommand.getInstance().cityProxy.getMyMainCity();
+        let unionData:Union = UnionCommand.getInstance().proxy.getUnion(city.unionId);
+        if(unionData.isMajor(city.rid)){
             UnionCommand.getInstance().unionLog();
         }
     }
-
-    protected onEnable(): void {
-        this.getLog();
+    protected onEnable():void{
+        console.log("getLog");
+        this.getLog()
     }
 }
+
