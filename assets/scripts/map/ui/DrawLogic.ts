@@ -9,7 +9,7 @@ import { EventMgr } from '../../utils/EventMgr';
 import { AudioManager } from '../../common/AudioManager';
 import { LogicEvent } from '../../common/LogicEvent';
 import { localizeNode } from '../../i18n/I18n';
-import { styleModernCityPanel } from '../../ui/components/MapHudSurface';
+import { applyDrawScreenLayout } from '../../ui/screens/DrawScreenPresenter';
 
 @ccclass('DrawLogic')
 export default class DrawLogic extends Component {
@@ -25,7 +25,7 @@ export default class DrawLogic extends Component {
 
     protected onEnable(): void {
         localizeNode(this.node);
-        styleModernCityPanel(this.node);
+        applyDrawScreenLayout(this.node, this.labelOnce, this.labelTen, this.cntLab);
         EventMgr.on(LogicEvent.upateMyRoleRes, this.updateRoleRes, this);
         EventMgr.on(LogicEvent.updateMyGenerals, this.updateRoleRes, this);
         this.updateRoleRes();
