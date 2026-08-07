@@ -170,8 +170,6 @@ export default class ChatLogic extends Component {
     protected onLoad(): void {
         localizeNode(this.node);
         applyChatLayout(this.node, this.editConent, this.chatView, this._type);
-        EventMgr.on(LogicEvent.updateChatHistory, this.updateChat, this);
-        EventMgr.on(LogicEvent.unionChange, this.updateChat, this);
     }
 
     protected onDisable(): void {
@@ -179,6 +177,9 @@ export default class ChatLogic extends Component {
     }
 
     protected onEnable(): void {
+        EventMgr.targetOff(this);
+        EventMgr.on(LogicEvent.updateChatHistory, this.updateChat, this);
+        EventMgr.on(LogicEvent.unionChange, this.updateChat, this);
         localizeNode(this.node);
         applyChatLayout(this.node, this.editConent, this.chatView, this._type);
         this.updateUnion();
@@ -228,6 +229,9 @@ export default class ChatLogic extends Component {
             let city: MapCityData = MapCommand.getInstance().cityProxy.getMyMainCity();
             if (city.unionId > 0) {
                 ChatCommand.getInstance().chat(this.editConent.string, this._type);
+            } else {
+                EventMgr.emit(LogicEvent.showToast, "Bạn chưa tham gia Liên minh");
+                return;
             }
         }
         this.editConent.string = "";
