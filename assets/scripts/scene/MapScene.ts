@@ -32,8 +32,8 @@ export default class MapScene extends Component {
     protected onLoad(): void {
         this._cmd = MapCommand.getInstance();
 
-        // Giữ nguyên TiledMap và toàn bộ dữ liệu bản đồ gốc.
-        const tiledMap: TiledMap = this.mapLayer.addComponent(TiledMap);
+        // Giữ nguyên bản đồ gốc; chỉ bổ sung lớp trình bày HUD ở cuối frame.
+        let tiledMap: TiledMap = this.mapLayer.addComponent(TiledMap);
         tiledMap.tmxAsset = this._cmd.proxy.tiledMapAsset;
 
         MapUtil.initMapConfig(tiledMap);
@@ -41,14 +41,13 @@ export default class MapScene extends Component {
         EventMgr.on(LogicEvent.mapShowAreaChange, this.onMapShowAreaChange, this);
         EventMgr.on(LogicEvent.scrollToMap, this.onScrollToMap, this);
 
-        // Chỉ làm mới các thành phần UI đang nằm trên scene; không thay tile/camera.
         this.scheduleOnce(() => {
             localizeNode(this.node);
             styleModernMapScene(this.node);
         }, 0);
 
         this.scheduleOnce(() => {
-            const myCity: MapCityData = this._cmd.cityProxy.getMyMainCity();
+            let myCity: MapCityData = this._cmd.cityProxy.getMyMainCity();
             this.node.getComponent(MapLogic).setTiledMap(tiledMap);
             this.node.getComponent(MapLogic).scrollToMapPoint(new Vec2(myCity.x, myCity.y));
             this.onTimer();
@@ -56,7 +55,7 @@ export default class MapScene extends Component {
 
         this.schedule(this.onTimer, 0.2);
 
-        this.scheduleOnce(() => {
+        this.scheduleOnce(()=>{
             EventMgr.emit(CoreEvent.loadComplete);
         }, 0.6);
     }
@@ -68,18 +67,18 @@ export default class MapScene extends Component {
     }
 
     protected onTimer(): void {
+
         if (this._cmd.proxy.qryAreaIds && this._cmd.proxy.qryAreaIds.length > 0) {
-            const qryIndex: number = this._cmd.proxy.qryAreaIds.shift();
-            const qryData: MapAreaData = this._cmd.proxy.getMapAreaData(qryIndex);
+            let qryIndex: number = this._cmd.proxy.qryAreaIds.shift();
+            let qryData: MapAreaData = this._cmd.proxy.getMapAreaData(qryIndex);
             if (qryData.checkAndUpdateQryTime()) {
                 this._cmd.qryNationMapScanBlock(qryData);
             }
         }
-
-        const nowTime: number = Date.now();
+        let nowTime: number = Date.now();
         if (nowTime - this._lastUpPosTime > 1000) {
             this._lastUpPosTime = nowTime;
-            const point: Vec2 = MapCommand.getInstance().proxy.getCurCenterPoint();
+            let point: Vec2 = MapCommand.getInstance().proxy.getCurCenterPoint();
             if (point != null && (this._centerX != point.x || this._centerY != point.y)) {
                 this._centerX = point.x;
                 this._centerY = point.y;
@@ -88,19 +87,15 @@ export default class MapScene extends Component {
         }
     }
 
-    protected onMapShowAreaChange(
-        centerPoint: Vec2,
-        centerAreaId: number,
-        addIds: number[],
-        removeIds: number[],
-    ): void {
-        const resLogic: MapResLogic = this.node.getComponent(MapResLogic);
-        const buildResLogic: MapResBuildLogic = this.node.getComponent(MapResBuildLogic);
-        const buildFacilityLogic: MapFacilityBuildLogic = this.node.getComponent(MapFacilityBuildLogic);
-        const tagLogic: MapBuildTagLogic = this.node.getComponent(MapBuildTagLogic);
-        const buildTipsLogic: MapBuildTipsLogic = this.node.getComponent(MapBuildTipsLogic);
-        const cityLogic: MapCityLogic = this.node.getComponent(MapCityLogic);
-        const sysCityLogic: MapSysCityLogic = this.node.getComponent(MapSysCityLogic);
+    protected onMapShowAreaChange(centerPoint: Vec2, centerAreaId: number, addIds: number[], removeIds: number[]): void {
+
+        let resLogic: MapResLogic = this.node.getComponent(MapResLogic);
+        let buildResLogic: MapResBuildLogic = this.node.getComponent(MapResBuildLogic);
+        let buildFacilityLogic: MapFacilityBuildLogic = this.node.getComponent(MapFacilityBuildLogic);
+        let tagLogic: MapBuildTagLogic = this.node.getComponent(MapBuildTagLogic);
+        let buildTipsLogic: MapBuildTipsLogic = this.node.getComponent(MapBuildTipsLogic);
+        let cityLogic: MapCityLogic = this.node.getComponent(MapCityLogic);
+        let sysCityLogic: MapSysCityLogic = this.node.getComponent(MapSysCityLogic);
 
         resLogic.udpateShowAreas(addIds, removeIds);
         buildResLogic.udpateShowAreas(addIds, removeIds);
@@ -111,41 +106,43 @@ export default class MapScene extends Component {
         sysCityLogic.udpateShowAreas(addIds, removeIds);
 
         for (let i: number = 0; i < addIds.length; i++) {
-            const areaData: MapAreaData = this._cmd.proxy.getMapAreaData(addIds[i]);
+            let areaData: MapAreaData = this._cmd.proxy.getMapAreaData(addIds[i]);
             for (let x: number = areaData.startCellX; x < areaData.endCellX; x++) {
                 for (let y: number = areaData.startCellY; y < areaData.endCellY; y++) {
-                    const cellId: number = MapUtil.getIdByCellPoint(x, y);
-                    const resourceData = this._cmd.proxy.getResData(cellId);
-                    const buildData = this._cmd.buildProxy.getBuild(cellId);
+                    let cellId: number = MapUtil.getIdByCellPoint(x, y);
+                    if (this._cmd.proxy.getResData(cellId)) {
+                        resLogic.addItem(addIds[i], this._cmd.proxy.getResData(cellId));
+                    }
 
-                    if (resourceData) {
-                        resLogic.addItem(addIds[i], resourceData);
+                    if (this._cmd.proxy.getResData(cellId).type == MapResType.SYS_CITY) {
+                        sysCityLogic.addItem(addIds[i], this._cmd.proxy.getResData(cellId));
+                    }
 
-                        if (resourceData.type == MapResType.SYS_CITY) {
-                            sysCityLogic.addItem(addIds[i], resourceData);
-                        }
-
-                        if (resourceData.type <= MapResType.FORTRESS) {
-                            tagLogic.addItem(addIds[i], resourceData);
+                    if (this._cmd.buildProxy.getBuild(cellId) != null) {
+                        var build = this._cmd.buildProxy.getBuild(cellId);
+                        if(build.type == MapResType.SYS_CITY){
+                            sysCityLogic.addItem(addIds[i], build);
+                        }else if(build.type == MapResType.SYS_FORTRESS){
+                            resLogic.addItem(addIds[i], build);
+                        } else{
+                            buildResLogic.addItem(addIds[i], build);
                         }
                     }
 
-                    if (buildData != null) {
-                        if (buildData.type == MapResType.SYS_CITY) {
-                            sysCityLogic.addItem(addIds[i], buildData);
-                        } else if (buildData.type == MapResType.SYS_FORTRESS) {
-                            resLogic.addItem(addIds[i], buildData);
-                        } else {
-                            buildResLogic.addItem(addIds[i], buildData);
-                        }
-
-                        buildFacilityLogic.addItem(addIds[i], buildData);
-                        buildTipsLogic.addItem(addIds[i], buildData);
+                    if (this._cmd.buildProxy.getBuild(cellId) != null) {
+                        buildFacilityLogic.addItem(addIds[i], this._cmd.buildProxy.getBuild(cellId));
                     }
 
-                    const cityData = this._cmd.cityProxy.getCity(cellId);
-                    if (cityData != null) {
-                        cityLogic.addItem(addIds[i], cityData);
+                    if (this._cmd.proxy.getResData(cellId).type <= MapResType.FORTRESS) {
+                        tagLogic.addItem(addIds[i], this._cmd.proxy.getResData(cellId));
+                    }
+
+                    if (this._cmd.buildProxy.getBuild(cellId) != null) {
+                        buildTipsLogic.addItem(addIds[i], this._cmd.buildProxy.getBuild(cellId));
+                    }
+
+                    if (this._cmd.cityProxy.getCity(cellId) != null) {
+                        cityLogic.addItem(addIds[i], this._cmd.cityProxy.getCity(cellId));
                     }
                 }
             }
@@ -153,8 +150,8 @@ export default class MapScene extends Component {
     }
 
     protected onScrollToMap(x: number, y: number): void {
-        const old = this.node.getComponent(MapLogic).curCameraPoint();
-        const cur = this.node.getComponent(MapLogic).toCameraPoint(new Vec2(x, y));
+        let old = this.node.getComponent(MapLogic).curCameraPoint();
+        let cur = this.node.getComponent(MapLogic).toCameraPoint(new Vec2(x, y));
 
         EventMgr.emit(LogicEvent.beforeScrollToMap, cur.x, cur.y, old.x, old.y);
         this.node.getComponent(MapLogic).scrollToMapPoint(new Vec2(x, y));
