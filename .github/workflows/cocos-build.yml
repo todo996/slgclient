@@ -10,7 +10,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: cocos-web-build
+  group: cocos-web-build-${{ github.ref_name }}
   cancel-in-progress: true
 
 env:
@@ -18,7 +18,8 @@ env:
   COCOS_DOWNLOAD_URL: "https://download.cocos.com/CocosCreator/v3.4.0/CocosCreator-v3.4.0-win32-121822.zip"
   COCOS_INSTALL_DIR: "C:\\CocosCreator-3.4.0"
   WEB_OUTPUT_PATH: "build/web-desktop"
-  DEPLOY_BRANCH: "build-web"
+  # main luôn xuất bản production; mọi nhánh khác chỉ xuất bản preview.
+  DEPLOY_BRANCH: ${{ github.ref_name == 'main' && 'build-web' || 'build-web-preview' }}
 
 jobs:
   build-web:
@@ -32,6 +33,15 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: true
+
+      - name: Show deployment target
+        shell: pwsh
+        run: |
+          Write-Host "Source branch: $env:GITHUB_REF_NAME"
+          Write-Host "Deployment branch: $env:DEPLOY_BRANCH"
+          if ($env:GITHUB_REF_NAME -ne "main" -and $env:DEPLOY_BRANCH -eq "build-web") {
+            throw "Safety check failed: a non-main branch must never publish to build-web."
+          }
 
       - name: Setup Node.js 22
         uses: actions/setup-node@v4
@@ -135,11 +145,11 @@ jobs:
           Set-Content -Path $indexPath -Value $html -Encoding utf8
           Write-Host "Mobile fullscreen shell applied."
 
-      - name: Prepare build-web branch contents
+      - name: Prepare deployment branch contents
         shell: pwsh
         run: |
           $ErrorActionPreference = "Stop"
-          $deployDir = Join-Path $env:RUNNER_TEMP "slgclient-build-web"
+          $deployDir = Join-Path $env:RUNNER_TEMP "slgclient-deploy"
           if (Test-Path $deployDir) { Remove-Item $deployDir -Recurse -Force }
           New-Item -ItemType Directory -Path $deployDir -Force | Out-Null
           New-Item -ItemType Directory -Path (Join-Path $deployDir "build") -Force | Out-Null
@@ -149,13 +159,13 @@ jobs:
           Copy-Item "vercel.json" (Join-Path $deployDir "vercel.json") -Force
           Copy-Item "scripts/prepare-vercel.mjs" (Join-Path $deployDir "scripts/prepare-vercel.mjs") -Force
           New-Item -ItemType File -Path (Join-Path $deployDir ".nojekyll") -Force | Out-Null
-          @("# Generated deployment branch","","This branch is generated automatically from main by GitHub Actions.","Do not edit it manually. Configure Vercel to deploy the build-web branch.") | Set-Content -Path (Join-Path $deployDir "README.md") -Encoding utf8
+          @("# Generated deployment branch","","Generated automatically from $env:GITHUB_REF_NAME by GitHub Actions.","Target branch: $env:DEPLOY_BRANCH","Do not edit this branch manually.") | Set-Content -Path (Join-Path $deployDir "README.md") -Encoding utf8
 
-      - name: Push deployment to build-web
+      - name: Push deployment branch
         shell: pwsh
         run: |
           $ErrorActionPreference = "Stop"
-          $deployDir = Join-Path $env:RUNNER_TEMP "slgclient-build-web"
+          $deployDir = Join-Path $env:RUNNER_TEMP "slgclient-deploy"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout --orphan $env:DEPLOY_BRANCH
@@ -163,6 +173,6 @@ jobs:
           Copy-Item -Path (Join-Path $deployDir "*") -Destination $env:GITHUB_WORKSPACE -Recurse -Force
           Copy-Item -Path (Join-Path $deployDir ".nojekyll") -Destination (Join-Path $env:GITHUB_WORKSPACE ".nojekyll") -Force
           git add --all
-          git commit -m "build(web): $env:GITHUB_SHA" -m "Generated automatically with Cocos Creator $env:COCOS_VERSION."
+          git commit -m "build(web): $env:GITHUB_SHA" -m "Generated automatically with Cocos Creator $env:COCOS_VERSION from $env:GITHUB_REF_NAME."
           git push --force origin "HEAD:$env:DEPLOY_BRANCH"
           Write-Host "Published Web Desktop to branch $env:DEPLOY_BRANCH."
