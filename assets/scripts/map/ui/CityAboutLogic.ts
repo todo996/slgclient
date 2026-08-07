@@ -25,10 +25,11 @@ export default class CityAboutLogic extends Component {
     protected _armyComps: CityArmyItemLogic[] = [];
 
     protected onEnable(): void {
+        EventMgr.off(LogicEvent.updateCityAddition, this.onUpdateCityAdditon, this);
+        EventMgr.on(LogicEvent.updateCityAddition, this.onUpdateCityAdditon, this);
         localizeNode(this.node);
         styleModernCityPanel(this.node);
         this.initView();
-        EventMgr.on(LogicEvent.updateCityAddition, this.onUpdateCityAdditon, this);
     }
 
     protected onDisable(): void {
