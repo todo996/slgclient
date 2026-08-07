@@ -16,6 +16,8 @@ import MapSysCityLogic from "../map/MapSysCityLogic";
 import { EventMgr } from '../utils/EventMgr';
 import { LogicEvent } from '../common/LogicEvent';
 import { CoreEvent } from '../core/coreEvent';
+import { localizeNode } from '../i18n/I18n';
+import { styleModernMapScene } from '../ui/components/MapHudSurface';
 
 @ccclass('MapScene')
 export default class MapScene extends Component {
@@ -30,9 +32,8 @@ export default class MapScene extends Component {
     protected onLoad(): void {
         this._cmd = MapCommand.getInstance();
 
-
-        //初始化地图
-        let tiledMap: TiledMap = this.mapLayer.addComponent(TiledMap);
+        // Giữ nguyên TiledMap và toàn bộ dữ liệu bản đồ gốc.
+        const tiledMap: TiledMap = this.mapLayer.addComponent(TiledMap);
         tiledMap.tmxAsset = this._cmd.proxy.tiledMapAsset;
 
         MapUtil.initMapConfig(tiledMap);
@@ -40,16 +41,22 @@ export default class MapScene extends Component {
         EventMgr.on(LogicEvent.mapShowAreaChange, this.onMapShowAreaChange, this);
         EventMgr.on(LogicEvent.scrollToMap, this.onScrollToMap, this);
 
+        // Chỉ làm mới các thành phần UI đang nằm trên scene; không thay tile/camera.
         this.scheduleOnce(() => {
-            let myCity: MapCityData = this._cmd.cityProxy.getMyMainCity();
+            localizeNode(this.node);
+            styleModernMapScene(this.node);
+        }, 0);
+
+        this.scheduleOnce(() => {
+            const myCity: MapCityData = this._cmd.cityProxy.getMyMainCity();
             this.node.getComponent(MapLogic).setTiledMap(tiledMap);
             this.node.getComponent(MapLogic).scrollToMapPoint(new Vec2(myCity.x, myCity.y));
-            this.onTimer();//立即执行Một次
+            this.onTimer();
         }, 0.1);
 
         this.schedule(this.onTimer, 0.2);
 
-        this.scheduleOnce(()=>{
+        this.scheduleOnce(() => {
             EventMgr.emit(CoreEvent.loadComplete);
         }, 0.6);
     }
@@ -61,19 +68,18 @@ export default class MapScene extends Component {
     }
 
     protected onTimer(): void {
-
         if (this._cmd.proxy.qryAreaIds && this._cmd.proxy.qryAreaIds.length > 0) {
-            let qryIndex: number = this._cmd.proxy.qryAreaIds.shift();
-            let qryData: MapAreaData = this._cmd.proxy.getMapAreaData(qryIndex);
+            const qryIndex: number = this._cmd.proxy.qryAreaIds.shift();
+            const qryData: MapAreaData = this._cmd.proxy.getMapAreaData(qryIndex);
             if (qryData.checkAndUpdateQryTime()) {
                 this._cmd.qryNationMapScanBlock(qryData);
             }
         }
-        let nowTime: number = Date.now();
+
+        const nowTime: number = Date.now();
         if (nowTime - this._lastUpPosTime > 1000) {
             this._lastUpPosTime = nowTime;
-            //间隔Mộtgiây检测中心点是否改变
-            let point: Vec2 = MapCommand.getInstance().proxy.getCurCenterPoint();
+            const point: Vec2 = MapCommand.getInstance().proxy.getCurCenterPoint();
             if (point != null && (this._centerX != point.x || this._centerY != point.y)) {
                 this._centerX = point.x;
                 this._centerY = point.y;
@@ -82,18 +88,20 @@ export default class MapScene extends Component {
         }
     }
 
-    protected onMapShowAreaChange(centerPoint: Vec2, centerAreaId: number, addIds: number[], removeIds: number[]): void {
+    protected onMapShowAreaChange(
+        centerPoint: Vec2,
+        centerAreaId: number,
+        addIds: number[],
+        removeIds: number[],
+    ): void {
+        const resLogic: MapResLogic = this.node.getComponent(MapResLogic);
+        const buildResLogic: MapResBuildLogic = this.node.getComponent(MapResBuildLogic);
+        const buildFacilityLogic: MapFacilityBuildLogic = this.node.getComponent(MapFacilityBuildLogic);
+        const tagLogic: MapBuildTagLogic = this.node.getComponent(MapBuildTagLogic);
+        const buildTipsLogic: MapBuildTipsLogic = this.node.getComponent(MapBuildTipsLogic);
+        const cityLogic: MapCityLogic = this.node.getComponent(MapCityLogic);
+        const sysCityLogic: MapSysCityLogic = this.node.getComponent(MapSysCityLogic);
 
-
-        let resLogic: MapResLogic = this.node.getComponent(MapResLogic);
-        let buildResLogic: MapResBuildLogic = this.node.getComponent(MapResBuildLogic);
-        let buildFacilityLogic: MapFacilityBuildLogic = this.node.getComponent(MapFacilityBuildLogic);
-        let tagLogic: MapBuildTagLogic = this.node.getComponent(MapBuildTagLogic);
-        let buildTipsLogic: MapBuildTipsLogic = this.node.getComponent(MapBuildTipsLogic);
-        let cityLogic: MapCityLogic = this.node.getComponent(MapCityLogic);
-        let sysCityLogic: MapSysCityLogic = this.node.getComponent(MapSysCityLogic);
-
-        //更新展示区域
         resLogic.udpateShowAreas(addIds, removeIds);
         buildResLogic.udpateShowAreas(addIds, removeIds);
         buildFacilityLogic.udpateShowAreas(addIds, removeIds);
@@ -102,63 +110,51 @@ export default class MapScene extends Component {
         cityLogic.udpateShowAreas(addIds, removeIds);
         sysCityLogic.udpateShowAreas(addIds, removeIds);
 
-        //更新区域内的具体节点
         for (let i: number = 0; i < addIds.length; i++) {
-            let areaData: MapAreaData = this._cmd.proxy.getMapAreaData(addIds[i]);
-            // console.log("areaData", areaData);
+            const areaData: MapAreaData = this._cmd.proxy.getMapAreaData(addIds[i]);
             for (let x: number = areaData.startCellX; x < areaData.endCellX; x++) {
                 for (let y: number = areaData.startCellY; y < areaData.endCellY; y++) {
-                    let cellId: number = MapUtil.getIdByCellPoint(x, y);
-                    //Tài nguyên
-                    if (this._cmd.proxy.getResData(cellId)) {
-                        resLogic.addItem(addIds[i], this._cmd.proxy.getResData(cellId));
-                    }
+                    const cellId: number = MapUtil.getIdByCellPoint(x, y);
+                    const resourceData = this._cmd.proxy.getResData(cellId);
+                    const buildData = this._cmd.buildProxy.getBuild(cellId);
 
-                    if (this._cmd.proxy.getResData(cellId).type == MapResType.SYS_CITY) {
-                        sysCityLogic.addItem(addIds[i], this._cmd.proxy.getResData(cellId));
-                    }
+                    if (resourceData) {
+                        resLogic.addItem(addIds[i], resourceData);
 
-                    //Công trình
-                    if (this._cmd.buildProxy.getBuild(cellId) != null) {
-                        var build = this._cmd.buildProxy.getBuild(cellId);
-                        if(build.type == MapResType.SYS_CITY){
-                            //Hệ thốngThành trì
-                            sysCityLogic.addItem(addIds[i], build);
-                        }else if(build.type == MapResType.SYS_FORTRESS){
-                            console.log("MapResType.SYS_FORTRESS");
-                            resLogic.addItem(addIds[i], build);
-                        } else{
-                            buildResLogic.addItem(addIds[i], build);
+                        if (resourceData.type == MapResType.SYS_CITY) {
+                            sysCityLogic.addItem(addIds[i], resourceData);
+                        }
+
+                        if (resourceData.type <= MapResType.FORTRESS) {
+                            tagLogic.addItem(addIds[i], resourceData);
                         }
                     }
 
-                    if (this._cmd.buildProxy.getBuild(cellId) != null) {
-                        buildFacilityLogic.addItem(addIds[i], this._cmd.buildProxy.getBuild(cellId));
+                    if (buildData != null) {
+                        if (buildData.type == MapResType.SYS_CITY) {
+                            sysCityLogic.addItem(addIds[i], buildData);
+                        } else if (buildData.type == MapResType.SYS_FORTRESS) {
+                            resLogic.addItem(addIds[i], buildData);
+                        } else {
+                            buildResLogic.addItem(addIds[i], buildData);
+                        }
+
+                        buildFacilityLogic.addItem(addIds[i], buildData);
+                        buildTipsLogic.addItem(addIds[i], buildData);
                     }
 
-                    //Đánh dấu
-                    if (this._cmd.proxy.getResData(cellId).type <= MapResType.FORTRESS) {
-
-                        tagLogic.addItem(addIds[i], this._cmd.proxy.getResData(cellId));
+                    const cityData = this._cmd.cityProxy.getCity(cellId);
+                    if (cityData != null) {
+                        cityLogic.addItem(addIds[i], cityData);
                     }
-
-                    if (this._cmd.buildProxy.getBuild(cellId) != null) {
-                        buildTipsLogic.addItem(addIds[i], this._cmd.buildProxy.getBuild(cellId));
-                    }
-
-                    //Thành trì
-                    if (this._cmd.cityProxy.getCity(cellId) != null) {
-                        cityLogic.addItem(addIds[i], this._cmd.cityProxy.getCity(cellId));
-                    }
-
                 }
             }
         }
     }
 
     protected onScrollToMap(x: number, y: number): void {
-        let old = this.node.getComponent(MapLogic).curCameraPoint();
-        let cur = this.node.getComponent(MapLogic).toCameraPoint(new Vec2(x, y));
+        const old = this.node.getComponent(MapLogic).curCameraPoint();
+        const cur = this.node.getComponent(MapLogic).toCameraPoint(new Vec2(x, y));
 
         EventMgr.emit(LogicEvent.beforeScrollToMap, cur.x, cur.y, old.x, old.y);
         this.node.getComponent(MapLogic).scrollToMapPoint(new Vec2(x, y));
