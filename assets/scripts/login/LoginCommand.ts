@@ -31,6 +31,7 @@ export default class LoginCommand {
     }
 
     protected _proxy: LoginProxy = new LoginProxy();
+    private _loginTimeout: any = null;
 
     constructor() {
         EventMgr.on(NetEvent.ServerCheckLogin, this.onServerConneted, this);
@@ -45,7 +46,30 @@ export default class LoginCommand {
     }
 
     public onDestory(): void {
+        this.clearLoginTimeout();
         EventMgr.targetOff(this);
+    }
+
+    private showToast(message: string): void {
+        EventMgr.emit(LogicEvent.showToast, message);
+    }
+
+    private getResponseMessage(data: any, fallback: string): string {
+        if (!data) {
+            return fallback;
+        }
+
+        const message = data.errmsg || data.message || data.msg;
+        return typeof message === 'string' && message.trim() !== ''
+            ? message.trim()
+            : fallback;
+    }
+
+    private clearLoginTimeout(): void {
+        if (this._loginTimeout !== null) {
+            clearTimeout(this._loginTimeout);
+            this._loginTimeout = null;
+        }
     }
 
     private onAccountRobLogin(): void {
@@ -53,14 +77,32 @@ export default class LoginCommand {
     }
 
     private onRegister(data: any, otherData: { username: string; password: string }): void {
-        if (data.code === 0) {
-            this.rememberUsername(otherData.username);
-            this.accountLogin(otherData.username, otherData.password);
+        if (!data || data.code !== 0) {
+            this.showToast(this.getResponseMessage(
+                data,
+                'Không thể đăng ký. Vui lòng kiểm tra kết nối máy chủ rồi thử lại.',
+            ));
+            return;
         }
+
+        this.rememberUsername(otherData.username);
+        this.showToast('Đăng ký thành công. Đang đăng nhập...');
+        this.accountLogin(otherData.username, otherData.password);
     }
 
     private onAccountLogin(data: any, otherData: { username: string }): void {
-        if (data.code !== 0) {
+        this.clearLoginTimeout();
+
+        if (!data || data.code !== 0) {
+            this.showToast(this.getResponseMessage(
+                data,
+                'Đăng nhập thất bại. Tài khoản hoặc mật khẩu không đúng.',
+            ));
+            return;
+        }
+
+        if (!data.msg) {
+            this.showToast('Máy chủ trả về dữ liệu đăng nhập không hợp lệ.');
             return;
         }
 
@@ -78,6 +120,7 @@ export default class LoginCommand {
         }
 
         if (data.code !== 0) {
+            this.showToast(this.getResponseMessage(data, 'Không thể vào máy chủ game.'));
             return;
         }
 
@@ -121,7 +164,7 @@ export default class LoginCommand {
     }
 
     private onChatLogin(_data: any): void {
-        // Kết nối chat dùng chung gateway; không ghi token hoặc dữ liệu nhạy cảm ra console.
+        // Kết nối chat dùng chung gateway; không ghi dữ liệu nhạy cảm ra console.
     }
 
     private rememberUsername(username: string): void {
@@ -149,6 +192,12 @@ export default class LoginCommand {
     }
 
     public accountLogin(name: string, password: string): void {
+        this.clearLoginTimeout();
+        this._loginTimeout = setTimeout(() => {
+            this._loginTimeout = null;
+            this.showToast('Không nhận được phản hồi đăng nhập từ máy chủ.');
+        }, 15000);
+
         const sendData = {
             name: ServerConfig.account_login,
             msg: {
