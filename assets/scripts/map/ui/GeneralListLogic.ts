@@ -7,8 +7,6 @@ import { EventMgr } from '../../utils/EventMgr';
 import ListLogic from '../../utils/ListLogic';
 import { AudioManager } from '../../common/AudioManager';
 import { LogicEvent } from '../../common/LogicEvent';
-import { localizeNode } from '../../i18n/I18n';
-import { applyGeneralScreenLayout } from '../../ui/screens/GeneralScreenPresenter';
 
 @ccclass('GeneralListLogic')
 export default class GeneralListLogic extends Component {
@@ -24,8 +22,6 @@ export default class GeneralListLogic extends Component {
     private _position: number = 0;
 
     protected onEnable(): void {
-        localizeNode(this.node);
-        applyGeneralScreenLayout(this.node, this.scrollView, this.cntLab);
         EventMgr.on(LogicEvent.updateMyGenerals, this.initGeneralCfg, this);
         EventMgr.on(LogicEvent.generalConvert, this.initGeneralCfg, this);
         EventMgr.on(LogicEvent.chosedGeneral, this.onClickClose, this);
@@ -53,27 +49,29 @@ export default class GeneralListLogic extends Component {
     }
 
     protected initGeneralCfg(): void {
-        var basic = MapUICommand.getInstance().proxy.getBasicGeneral();
-        var cnt = GeneralCommand.getInstance().proxy.getMyActiveGeneralCnt();
+        const basic = MapUICommand.getInstance().proxy.getBasicGeneral();
+        const cnt = GeneralCommand.getInstance().proxy.getMyActiveGeneralCnt();
         this.cntLab.string = "(" + cnt + "/" + basic.limit + ")";
 
-        let list: any[] = GeneralCommand.getInstance().proxy.getUseGenerals();
-        let listTemp = list.concat();
+        const list: any[] = GeneralCommand.getInstance().proxy.getUseGenerals();
+        const listTemp = list.concat();
 
         listTemp.forEach(item => {
             item.type = this._type;
             item.position = this._position;
         });
 
-        for (var i = 0; i < listTemp.length; i++) {
+        for (let i = 0; i < listTemp.length; i++) {
             if (this._cunGeneral.indexOf(listTemp[i].id) >= 0) {
                 listTemp.splice(i, 1);
                 i--;
             }
         }
 
-        var comp = this.scrollView.node.getComponent(ListLogic);
-        comp.setData(listTemp);
+        const comp = this.scrollView.node.getComponent(ListLogic);
+        if (comp) {
+            comp.setData(listTemp);
+        }
     }
 
     public setData(data: number[], type: number = 0, position: number = 0): void {
