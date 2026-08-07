@@ -2,11 +2,9 @@ import { EditBox, Label, Node, RichText } from 'cc';
 import { gameTermTranslations } from './GameTerms';
 import { generalNameTranslations } from './GeneralNames';
 import { runtimeTermTranslations } from './RuntimeTerms';
+import { applyGameTheme } from '../ui/theme/applyGameTheme';
 
-/**
- * Phông hệ thống hỗ trợ đầy đủ dấu tiếng Việt trên trình duyệt.
- * Arial có sẵn trên hầu hết hệ điều hành; trình duyệt sẽ tự dùng sans-serif tương thích khi cần.
- */
+/** Phông hệ thống hỗ trợ đầy đủ dấu tiếng Việt trên trình duyệt. */
 export const VIETNAMESE_FONT_FAMILY = 'Arial';
 
 const viDictionary: Record<string, string> = {
@@ -72,10 +70,34 @@ const viDictionary: Record<string, string> = {
     '今日': 'Hôm nay',
     '分钟': 'phút',
     '秒': 'giây',
+    '登录': 'Đăng nhập',
+    '注册': 'Đăng ký',
+    '忘记密码': 'Quên mật khẩu',
+    '武将': 'Tướng',
+    '抽卡': 'Chiêu mộ',
+    '战报': 'Chiến báo',
+    '联盟': 'Liên minh',
+    '征收': 'Thu thuế',
+    '市场': 'Chợ',
+    '聊天': 'Trò chuyện',
+    '技能': 'Kỹ năng',
+    '设置': 'Cài đặt',
+    '返回': 'Quay lại',
+    '确认': 'Xác nhận',
+    '取消': 'Hủy',
+    '发送': 'Gửi',
+    '创建': 'Tạo mới',
+    '加入': 'Gia nhập',
+    '详情': 'Chi tiết',
+    '升级': 'Nâng cấp',
+    '排序': 'Sắp xếp',
+    '筛选': 'Lọc',
+    '全部': 'Tất cả',
+    '世界': 'Thế giới',
+    '邮件': 'Thư',
+    '任务': 'Nhiệm vụ',
 };
 
-// Chỉ thay theo cụm từ từ hai ký tự trở lên để tránh làm hỏng tên riêng
-// hoặc câu chưa có trong từ điển bởi các mục đơn ký tự như 主, 吴, 魏.
 const phraseReplacementEntries = Object.entries(viDictionary)
     .filter(([source]) => source.length >= 2)
     .sort((left, right) => right[0].length - left[0].length);
@@ -99,10 +121,6 @@ export function translateText(value: string): string {
     return translated;
 }
 
-/**
- * Việt hoá dữ liệu JSON đã được Cocos nạp. Hàm thay đổi object tại chỗ để
- * các proxy và model hiện tại tiếp tục sử dụng cùng tham chiếu dữ liệu.
- */
 export function localizeData<T>(value: T): T {
     if (typeof value === 'string') {
         return translateText(value) as unknown as T;
@@ -130,7 +148,7 @@ function applyVietnameseFont(label: Label): void {
     label.fontFamily = VIETNAMESE_FONT_FAMILY;
 }
 
-/** Áp dụng bản dịch và phông tiếng Việt cho toàn bộ cây giao diện. */
+/** Áp dụng bản dịch, phông tiếng Việt và design system cho toàn bộ cây UI. */
 export function localizeNode(root: Node): void {
     const labels = root.getComponentsInChildren(Label);
     for (const label of labels) {
@@ -154,4 +172,6 @@ export function localizeNode(root: Node): void {
             applyVietnameseFont(editBox.textLabel);
         }
     }
+
+    applyGameTheme(root);
 }
