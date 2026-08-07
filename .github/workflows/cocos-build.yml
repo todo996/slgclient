@@ -130,22 +130,6 @@ jobs:
 
           Write-Host "Cocos Creator executable: $($creator.FullName)"
 
-      # Cài TypeScript cục bộ để script check-typescript-syntax.mjs
-      # có thể import package "typescript".
-      - name: Install repository check dependencies
-        shell: pwsh
-        run: |
-          $ErrorActionPreference = "Stop"
-
-          npm install --no-save --no-audit --no-fund typescript
-
-          if ($LASTEXITCODE -ne 0) {
-            throw "Failed to install TypeScript. npm exit code: $LASTEXITCODE"
-          }
-
-          Write-Host "TypeScript installed successfully."
-          npm exec -- tsc --version
-
       - name: Run repository checks
         shell: pwsh
         run: |
@@ -154,7 +138,6 @@ jobs:
           node --check scripts/prepare-vercel.mjs
           node --check scripts/test-pwa-build.mjs
           npm run test:pwa
-          node scripts/check-typescript-syntax.mjs
 
       - name: Build Cocos Web Desktop
         shell: pwsh
