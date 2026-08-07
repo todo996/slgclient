@@ -1,4 +1,15 @@
-import { _decorator, Component, RichText, Label, UITransform, Node } from 'cc';
+import {
+    _decorator,
+    Color,
+    Component,
+    Graphics,
+    HorizontalTextAlignment,
+    Label,
+    Node,
+    RichText,
+    UITransform,
+    VerticalTextAlignment,
+} from 'cc';
 import { AudioManager } from '../../common/AudioManager';
 import { LogicEvent } from '../../common/LogicEvent';
 import { SkillEffectType } from '../../config/skill/Skill';
@@ -9,6 +20,8 @@ import { GeneralConfig, GeneralData } from '../../general/GeneralProxy';
 import SkillCommand from '../../skill/SkillCommand';
 import { EventMgr } from '../../utils/EventMgr';
 import { WarReport, WarReportRound, WarReportSkill } from "./MapUIProxy";
+import { ensureChild, ensureTransform } from '../../ui/components/GameSurface';
+import { GameTheme } from '../../ui/theme/GameTheme';
 
 export class GeneralDataX {
     gdata: GeneralData;
@@ -35,20 +48,107 @@ export default class WarReportDesItemLogic extends Component {
 
     warReport: WarReport = null;
 
-    attColor: string = "<color=#ff0000>";
-    denColor: string = "<color=#00ff00>";
-    skillColor: string = "<color=#FD6500>";
-    lossColor: string = "<color=#F2C420>";
+    attColor: string = "<color=#e46e5d>";
+    denColor: string = "<color=#67b895>";
+    skillColor: string = "<color=#e3a84f>";
+    lossColor: string = "<color=#f2c45e>";
     endColor: string = "</color>";
     attstr: string = "Công";
     denStr: string = "Thủ";
 
+    protected onLoad(): void {
+        this.applyTypography();
+    }
+
+    private applyTypography(): void {
+        if (this.roundsLabel) {
+            this.roundsLabel.useSystemFont = true;
+            this.roundsLabel.fontFamily = GameTheme.typography.titleFont;
+            this.roundsLabel.fontSize = 20;
+            this.roundsLabel.lineHeight = 26;
+            this.roundsLabel.enableWrapText = false;
+            this.roundsLabel.overflow = Label.Overflow.SHRINK;
+            this.roundsLabel.horizontalAlign = HorizontalTextAlignment.LEFT;
+            this.roundsLabel.verticalAlign = VerticalTextAlignment.CENTER;
+            this.roundsLabel.color = GameTheme.colors.gold300;
+            ensureTransform(this.roundsLabel.node, 900, 36);
+        }
+
+        if (this.warLab) {
+            this.warLab.fontFamily = GameTheme.typography.bodyFont;
+            this.warLab.fontSize = 16;
+            this.warLab.lineHeight = 25;
+            this.warLab.maxWidth = 920;
+            ensureTransform(this.warLab.node, 920, this.warLab.node.getComponent(UITransform)?.height || 80);
+        }
+
+        if (this.endLab) {
+            this.endLab.useSystemFont = true;
+            this.endLab.fontFamily = GameTheme.typography.bodyFont;
+            this.endLab.fontSize = 16;
+            this.endLab.lineHeight = 23;
+            this.endLab.enableWrapText = true;
+            this.endLab.overflow = Label.Overflow.SHRINK;
+            this.endLab.horizontalAlign = HorizontalTextAlignment.LEFT;
+            this.endLab.verticalAlign = VerticalTextAlignment.CENTER;
+            this.endLab.color = GameTheme.colors.gold300;
+            ensureTransform(this.endLab.node, 900, 54);
+        }
+        if (this.cNode) {
+            const content = this.cNode.getComponent(UITransform) || this.cNode.addComponent(UITransform);
+            content.width = 960;
+        }
+    }
+
+    private refreshCard(isEnd: boolean): void {
+        const contentTransform = this.cNode.getComponent(UITransform) || this.cNode.addComponent(UITransform);
+        const warTransform = this.warLab.getComponent(UITransform);
+        const endTransform = this.endLab.getComponent(UITransform);
+        const warHeight = Math.max(58, warTransform ? warTransform.height : 58);
+        const endHeight = isEnd ? Math.max(54, endTransform ? endTransform.height : 54) : 0;
+        const contentHeight = warHeight + endHeight + (isEnd ? 42 : 20);
+        contentTransform.height = contentHeight;
+
+        const rootTransform = this.node.getComponent(UITransform) || this.node.addComponent(UITransform);
+        rootTransform.setContentSize(1000, contentHeight + 58);
+
+        const surface = ensureChild(this.node, '__RoundCardSurface');
+        surface.setSiblingIndex(0);
+        surface.setPosition(0, 0, 0);
+        ensureTransform(surface, 990, rootTransform.height - 8);
+        const graphics = surface.getComponent(Graphics) || surface.addComponent(Graphics);
+        graphics.clear();
+        const width = 990;
+        const height = rootTransform.height - 8;
+        graphics.fillColor = new Color(20, 17, 14, 244);
+        graphics.roundRect(-width / 2, -height / 2, width, height, 11);
+        graphics.fill();
+        graphics.fillColor = new Color(57, 39, 24, 55);
+        graphics.roundRect(-width / 2 + 7, -height / 2 + 7, width - 14, height - 14, 8);
+        graphics.fill();
+        graphics.strokeColor = new Color(137, 96, 49, 205);
+        graphics.lineWidth = 1.5;
+        graphics.roundRect(-width / 2, -height / 2, width, height, 11);
+        graphics.stroke();
+
+        const accent = ensureChild(this.node, '__RoundAccent');
+        accent.setSiblingIndex(1);
+        accent.setPosition(-476, 0, 0);
+        ensureTransform(accent, 4, height - 24);
+        const ag = accent.getComponent(Graphics) || accent.addComponent(Graphics);
+        ag.clear();
+        ag.fillColor = new Color(190, 139, 69, 230);
+        ag.roundRect(-2, -(height - 24) / 2, 4, height - 24, 2);
+        ag.fill();
+    }
+
     public setData(data: WarReportRound, warReport: WarReport, isEnd: boolean): void {
         this._reportRound = data;
         this.warReport = warReport;
+        this.applyTypography();
         this.endLab.node.active = false;
         this.warLab.string = "";
-        this.roundsLabel.string = `Hiệp ${this._reportRound.round} · Lượt ${this._reportRound.turn}`;
+        this.roundsLabel.string = `HIỆP ${this._reportRound.round} · LƯỢT ${this._reportRound.turn}`;
 
         const beforeSkillText = this.skillString(data.attackBefore);
         this.warLab.string = beforeSkillText;
@@ -94,17 +194,11 @@ export default class WarReportDesItemLogic extends Component {
             this.warLab.string += `\n${defenseAfterText}`;
         }
 
-        this.cNode.getComponent(UITransform).height = this.warLab.getComponent(UITransform).height;
         if (isEnd) {
             this.endLab.node.active = true;
-            this.endLab.string = this.battleResultText();
-            this.cNode.getComponent(UITransform).height =
-                this.warLab.getComponent(UITransform).height
-                + this.endLab.getComponent(UITransform).height
-                + 20;
+            this.endLab.string = "KẾT QUẢ · " + this.battleResultText();
         }
-
-        this.node.getComponent(UITransform).height = this.cNode.getComponent(UITransform).height + 40;
+        this.refreshCard(isEnd);
     }
 
     private attackDescription(
