@@ -42,11 +42,14 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = "Stop"
+
           $project = Get-Content "package.json" -Raw | ConvertFrom-Json
           $actualVersion = [string]$project.creator.version
+
           if ($actualVersion -ne $env:COCOS_VERSION) {
             throw "Project requires Cocos Creator $actualVersion, but workflow is configured for $env:COCOS_VERSION."
           }
+
           Write-Host "Confirmed Cocos Creator version: $actualVersion"
 
       - name: Cache Cocos Creator 3.4.0
@@ -61,40 +64,93 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = "Stop"
+
           $archive = Join-Path $env:RUNNER_TEMP "CocosCreator-v3.4.0-win32.zip"
 
           if (Test-Path $env:COCOS_INSTALL_DIR) {
             Remove-Item $env:COCOS_INSTALL_DIR -Recurse -Force
           }
-          New-Item -ItemType Directory -Path $env:COCOS_INSTALL_DIR -Force | Out-Null
+
+          New-Item `
+            -ItemType Directory `
+            -Path $env:COCOS_INSTALL_DIR `
+            -Force | Out-Null
 
           Write-Host "Downloading Cocos Creator from the official Cocos server..."
-          & curl.exe --fail --location --retry 5 --retry-delay 10 --output $archive $env:COCOS_DOWNLOAD_URL
+
+          & curl.exe `
+            --fail `
+            --location `
+            --retry 5 `
+            --retry-delay 10 `
+            --output $archive `
+            $env:COCOS_DOWNLOAD_URL
+
           if ($LASTEXITCODE -ne 0) {
             throw "Failed to download Cocos Creator. curl exit code: $LASTEXITCODE"
           }
 
           Write-Host "Extracting Cocos Creator..."
-          Expand-Archive -LiteralPath $archive -DestinationPath $env:COCOS_INSTALL_DIR -Force
+
+          Expand-Archive `
+            -LiteralPath $archive `
+            -DestinationPath $env:COCOS_INSTALL_DIR `
+            -Force
 
       - name: Locate Cocos Creator executable
         shell: pwsh
         run: |
           $ErrorActionPreference = "Stop"
-          $creator = Get-ChildItem -Path $env:COCOS_INSTALL_DIR -Filter "CocosCreator.exe" -File -Recurse | Select-Object -First 1
+
+          $creator = Get-ChildItem `
+            -Path $env:COCOS_INSTALL_DIR `
+            -Filter "CocosCreator.exe" `
+            -File `
+            -Recurse |
+            Select-Object -First 1
 
           if (-not $creator) {
-            Get-ChildItem $env:COCOS_INSTALL_DIR -Force -Recurse | Select-Object -First 200 | ForEach-Object { Write-Host $_.FullName }
+            Get-ChildItem `
+              $env:COCOS_INSTALL_DIR `
+              -Force `
+              -Recurse |
+              Select-Object -First 200 |
+              ForEach-Object {
+                Write-Host $_.FullName
+              }
+
             throw "CocosCreator.exe was not found in the official archive."
           }
 
-          "COCOS_EXE=$($creator.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          "COCOS_EXE=$($creator.FullName)" |
+            Out-File `
+              -FilePath $env:GITHUB_ENV `
+              -Encoding utf8 `
+              -Append
+
           Write-Host "Cocos Creator executable: $($creator.FullName)"
+
+      # Cài TypeScript cục bộ để script check-typescript-syntax.mjs
+      # có thể import package "typescript".
+      - name: Install repository check dependencies
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+
+          npm install --no-save --no-audit --no-fund typescript
+
+          if ($LASTEXITCODE -ne 0) {
+            throw "Failed to install TypeScript. npm exit code: $LASTEXITCODE"
+          }
+
+          Write-Host "TypeScript installed successfully."
+          npm exec -- tsc --version
 
       - name: Run repository checks
         shell: pwsh
         run: |
           $ErrorActionPreference = "Stop"
+
           node --check scripts/prepare-vercel.mjs
           node --check scripts/test-pwa-build.mjs
           npm run test:pwa
@@ -104,7 +160,10 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = "Stop"
-          $output = Join-Path $env:GITHUB_WORKSPACE $env:WEB_OUTPUT_PATH
+
+          $output = Join-Path `
+            $env:GITHUB_WORKSPACE `
+            $env:WEB_OUTPUT_PATH
 
           if (Test-Path $output) {
             Remove-Item $output -Recurse -Force
@@ -120,31 +179,54 @@ jobs:
           ) -join ";"
 
           Write-Host "Starting Cocos Creator $env:COCOS_VERSION build..."
-          & $env:COCOS_EXE --project $env:GITHUB_WORKSPACE --build $buildOptions
+
+          & $env:COCOS_EXE `
+            --project $env:GITHUB_WORKSPACE `
+            --build $buildOptions
+
           $creatorExitCode = $LASTEXITCODE
 
-          # Cocos Creator 3.4 reports a successful build with exit code 36.
+          # Cocos Creator 3.4 có thể trả exit code 36
+          # ngay cả khi quá trình build đã hoàn thành.
           if ($creatorExitCode -notin @(0, 36)) {
             throw "Cocos Creator build failed with exit code $creatorExitCode."
           }
+
           Write-Host "Cocos Creator finished with exit code $creatorExitCode."
 
       - name: Validate Web Desktop output
         shell: pwsh
         run: |
           $ErrorActionPreference = "Stop"
-          $output = Join-Path $env:GITHUB_WORKSPACE $env:WEB_OUTPUT_PATH
+
+          $output = Join-Path `
+            $env:GITHUB_WORKSPACE `
+            $env:WEB_OUTPUT_PATH
+
           $index = Join-Path $output "index.html"
 
           if (-not (Test-Path $index -PathType Leaf)) {
             Write-Host "Files created under build:"
+
             if (Test-Path "build") {
-              Get-ChildItem "build" -Force -Recurse | Select-Object -First 300 | ForEach-Object { Write-Host $_.FullName }
+              Get-ChildItem `
+                "build" `
+                -Force `
+                -Recurse |
+                Select-Object -First 300 |
+                ForEach-Object {
+                  Write-Host $_.FullName
+                }
             }
+
             throw "Cocos Creator completed without producing $index."
           }
 
-          $size = (Get-ChildItem $output -File -Recurse | Measure-Object -Property Length -Sum).Sum
+          $size = (
+            Get-ChildItem $output -File -Recurse |
+            Measure-Object -Property Length -Sum
+          ).Sum
+
           Write-Host "Web Desktop build is valid."
           Write-Host ("Output size: {0:N2} MB" -f ($size / 1MB))
 
@@ -152,21 +234,55 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = "Stop"
-          $deployDir = Join-Path $env:RUNNER_TEMP "slgclient-build-web"
+
+          $deployDir = Join-Path `
+            $env:RUNNER_TEMP `
+            "slgclient-build-web"
 
           if (Test-Path $deployDir) {
             Remove-Item $deployDir -Recurse -Force
           }
 
-          New-Item -ItemType Directory -Path $deployDir -Force | Out-Null
-          New-Item -ItemType Directory -Path (Join-Path $deployDir "build") -Force | Out-Null
-          New-Item -ItemType Directory -Path (Join-Path $deployDir "scripts") -Force | Out-Null
+          New-Item `
+            -ItemType Directory `
+            -Path $deployDir `
+            -Force | Out-Null
 
-          Copy-Item -Path (Join-Path $env:GITHUB_WORKSPACE $env:WEB_OUTPUT_PATH) -Destination (Join-Path $deployDir "build/web-desktop") -Recurse -Force
-          Copy-Item "package.json" (Join-Path $deployDir "package.json") -Force
-          Copy-Item "vercel.json" (Join-Path $deployDir "vercel.json") -Force
-          Copy-Item "scripts/prepare-vercel.mjs" (Join-Path $deployDir "scripts/prepare-vercel.mjs") -Force
-          New-Item -ItemType File -Path (Join-Path $deployDir ".nojekyll") -Force | Out-Null
+          New-Item `
+            -ItemType Directory `
+            -Path (Join-Path $deployDir "build") `
+            -Force | Out-Null
+
+          New-Item `
+            -ItemType Directory `
+            -Path (Join-Path $deployDir "scripts") `
+            -Force | Out-Null
+
+          Copy-Item `
+            -Path (Join-Path $env:GITHUB_WORKSPACE $env:WEB_OUTPUT_PATH) `
+            -Destination (Join-Path $deployDir "build/web-desktop") `
+            -Recurse `
+            -Force
+
+          Copy-Item `
+            "package.json" `
+            (Join-Path $deployDir "package.json") `
+            -Force
+
+          Copy-Item `
+            "vercel.json" `
+            (Join-Path $deployDir "vercel.json") `
+            -Force
+
+          Copy-Item `
+            "scripts/prepare-vercel.mjs" `
+            (Join-Path $deployDir "scripts/prepare-vercel.mjs") `
+            -Force
+
+          New-Item `
+            -ItemType File `
+            -Path (Join-Path $deployDir ".nojekyll") `
+            -Force | Out-Null
 
           $readme = @(
             "# Generated deployment branch"
@@ -174,24 +290,49 @@ jobs:
             "This branch is generated automatically from main by GitHub Actions."
             "Do not edit it manually. Configure Vercel to deploy the build-web branch."
           )
-          $readme | Set-Content -Path (Join-Path $deployDir "README.md") -Encoding utf8
+
+          $readme |
+            Set-Content `
+              -Path (Join-Path $deployDir "README.md") `
+              -Encoding utf8
 
       - name: Push deployment to build-web
         shell: pwsh
         run: |
           $ErrorActionPreference = "Stop"
-          $deployDir = Join-Path $env:RUNNER_TEMP "slgclient-build-web"
+
+          $deployDir = Join-Path `
+            $env:RUNNER_TEMP `
+            "slgclient-build-web"
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
           git checkout --orphan $env:DEPLOY_BRANCH
 
-          Get-ChildItem $env:GITHUB_WORKSPACE -Force | Where-Object { $_.Name -ne ".git" } | Remove-Item -Recurse -Force
-          Copy-Item -Path (Join-Path $deployDir "*") -Destination $env:GITHUB_WORKSPACE -Recurse -Force
-          Copy-Item -Path (Join-Path $deployDir ".nojekyll") -Destination (Join-Path $env:GITHUB_WORKSPACE ".nojekyll") -Force
+          Get-ChildItem $env:GITHUB_WORKSPACE -Force |
+            Where-Object {
+              $_.Name -ne ".git"
+            } |
+            Remove-Item -Recurse -Force
+
+          Copy-Item `
+            -Path (Join-Path $deployDir "*") `
+            -Destination $env:GITHUB_WORKSPACE `
+            -Recurse `
+            -Force
+
+          Copy-Item `
+            -Path (Join-Path $deployDir ".nojekyll") `
+            -Destination (Join-Path $env:GITHUB_WORKSPACE ".nojekyll") `
+            -Force
 
           git add --all
-          git commit -m "build(web): $env:GITHUB_SHA" -m "Generated automatically with Cocos Creator $env:COCOS_VERSION."
+
+          git commit `
+            -m "build(web): $env:GITHUB_SHA" `
+            -m "Generated automatically with Cocos Creator $env:COCOS_VERSION."
+
           git push --force origin "HEAD:$env:DEPLOY_BRANCH"
 
           Write-Host "Published Web Desktop to branch $env:DEPLOY_BRANCH."
