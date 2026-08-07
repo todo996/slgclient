@@ -1,4 +1,5 @@
 import { Button, EditBox, Label, Node, RichText } from 'cc';
+import { applyMapHUDLayout } from '../screens/MapHUDPresenter';
 import { GameTheme } from './GameTheme';
 
 const TITLE_HINTS = [
@@ -64,6 +65,19 @@ function applyButtonTheme(button: Button): void {
     }
 }
 
+function findDescendant(root: Node, name: string): Node | null {
+    if (root.name === name) {
+        return root;
+    }
+    for (const child of root.children) {
+        const found = findDescendant(child, name);
+        if (found) {
+            return found;
+        }
+    }
+    return null;
+}
+
 /**
  * Áp theme lên một cây node đã instantiate.
  * Hàm không đổi SpriteFrame, texture, bản đồ hoặc dữ liệu gameplay.
@@ -80,5 +94,14 @@ export function applyGameTheme(root: Node): void {
     }
     for (const button of root.getComponentsInChildren(Button)) {
         applyButtonTheme(button);
+    }
+
+    // MapUIScene dùng bố cục riêng bám sát ảnh concept: hồ sơ góc trái,
+    // tài nguyên phía trên, menu chức năng bên trái và cài đặt góc phải dưới.
+    const mapUiRoot = root.name === 'MapUIScene'
+        ? root
+        : findDescendant(root, 'MapUIScene');
+    if (mapUiRoot) {
+        applyMapHUDLayout(mapUiRoot);
     }
 }
