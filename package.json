@@ -8,6 +8,7 @@
     "version": "3.4.0"
   },
   "scripts": {
+    "audit:ui": "node scripts/audit-ui.mjs",
     "vercel-build": "node -e \"require('fs').accessSync('build/web-desktop/index.html'); console.log('Cocos Web Desktop build is ready for Vercel.')\"",
     "test:pwa": "node scripts/test-pwa-build.mjs"
   }

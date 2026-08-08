@@ -1,0 +1,126 @@
+name: Validate Modern Vietnamese UI
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - feat/modern-vietnamese-ui-overhaul
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ui-overhaul-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  COCOS_VERSION: "3.4.0"
+  COCOS_DOWNLOAD_URL: "https://download.cocos.com/CocosCreator/v3.4.0/CocosCreator-v3.4.0-win32-121822.zip"
+  COCOS_INSTALL_DIR: "C:\\CocosCreator-3.4.0"
+  WEB_OUTPUT_PATH: "build/web-desktop"
+
+jobs:
+  validate-ui:
+    name: Audit and build Cocos Web Desktop
+    runs-on: windows-2022
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+
+      - name: Validate project metadata and scripts
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $project = Get-Content "package.json" -Raw | ConvertFrom-Json
+          if ([string]$project.creator.version -ne $env:COCOS_VERSION) {
+            throw "Project requires Cocos Creator $($project.creator.version), workflow expects $env:COCOS_VERSION."
+          }
+          node --check scripts/audit-ui.mjs
+          node --check scripts/prepare-vercel.mjs
+          node --check scripts/test-pwa-build.mjs
+          npm run audit:ui
+          npm run test:pwa
+
+      - name: Upload UI audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-audit-${{ github.sha }}
+          path: artifacts/ui-audit.json
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Cache Cocos Creator 3.4.0
+        id: cache-cocos
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.COCOS_INSTALL_DIR }}
+          key: cocos-creator-${{ runner.os }}-${{ env.COCOS_VERSION }}-121822
+
+      - name: Download official Cocos Creator
+        if: steps.cache-cocos.outputs.cache-hit != 'true'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $archive = Join-Path $env:RUNNER_TEMP "CocosCreator-v3.4.0-win32.zip"
+          if (Test-Path $env:COCOS_INSTALL_DIR) {
+            Remove-Item $env:COCOS_INSTALL_DIR -Recurse -Force
+          }
+          New-Item -ItemType Directory -Path $env:COCOS_INSTALL_DIR -Force | Out-Null
+          & curl.exe --fail --location --retry 5 --retry-delay 10 --output $archive $env:COCOS_DOWNLOAD_URL
+          if ($LASTEXITCODE -ne 0) {
+            throw "Failed to download Cocos Creator. curl exit code: $LASTEXITCODE"
+          }
+          Expand-Archive -LiteralPath $archive -DestinationPath $env:COCOS_INSTALL_DIR -Force
+
+      - name: Locate Cocos Creator executable
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $creator = Get-ChildItem -Path $env:COCOS_INSTALL_DIR -Filter "CocosCreator.exe" -File -Recurse | Select-Object -First 1
+          if (-not $creator) {
+            throw "CocosCreator.exe was not found in the official archive."
+          }
+          "COCOS_EXE=$($creator.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Build Cocos Web Desktop
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $output = Join-Path $env:GITHUB_WORKSPACE $env:WEB_OUTPUT_PATH
+          if (Test-Path $output) {
+            Remove-Item $output -Recurse -Force
+          }
+          $buildOptions = @(
+            "platform=web-desktop",
+            "buildPath=project://build",
+            "outputName=web-desktop",
+            "startScene=94681aa6-17dd-47fe-b1bd-f2e2ca8fd6ca",
+            "debug=false",
+            "md5Cache=true"
+          ) -join ";"
+          $arguments = @("--project", $env:GITHUB_WORKSPACE, "--build", $buildOptions)
+          $process = Start-Process -FilePath $env:COCOS_EXE -ArgumentList $arguments -Wait -PassThru -NoNewWindow
+          if ($process.ExitCode -notin @(0, 36)) {
+            throw "Cocos Creator build failed with exit code $($process.ExitCode)."
+          }
+
+      - name: Validate production output
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $index = Join-Path $env:GITHUB_WORKSPACE "$env:WEB_OUTPUT_PATH/index.html"
+          if (-not (Test-Path $index -PathType Leaf)) {
+            throw "Cocos build did not produce index.html."
+          }
+          $size = (Get-ChildItem (Split-Path $index) -File -Recurse | Measure-Object -Property Length -Sum).Sum
+          Write-Host ("Validated Web Desktop output: {0:N2} MB" -f ($size / 1MB))

@@ -1,15 +1,17 @@
-import { HttpConfig } from "../config/HttpConfig";
-import { ServerConfig } from "../config/ServerConfig";
-import { HttpManager } from "../network/http/HttpManager";
-import { NetManager } from "../network/socket/NetManager";
-import { Tools } from "../utils/Tools";
-import LoginProxy from "./LoginProxy";
-import { NetEvent } from "../network/socket/NetInterface";
-import MapCommand from "../map/MapCommand";
-import { LocalCache } from "../utils/LocalCache";
-import DateUtil from "../utils/DateUtil";
-import { EventMgr } from "../utils/EventMgr";
-import { LogicEvent } from "../common/LogicEvent";
+import { LogicEvent } from '../common/LogicEvent';
+import { HttpConfig } from '../config/HttpConfig';
+import { ServerConfig } from '../config/ServerConfig';
+import MapCommand from '../map/MapCommand';
+import { HttpManager } from '../network/http/HttpManager';
+import { NetEvent } from '../network/socket/NetInterface';
+import { NetManager } from '../network/socket/NetManager';
+import DateUtil from '../utils/DateUtil';
+import { EventMgr } from '../utils/EventMgr';
+import { LocalCache } from '../utils/LocalCache';
+import { Tools } from '../utils/Tools';
+import LoginProxy from './LoginProxy';
+
+type AuthTone = 'info' | 'success' | 'error';
 
 export default class LoginCommand {
     protected static _instance: LoginCommand;
@@ -32,6 +34,7 @@ export default class LoginCommand {
 
     protected _proxy: LoginProxy = new LoginProxy();
     private _loginTimeout: any = null;
+    private _registerTimeout: any = null;
 
     constructor() {
         EventMgr.on(NetEvent.ServerCheckLogin, this.onServerConneted, this);
@@ -47,7 +50,16 @@ export default class LoginCommand {
 
     public onDestory(): void {
         this.clearLoginTimeout();
+        this.clearRegisterTimeout();
         EventMgr.targetOff(this);
+    }
+
+    private emitAuthState(
+        busy: boolean,
+        message: string = '',
+        tone: AuthTone = 'info',
+    ): void {
+        EventMgr.emit(LogicEvent.authStateChanged, { busy, message, tone });
     }
 
     private showToast(message: string): void {
@@ -58,7 +70,6 @@ export default class LoginCommand {
         if (!data) {
             return fallback;
         }
-
         const message = data.errmsg || data.message || data.msg;
         return typeof message === 'string' && message.trim() !== ''
             ? message.trim()
@@ -72,58 +83,86 @@ export default class LoginCommand {
         }
     }
 
+    private clearRegisterTimeout(): void {
+        if (this._registerTimeout !== null) {
+            clearTimeout(this._registerTimeout);
+            this._registerTimeout = null;
+        }
+    }
+
     private onAccountRobLogin(): void {
+        this.emitAuthState(false, 'Tài khoản đã đăng nhập trên thiết bị khác.', 'error');
         EventMgr.emit(LogicEvent.robLoginUI);
     }
 
     private onRegister(data: any, otherData: { username: string; password: string }): void {
+        this.clearRegisterTimeout();
         if (!data || data.code !== 0) {
-            this.showToast(this.getResponseMessage(
+            const message = this.getResponseMessage(
                 data,
                 'Không thể đăng ký. Vui lòng kiểm tra kết nối máy chủ rồi thử lại.',
-            ));
+            );
+            this.emitAuthState(false, message, 'error');
+            this.showToast(message);
             return;
         }
 
         this.rememberUsername(otherData.username);
-        this.showToast('Đăng ký thành công. Đang đăng nhập...');
+        this.emitAuthState(true, 'Đăng ký thành công. Đang đăng nhập...', 'success');
         this.accountLogin(otherData.username, otherData.password);
     }
 
     private onAccountLogin(data: any, otherData: { username: string }): void {
         this.clearLoginTimeout();
-
         if (!data || data.code !== 0) {
-            this.showToast(this.getResponseMessage(
+            const message = this.getResponseMessage(
                 data,
                 'Đăng nhập thất bại. Tài khoản hoặc mật khẩu không đúng.',
-            ));
+            );
+            this.emitAuthState(false, message, 'error');
+            this.showToast(message);
             return;
         }
 
         if (!data.msg) {
-            this.showToast('Máy chủ trả về dữ liệu đăng nhập không hợp lệ.');
+            const message = 'Máy chủ trả về dữ liệu đăng nhập không hợp lệ.';
+            this.emitAuthState(false, message, 'error');
+            this.showToast(message);
             return;
         }
 
         this._proxy.saveLoginData(data.msg);
         this.rememberUsername(otherData.username);
+        this.emitAuthState(true, 'Đăng nhập thành công. Đang vào máy chủ...', 'success');
         this.role_enterServer(this._proxy.getSession());
         EventMgr.emit(LogicEvent.loginComplete, data.code);
     }
 
     private onEnterServer(data: any, isLoadMap: boolean): void {
+        if (!data) {
+            const message = 'Không nhận được dữ liệu từ máy chủ game.';
+            this.emitAuthState(false, message, 'error');
+            this.showToast(message);
+            return;
+        }
+
         if (data.code === 9) {
+            this.emitAuthState(false, '', 'info');
             EventMgr.emit(LogicEvent.createRole);
-            DateUtil.setServerTime(data.msg.time);
+            if (data.msg?.time) {
+                DateUtil.setServerTime(data.msg.time);
+            }
             return;
         }
 
         if (data.code !== 0) {
-            this.showToast(this.getResponseMessage(data, 'Không thể vào máy chủ game.'));
+            const message = this.getResponseMessage(data, 'Không thể vào máy chủ game.');
+            this.emitAuthState(false, message, 'error');
+            this.showToast(message);
             return;
         }
 
+        this.emitAuthState(false, '', 'success');
         this._proxy.saveEnterData(data.msg);
         DateUtil.setServerTime(data.msg.time);
 
@@ -145,19 +184,19 @@ export default class LoginCommand {
     }
 
     private onAccountRelogin(data: any): void {
-        if (data.code === 0) {
+        if (data?.code === 0) {
             this.role_enterServer(this._proxy.getSession(), false);
         }
     }
 
     private onRoleCreate(data: any): void {
-        if (data.code === 0) {
+        if (data?.code === 0) {
             this.role_enterServer(this._proxy.getSession());
         }
     }
 
     private onAccountLogout(data: any): void {
-        if (data.code === 0) {
+        if (data?.code === 0) {
             this._proxy.clear();
             EventMgr.emit(LogicEvent.enterLogin);
         }
@@ -176,12 +215,20 @@ export default class LoginCommand {
     }
 
     public register(name: string, password: string): void {
+        this.clearRegisterTimeout();
+        this.emitAuthState(true, 'Đang tạo tài khoản...', 'info');
+        this._registerTimeout = setTimeout(() => {
+            this._registerTimeout = null;
+            const message = 'Không nhận được phản hồi đăng ký từ máy chủ.';
+            this.emitAuthState(false, message, 'error');
+            this.showToast(message);
+        }, 15000);
+
         const params = new URLSearchParams({
             username: name,
             password,
             hardware: Tools.getUUID(),
         }).toString();
-
         const otherData = { username: name, password };
         HttpManager.getInstance().doPost(
             HttpConfig.register.name,
@@ -193,20 +240,22 @@ export default class LoginCommand {
 
     public accountLogin(name: string, password: string): void {
         this.clearLoginTimeout();
+        this.emitAuthState(true, 'Đang xác thực tài khoản...', 'info');
         this._loginTimeout = setTimeout(() => {
             this._loginTimeout = null;
-            this.showToast('Không nhận được phản hồi đăng nhập từ máy chủ.');
+            const message = 'Không nhận được phản hồi đăng nhập từ máy chủ.';
+            this.emitAuthState(false, message, 'error');
+            this.showToast(message);
         }, 15000);
 
-        const sendData = {
+        NetManager.getInstance().send({
             name: ServerConfig.account_login,
             msg: {
                 username: name,
                 password,
                 hardware: Tools.getUUID(),
             },
-        };
-        NetManager.getInstance().send(sendData, { username: name });
+        }, { username: name });
     }
 
     public role_create(
@@ -246,7 +295,7 @@ export default class LoginCommand {
         });
     }
 
-    public chatLogin(rid: number, token: string, nickName: string = ""): void {
+    public chatLogin(rid: number, token: string, nickName: string = ''): void {
         NetManager.getInstance().send({
             name: ServerConfig.chat_login,
             msg: { rid, token, nickName },
