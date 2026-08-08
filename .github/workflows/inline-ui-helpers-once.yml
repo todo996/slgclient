@@ -1,0 +1,52 @@
+name: Inline UI helpers once
+
+on:
+  push:
+    branches:
+      - feat/modern-vietnamese-ui-overhaul
+    paths:
+      - scripts/inline-ui-helpers.mjs
+
+permissions:
+  contents: write
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: feat/modern-vietnamese-ui-overhaul
+          fetch-depth: 0
+
+      - name: Restore build-proven core modules
+        shell: bash
+        run: |
+          git show 3052ecbe5026a9bcf443cf51ab1186dddf60961d:assets/scripts/common/AudioManager.ts > assets/scripts/common/AudioManager.ts
+          git show 3052ecbe5026a9bcf443cf51ab1186dddf60961d:assets/scripts/i18n/I18n.ts > assets/scripts/i18n/I18n.ts
+
+      - name: Inline presentation helpers
+        run: node scripts/inline-ui-helpers.mjs
+
+      - name: Verify no UI helper bridge remains
+        shell: bash
+        run: |
+          if grep -R -n -E "import[[:space:][:print:]]*(ANCIENT_UI|applyAncientScreenChrome|drawAncientPanel|styleAncientButton)" assets/scripts/map/ui assets/scripts/chat assets/scripts/union; then
+            echo "Unexpected shared UI helper import remains"
+            exit 1
+          fi
+          echo "UI helper bridge removed."
+
+      - name: Commit migration
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo "No migration changes needed."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/scripts
+          git commit -m "fix(build): inline UI presentation helpers into stable controllers"
+          git push origin HEAD:feat/modern-vietnamese-ui-overhaul
