@@ -1,41 +1,50 @@
-import { _decorator, Component, Label, Node, SpriteFrame } from 'cc';
-const {ccclass, property} = _decorator;
-import SkillCommand from "../../skill/SkillCommand";
-import { Skill } from "../../skill/SkillProxy";
-import SkillIconLogic from "./SkillIconLogic";
+import { _decorator, Component, Label, Node, SpriteFrame, UITransform } from 'cc';
+const { ccclass, property } = _decorator;
+
+import { ANCIENT_UI, drawAncientPanel, localizeNode, suppressLegacyChrome } from '../../i18n/I18n';
+import SkillCommand from '../../skill/SkillCommand';
+import { Skill } from '../../skill/SkillProxy';
+import SkillIconLogic from './SkillIconLogic';
 
 @ccclass('SkillItemLogic')
 export default class SkillItemLogic extends Component {
-
-
     @property(Label)
     nameLab: Label = null;
-
-
     @property(Label)
     limitLab: Label = null;
-
     @property(Node)
-    icon:Node = null;
-
+    icon: Node = null;
     @property([SpriteFrame])
-    sps:SpriteFrame[] = [];
+    sps: SpriteFrame[] = [];
 
     _skill: Skill = null;
 
-    protected onEnable():void{
-
+    protected onEnable(): void {
+        this.applyModernCard();
     }
 
-    protected updateItem(skill:Skill):void{
+    private applyModernCard(): void {
+        localizeNode(this.node);
+        suppressLegacyChrome(this.node, 1);
+        const transform = this.node.getComponent(UITransform);
+        const width = transform && transform.width > 20 ? transform.width : 260;
+        const height = transform && transform.height > 20 ? transform.height : 112;
+        drawAncientPanel(this.node, width, height, 7);
+        this.nameLab.useSystemFont = true;
+        this.nameLab.fontFamily = 'Times New Roman';
+        this.nameLab.color = ANCIENT_UI.gold;
+        this.nameLab.fontSize = 20;
+        this.limitLab.useSystemFont = true;
+        this.limitLab.fontFamily = 'Arial';
+        this.limitLab.color = ANCIENT_UI.muted;
+        this.limitLab.fontSize = 15;
+    }
 
-        var conf = SkillCommand.getInstance().proxy.getSkillCfg(skill.cfgId);
+    protected updateItem(skill: Skill): void {
+        const conf = SkillCommand.getInstance().proxy.getSkillCfg(skill.cfgId);
         this._skill = skill;
         this.nameLab.string = conf.name;
-
         this.icon.getComponent(SkillIconLogic).setData(skill, null);
-
-        this.limitLab.string = this._skill.generals.length + "/" + conf.limit;
+        this.limitLab.string = `${this._skill.generals.length}/${conf.limit}`;
     }
-
 }
