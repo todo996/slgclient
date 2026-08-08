@@ -2,11 +2,13 @@ import { _decorator, Button, Color, Component, Graphics, ScrollView, Label, Node
 const { ccclass, property } = _decorator;
 
 import GeneralCommand from "../../general/GeneralCommand";
+import LoginCommand from "../../login/LoginCommand";
 import MapUICommand from "./MapUICommand";
 import { EventMgr } from '../../utils/EventMgr';
 import ListLogic from '../../utils/ListLogic';
 import { AudioManager } from '../../common/AudioManager';
 import { LogicEvent } from '../../common/LogicEvent';
+import { Tools } from '../../utils/Tools';
 
 type HeroFilterMode = 'all' | 'rarity' | 'level' | 'formation';
 
@@ -39,10 +41,7 @@ export default class GeneralListLogic extends Component {
         EventMgr.targetOff(this);
     }
 
-    /**
-     * Thay toàn bộ khung danh sách Tướng cũ bằng hierarchy mới.
-     * ScrollView thật được chuyển sang khung mới nên ListLogic và dữ liệu server không đổi.
-     */
+    /** Dựng màn Tướng mới theo bố cục ảnh mẫu, giữ ScrollView/ListLogic thật. */
     private buildReferenceRosterUI(): void {
         this._referenceBuilt = true;
         const legacyRoots = [...this.node.children];
@@ -52,50 +51,77 @@ export default class GeneralListLogic extends Component {
         root.layer = this.node.layer;
         root.addComponent(UITransform).setContentSize(1280, 720);
 
-        this.makePanel(root, 'Backdrop', 1280, 720, 0, 0, new Color(13, 10, 8, 248), new Color(74, 49, 27, 255), 1, 0);
-        this.makePanel(root, 'HeaderBar', 1240, 76, 0, 310, new Color(23, 17, 12, 250), new Color(151, 109, 54, 255), 2, 8);
-        this.makeLabel(root, 'Title', 'TƯỚNG', -520, 310, 32, new Color(233, 194, 116, 255), true, 170);
-        this.makeLabel(root, 'SubTitle', 'Danh sách võ tướng', -345, 310, 15, new Color(153, 132, 99, 255), false, 180);
-        this.makeButton(root, 'Close', 'ĐÓNG', 550, 310, 100, 42, () => this.onClickClose(), false, 14);
+        this.makePanel(root, 'Backdrop', 1280, 720, 0, 0, new Color(10, 8, 7, 248), new Color(58, 38, 22, 255), 1, 0);
 
-        const filterBar = this.makePanel(root, 'FilterBar', 760, 54, -175, 248, new Color(20, 15, 11, 238), new Color(92, 66, 36, 255), 1, 8);
+        // Header mảnh như ảnh mẫu, không dùng bảng tiêu đề cũ.
+        const header = this.makePanel(root, 'HeaderBar', 1248, 64, 0, 322, new Color(20, 14, 10, 248), new Color(147, 102, 49, 255), 2, 7);
+        this.makeLabel(header, 'Title', 'TƯỚNG', -518, 0, 28, new Color(239, 200, 121, 255), true, 154);
+        this.makeLabel(header, 'SubTitle', 'Danh sách võ tướng', -360, 0, 13, new Color(145, 126, 96, 255), false, 160);
+
+        // Chỉ hiển thị tài nguyên thật đang có trong role_res.
+        const roleRes = LoginCommand.getInstance().proxy.getRoleResData() || {};
+        const resources = [
+            {title: 'Vàng', key: 'gold'},
+            {title: 'Lương', key: 'grain'},
+            {title: 'Đá', key: 'stone'},
+        ];
+        resources.forEach((item, index) => {
+            const chip = this.makePanel(header, `Resource_${item.key}`, 140, 38, 130 + index * 145, 0, new Color(12, 10, 8, 230), new Color(91, 63, 34, 240), 1, 6);
+            this.makeLabel(chip, `${item.key}_name`, item.title, -40, 0, 11, new Color(167, 141, 99, 255), true, 52);
+            this.makeLabel(chip, `${item.key}_value`, Tools.numberToShow(roleRes[item.key] || 0), 29, 0, 14, new Color(238, 216, 170, 255), true, 74);
+        });
+        this.makeButton(header, 'Close', 'ĐÓNG', 554, 0, 92, 38, () => this.onClickClose(), false, 13);
+
+        // Thanh lọc sát ngay dưới header giống mẫu.
+        const filterBar = this.makePanel(root, 'FilterBar', 760, 48, -206, 257, new Color(17, 13, 10, 230), new Color(85, 59, 32, 235), 1, 7);
         const filters: Array<{mode: HeroFilterMode; title: string}> = [
-            {mode: 'all', title: 'TẤT CẢ'},
-            {mode: 'rarity', title: 'HIẾM'},
-            {mode: 'level', title: 'CẤP'},
-            {mode: 'formation', title: 'ĐỘI HÌNH'},
+            {mode: 'all', title: 'Tất cả'},
+            {mode: 'rarity', title: 'Hiếm'},
+            {mode: 'level', title: 'Cấp'},
+            {mode: 'formation', title: 'Đội hình'},
         ];
         filters.forEach((filter, index) => {
-            const button = this.makeButton(filterBar, `Filter_${filter.mode}`, filter.title, -270 + index * 180, 0, 164, 38, () => this.setFilter(filter.mode), false, 14);
+            const button = this.makeButton(filterBar, `Filter_${filter.mode}`, filter.title, -270 + index * 180, 0, 162, 34, () => this.setFilter(filter.mode), false, 13);
             this._filterLabels[filter.mode] = button.getChildByName(`Filter_${filter.mode}_label`).getComponent(Label);
         });
         this.refreshFilterStyle();
 
-        // ScrollView thật, ListLogic thật, prefab card thật.
+        this.makeLabel(root, 'FilterHint', 'Chạm vào một tướng để xem chi tiết', 394, 257, 12, new Color(132, 116, 90, 255), false, 320);
+
+        // Vùng 5 cột x 2 hàng được ListLogic thật xử lý từ prefab (columnCount=5, scale=.54).
+        const gridFrame = this.makePanel(root, 'GridFrame', 1196, 500, 0, -15, new Color(13, 10, 8, 224), new Color(80, 55, 31, 220), 1, 8);
+        this.makePanel(gridFrame, 'GridTopLine', 1166, 1, 0, 232, new Color(105, 72, 36, 190), new Color(0, 0, 0, 0), 0, 0);
+
         this.scrollView.node.parent = root;
         this.scrollView.node.active = true;
-        this.scrollView.node.setPosition(0, -38, 0);
+        this.scrollView.node.setPosition(0, -14, 0);
         const scrollTransform = this.scrollView.node.getComponent(UITransform);
-        if (scrollTransform) {
-            scrollTransform.setContentSize(1120, 535);
+        if (scrollTransform) scrollTransform.setContentSize(1160, 472);
+
+        // Ép ListLogic giữ đúng grid 5 cột; không thay dữ liệu hay tạo card giả.
+        const list = this.scrollView.node.getComponent(ListLogic);
+        if (list) {
+            list.columnCount = 5;
+            list.autoColumnCount = false;
+            list.spaceColumn = 18;
+            list.spaceRow = 16;
         }
 
-        // Bộ đếm thật ở góc dưới giống cấu trúc ảnh mẫu.
-        this.cntLab.node.parent = root;
+        // Footer theo mẫu: số lượng sở hữu bên trái, công cụ bên phải.
+        const footer = this.makePanel(root, 'FooterBar', 1248, 52, 0, -329, new Color(18, 13, 10, 244), new Color(112, 77, 38, 240), 1, 6);
+        this.makeLabel(footer, 'OwnedLabel', 'Đã sở hữu', -512, 0, 13, new Color(145, 125, 95, 255), false, 90);
+        this.cntLab.node.parent = footer;
         this.cntLab.node.active = true;
-        this.cntLab.node.setPosition(444, -326, 0);
-        this.cntLab.color = new Color(220, 198, 158, 255);
-        this.cntLab.fontSize = 16;
+        this.cntLab.node.setPosition(-433, 0, 0);
+        this.cntLab.color = new Color(226, 202, 159, 255);
+        this.cntLab.fontSize = 15;
+        const cntTransform = this.cntLab.node.getComponent(UITransform);
+        if (cntTransform) cntTransform.setContentSize(80, 30);
+        this.makeButton(footer, 'Convert', 'CHUYỂN HÓA', 392, 0, 150, 36, () => this.onClickConvert(), false, 12);
+        this.makeButton(footer, 'Roster', 'ĐỒ GIÁM', 538, 0, 118, 36, () => this.onTuJianConvert(), false, 12);
 
-        this.makeLabel(root, 'OwnedLabel', 'Đã sở hữu', 350, -326, 15, new Color(145, 125, 95, 255), false, 90);
-        this.makeButton(root, 'Convert', 'CHUYỂN HÓA', -170, -326, 156, 42, () => this.onClickConvert(), false, 13);
-        this.makeButton(root, 'Roster', 'ĐỒ GIÁM', 8, -326, 150, 42, () => this.onTuJianConvert(), false, 13);
-
-        // Tắt hoàn toàn panel/nút/khung cũ sau khi hai node dữ liệu thật đã được chuyển ra.
         legacyRoots.forEach((child) => {
-            if (child !== root && child !== this.scrollView.node && child !== this.cntLab.node) {
-                child.active = false;
-            }
+            if (child !== root && child !== this.scrollView.node && child !== this.cntLab.node) child.active = false;
         });
     }
 
@@ -111,7 +137,7 @@ export default class GeneralListLogic extends Component {
             const label = this._filterLabels[key];
             if (!label) return;
             const active = key === this._filterMode;
-            label.color = active ? new Color(244, 211, 137, 255) : new Color(172, 151, 116, 255);
+            label.color = active ? new Color(247, 211, 133, 255) : new Color(163, 143, 109, 255);
         });
     }
 
@@ -170,13 +196,9 @@ export default class GeneralListLogic extends Component {
 
     public setData(data:number[],type:number = 0,position:number = 0):void{
         this._cunGeneral = [];
-        if(data && data.length > 0){
-            this._cunGeneral = data;
-        }
-
+        if(data && data.length > 0) this._cunGeneral = data;
         this._type = type;
         this._position = position;
-
         this.initGeneralCfg();
         GeneralCommand.getInstance().qryMyGenerals();
     }
@@ -217,12 +239,12 @@ export default class GeneralListLogic extends Component {
     }
 
     private makeButton(parent: Node, name: string, text: string, x: number, y: number, width: number, height: number, callback: () => void, primary: boolean, fontSize: number): Node {
-        const node = this.makePanel(parent, name, width, height, x, y, primary ? new Color(107, 70, 31, 255) : new Color(28, 20, 14, 248), primary ? new Color(229, 187, 102, 255) : new Color(119, 85, 44, 255), 2, 7);
+        const node = this.makePanel(parent, name, width, height, x, y, primary ? new Color(107, 70, 31, 255) : new Color(25, 18, 13, 248), primary ? new Color(229, 187, 102, 255) : new Color(116, 82, 43, 255), 2, 6);
         const button = node.addComponent(Button);
         button.transition = Button.Transition.SCALE;
         button.zoomScale = 0.96;
         node.on(Button.EventType.CLICK, callback, this);
-        this.makeLabel(node, `${name}_label`, text, 0, 0, fontSize, new Color(230, 208, 168, 255), true, width - 10);
+        this.makeLabel(node, `${name}_label`, text, 0, 0, fontSize, new Color(231, 209, 168, 255), true, width - 10);
         return node;
     }
 }
