@@ -202,7 +202,7 @@
     "__prefab": {
       "__id__": 8
     },
-    "_opacity": 120,
+    "_opacity": 155,
     "_id": ""
   },
   {
@@ -339,7 +339,7 @@
     "_lpos": {
       "__type__": "cc.Vec3",
       "x": 0,
-      "y": -29.495,
+      "y": -2,
       "z": 0
     },
     "_lrot": {
@@ -384,9 +384,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 35,
+      "g": 28,
+      "b": 21,
       "a": 255
     },
     "_spriteFrame": {
@@ -443,8 +443,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 600,
-      "height": 500
+      "width": 650,
+      "height": 620
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -497,7 +497,7 @@
     "_lpos": {
       "__type__": "cc.Vec3",
       "x": 0,
-      "y": 249.001,
+      "y": 246,
       "z": 0
     },
     "_lrot": {
@@ -593,24 +593,24 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 122,
-      "b": 17,
+      "r": 231,
+      "g": 190,
+      "b": 109,
       "a": 255
     },
-    "_string": "登录",
+    "_string": "ĐĂNG NHẬP",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 36,
-    "_fontSize": 36,
-    "_fontFamily": "Arial",
+    "_actualFontSize": 40,
+    "_fontSize": 40,
+    "_fontFamily": "Times New Roman",
     "_lineHeight": 40,
     "_overflow": 0,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 0,
@@ -1105,9 +1105,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
     "_string": "",
@@ -1296,12 +1296,12 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 187,
-      "g": 187,
-      "b": 187,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
-    "_string": "账号",
+    "_string": "Tên đăng nhập",
     "_horizontalAlign": 0,
     "_verticalAlign": 1,
     "_actualFontSize": 20,
@@ -1865,9 +1865,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
     "_string": "",
@@ -2056,12 +2056,12 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 187,
-      "g": 187,
-      "b": 187,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
-    "_string": "密码",
+    "_string": "Mật khẩu",
     "_horizontalAlign": 0,
     "_verticalAlign": 1,
     "_actualFontSize": 20,
@@ -2327,8 +2327,8 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": -95,
-      "y": -187.495,
+      "x": 0,
+      "y": -220,
       "z": 0
     },
     "_lrot": {
@@ -2483,11 +2483,11 @@
     "_color": {
       "__type__": "cc.Color",
       "r": 255,
-      "g": 255,
-      "b": 255,
+      "g": 239,
+      "b": 194,
       "a": 255
     },
-    "_string": "注册",
+    "_string": "ĐĂNG KÝ TÀI KHOẢN",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 0,
@@ -2499,7 +2499,7 @@
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 1,
@@ -2816,8 +2816,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 100,
-      "height": 40
+      "width": 330,
+      "height": 54
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -2869,8 +2869,8 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 91,
-      "y": -187.495,
+      "x": 0,
+      "y": -100,
       "z": 0
     },
     "_lrot": {
@@ -3024,16 +3024,16 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 231,
+      "g": 190,
+      "b": 109,
       "a": 255
     },
-    "_string": "登录",
+    "_string": "ĐĂNG NHẬP",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 0,
-    "_fontSize": 30,
+    "_actualFontSize": 40,
+    "_fontSize": 40,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
     "_overflow": 1,
@@ -3041,7 +3041,7 @@
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 1,
@@ -3358,8 +3358,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 100,
-      "height": 40
+      "width": 356,
+      "height": 64
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
