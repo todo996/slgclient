@@ -1,12 +1,11 @@
-name: Inline UI helpers once
+name: Fix inline UI imports once
 
 on:
   push:
     branches:
       - feat/modern-vietnamese-ui-overhaul
     paths:
-      - scripts/inline-ui-helpers.mjs
-      - scripts/inline-ui-helpers-runner.mjs
+      - scripts/fix-inline-helper-imports.mjs
 
 permissions:
   contents: write
@@ -21,33 +20,27 @@ jobs:
           ref: feat/modern-vietnamese-ui-overhaul
           fetch-depth: 0
 
-      - name: Restore build-proven core modules
+      - name: Remove leftover shared UI helper imports
+        run: node scripts/fix-inline-helper-imports.mjs
+
+      - name: Verify controller-local helpers
         shell: bash
         run: |
-          git show 3052ecbe5026a9bcf443cf51ab1186dddf60961d:assets/scripts/common/AudioManager.ts > assets/scripts/common/AudioManager.ts
-          git show 3052ecbe5026a9bcf443cf51ab1186dddf60961d:assets/scripts/i18n/I18n.ts > assets/scripts/i18n/I18n.ts
-
-      - name: Inline presentation helpers
-        run: node scripts/inline-ui-helpers-runner.mjs
-
-      - name: Verify core helper bridge is gone
-        shell: bash
-        run: |
+          node scripts/fix-inline-helper-imports.mjs --check
           if grep -R -n "ANCIENT_UI" assets/scripts/common/AudioManager.ts assets/scripts/i18n/I18n.ts; then
             echo "UI helper definitions must not remain in shared core modules"
             exit 1
           fi
-          echo "Shared core modules restored; UI helpers are controller-local."
 
-      - name: Commit migration
+      - name: Commit cleanup
         shell: bash
         run: |
           if git diff --quiet; then
-            echo "No migration changes needed."
+            echo "No import cleanup needed."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add assets/scripts
-          git commit -m "fix(build): inline UI presentation helpers into stable controllers"
+          git commit -m "fix(build): remove leftover shared UI helper imports"
           git push origin HEAD:feat/modern-vietnamese-ui-overhaul
