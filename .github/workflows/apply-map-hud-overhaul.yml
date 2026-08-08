@@ -31,20 +31,19 @@ jobs:
 
           const COLORS = {
             gold: { __type__: 'cc.Color', r: 231, g: 190, b: 109, a: 255 },
-            goldSoft: { __type__: 'cc.Color', r: 196, g: 168, b: 115, a: 255 },
             text: { __type__: 'cc.Color', r: 239, g: 225, b: 198, a: 255 },
-            muted: { __type__: 'cc.Color', r: 177, g: 163, b: 139, a: 255 },
             panel: { __type__: 'cc.Color', r: 29, g: 23, b: 18, a: 245 },
             panel2: { __type__: 'cc.Color', r: 43, g: 32, b: 23, a: 245 },
-            frame: { __type__: 'cc.Color', r: 116, g: 80, b: 43, a: 255 },
             red: { __type__: 'cc.Color', r: 118, g: 45, b: 37, a: 255 },
           };
 
           const VI = [
-            ['武将', 'Tướng'], ['将领', 'Tướng'], ['战报', 'Chiến báo'], ['招募', 'Chiêu mộ'],
+            ['昵称:', 'Chúa công:'], ['昵称：', 'Chúa công:'], ['昵称', 'Chúa công'],
+            ['武将', 'Tướng'], ['将领', 'Tướng'], ['战报', 'Chiến báo'], ['招募', 'Chiêu mộ'], ['抽卡', 'Chiêu mộ'],
             ['联盟', 'Liên minh'], ['聊天', 'Trò chuyện'], ['技能', 'Kỹ năng'], ['设置', 'Cài đặt'],
             ['征收', 'Thu thuế'], ['税收', 'Thu thuế'], ['转换', 'Chuyển đổi'], ['返回', 'Quay lại'],
-            ['退出', 'Đăng xuất'], ['木材', 'Gỗ'], ['铁矿', 'Sắt'], ['石料', 'Đá'], ['粮食', 'Lương'],
+            ['退出', 'Đăng xuất'], ['市场', 'Chợ'], ['队伍', 'Đội hình'], ['建筑', 'Công trình'],
+            ['标签', 'Dấu'], ['跳转', 'Đi đến'], ['木材', 'Gỗ'], ['铁矿', 'Sắt'], ['石料', 'Đá'], ['粮食', 'Lương'],
             ['黄金', 'Vàng'], ['金币', 'Vàng'], ['政令', 'Lệnh'], ['坐标', 'Tọa độ'],
             ['世界', 'Thế giới'], ['主城', 'Thành chính'], ['玩家', 'Người chơi'], ['角色', 'Nhân vật'],
             ['确定', 'Xác nhận'], ['取消', 'Hủy'], ['关闭', 'Đóng'], ['详情', 'Chi tiết'],
@@ -75,13 +74,15 @@ jobs:
           function setPos(nodeId, x, y) {
             const n = nodeById.get(nodeId);
             if (!n || !n._lpos) return;
-            n._lpos.x = x; n._lpos.y = y;
+            n._lpos.x = x;
+            n._lpos.y = y;
           }
 
           function setSize(nodeId, w, h) {
             for (const c of components(nodeId)) {
               if (c.__type__ === 'cc.UITransform' && c._contentSize) {
-                c._contentSize.width = w; c._contentSize.height = h;
+                c._contentSize.width = w;
+                c._contentSize.height = h;
               }
             }
           }
@@ -109,8 +110,7 @@ jobs:
           }
 
           function styleLabel(label, text = null, size = null, title = false) {
-            if (text !== null) label._string = text;
-            else label._string = tr(label._string || '');
+            label._string = text !== null ? text : tr(label._string || '');
             label._font = null;
             label._isSystemFontUsed = true;
             label._fontFamily = title ? 'Times New Roman' : 'Arial';
@@ -123,7 +123,11 @@ jobs:
             }
           }
 
-          // 1) Việt hóa và chuẩn font cho toàn bộ chữ HUD hiện hữu.
+          function eventRefs(button) {
+            const refs = Array.isArray(button.clickEvents) ? button.clickEvents : (Array.isArray(button._clickEvents) ? button._clickEvents : []);
+            return refs.map(r => data[r.__id__]).filter(e => e?.__type__ === 'cc.ClickEvent');
+          }
+
           data.forEach((e) => {
             if (!e || typeof e !== 'object') return;
             if (e.__type__ === 'cc.Label') styleLabel(e);
@@ -133,16 +137,16 @@ jobs:
             }
           });
 
-          // 2) Top bar: dùng đúng node có kích thước 1280x86 ở mép trên, chỉ đổi skin/tint.
+          // Top brass/charcoal bar.
           for (const [id, n] of nodeById) {
             const ui = components(id).find(c => c.__type__ === 'cc.UITransform');
-            if (ui && ui._contentSize && ui._contentSize.width >= 1200 && ui._contentSize.height >= 70 && ui._contentSize.height <= 110 && n._lpos?.y > 260) {
+            if (ui?._contentSize && ui._contentSize.width >= 1200 && ui._contentSize.height >= 70 && ui._contentSize.height <= 110 && n._lpos?.y > 260) {
               tintSprites(id, COLORS.panel, false);
               setSize(id, 1280, 86);
             }
           }
 
-          // 3) Resource strip: Layout ở vùng trên có nhiều ô con. Không đổi dữ liệu; MapUILogic vẫn ghi số thật.
+          // Resource strip remains connected to LoginCommand data through MapUILogic.
           let resourceRoot = -1;
           for (const [id, n] of nodeById) {
             const hasLayout = components(id).some(c => c.__type__ === 'cc.Layout');
@@ -160,7 +164,6 @@ jobs:
             }
           }
 
-          // 4) Gắn kiểu menu cổ trang cho chính các Button thật bằng ClickEvent handler có sẵn.
           const menu = new Map([
             ['onClickGeneral', { text: 'Tướng', order: 0 }],
             ['openWarReport', { text: 'Chiến báo', order: 1 }],
@@ -171,42 +174,58 @@ jobs:
             ['onClickSkillBtn', { text: 'Kỹ năng', order: 6 }],
             ['onClickSetting', { text: 'Cài đặt', order: 7 }],
           ]);
+          const secondary = new Map([
+            ['openTr', 'Chuyển đổi'],
+            ['onOpenGeneralConvert', 'Chuyển tướng'],
+            ['onOpenGeneralRoster', 'Đội hình'],
+          ]);
           const foundHandlers = new Set();
+          const handlerInventory = [];
           let realButtonCount = 0;
+
           data.forEach((entry) => {
             if (!entry || entry.__type__ !== 'cc.Button' || !entry.node || !Number.isInteger(entry.node.__id__)) return;
             realButtonCount++;
             const nodeId = entry.node.__id__;
-            const events = (entry._clickEvents || []).map(r => data[r.__id__]).filter(Boolean);
-            const handlers = events.map(e => e.handler).filter(Boolean);
-            const known = handlers.map(h => [h, menu.get(h)]).find(([, cfg]) => cfg);
+            const handlers = eventRefs(entry).map(e => e.handler).filter(Boolean);
+            handlerInventory.push(...handlers);
 
-            // Mọi nút thật đều bỏ skin màu sáng cũ và về một hệ đen-đồng.
             tintSprites(nodeId, COLORS.panel2, true);
             for (const label of labelsUnder(nodeId)) {
               styleLabel(label, null, 17, false);
               label._color = { ...COLORS.text };
             }
 
-            if (!known) return;
-            const [handler, cfg] = known;
-            foundHandlers.add(handler);
-            setPos(nodeId, -560, 188 - cfg.order * 55);
-            setSize(nodeId, 132, 46);
-            const labels = labelsUnder(nodeId);
-            if (labels.length) {
-              styleLabel(labels[0], cfg.text, 18, false);
-              labels[0]._isBold = true;
-              labels[0]._color = { ...COLORS.gold };
+            const known = handlers.map(h => [h, menu.get(h)]).find(([, cfg]) => cfg);
+            if (known) {
+              const [handler, cfg] = known;
+              foundHandlers.add(handler);
+              setPos(nodeId, -560, 188 - cfg.order * 55);
+              setSize(nodeId, 132, 46);
+              const labels = labelsUnder(nodeId);
+              if (labels.length) {
+                styleLabel(labels[0], cfg.text, 18, false);
+                labels[0]._isBold = true;
+                labels[0]._color = { ...COLORS.gold };
+              }
+              return;
+            }
+
+            const extra = handlers.map(h => [h, secondary.get(h)]).find(([, text]) => text);
+            if (extra) {
+              const [handler, text] = extra;
+              foundHandlers.add(handler);
+              const labels = labelsUnder(nodeId);
+              if (labels.length) styleLabel(labels[0], text, 16, false);
             }
           });
 
-          // 5) Nút quay lại/đăng xuất thật được giữ nhưng không trộn vào menu chức năng.
+          // Keep the real logout/back action compact at top-left.
           data.forEach((entry) => {
             if (!entry || entry.__type__ !== 'cc.Button' || !entry.node) return;
             const nodeId = entry.node.__id__;
-            const events = (entry._clickEvents || []).map(r => data[r.__id__]).filter(Boolean);
-            if (events.some(e => e.handler === 'onBack')) {
+            if (eventRefs(entry).some(e => e.handler === 'onBack')) {
+              foundHandlers.add('onBack');
               setPos(nodeId, -592, 320);
               setSize(nodeId, 72, 48);
               tintSprites(nodeId, COLORS.red, true);
@@ -215,7 +234,7 @@ jobs:
             }
           });
 
-          // 6) Profile labels được lấy từ chính component MapUILogic, không tạo dữ liệu mẫu.
+          // Profile labels reference live role data, never sample values.
           for (const entry of data) {
             if (!entry || typeof entry !== 'object' || !entry.nameLabel || !entry.ridLabel) continue;
             for (const key of ['nameLabel', 'ridLabel']) {
@@ -224,12 +243,11 @@ jobs:
               const label = data[ref.__id__];
               if (label?.__type__ !== 'cc.Label' || !label.node) continue;
               styleLabel(label, null, key === 'nameLabel' ? 18 : 14, key === 'nameLabel');
-              const labelNode = label.node.__id__;
-              setPos(labelNode, key === 'nameLabel' ? -475 : -475, key === 'nameLabel' ? 332 : 306);
+              setPos(label.node.__id__, -475, key === 'nameLabel' ? 332 : 306);
             }
           }
 
-          // 7) Tối màu các chrome cũ ở lớp HUD nhưng không đụng art map/tướng/quân/công trình.
+          // Retint old decorative chrome only; preserve map, generals, armies and building art.
           for (const [id, n] of nodeById) {
             const name = (n._name || '').toLowerCase();
             const art = /general|hero|head|avatar|portrait|skill|icon|map|army|city|build|cloud|pic/.test(name);
@@ -239,15 +257,13 @@ jobs:
 
           if (!realButtonCount) throw new Error('Không tìm thấy Button thật trong MapUIScene.prefab.');
           if (resourceRoot < 0) throw new Error('Không xác định được resource strip thật của MapUIScene.prefab.');
+          if (!handlerInventory.length) throw new Error('Không đọc được ClickEvent handler thật của MapUIScene.prefab.');
 
-          // Không bắt buộc handler nào mà prefab không có. Chỉ các handler có thật mới được hiển thị/reposition.
           console.log('Real buttons:', realButtonCount);
-          console.log('Styled menu handlers:', [...foundHandlers].join(', '));
+          console.log('Real handler inventory:', [...new Set(handlerInventory)].join(', '));
+          console.log('Styled handlers:', [...foundHandlers].join(', '));
 
-          const cjkLabels = data
-            .filter(e => e?.__type__ === 'cc.Label')
-            .map(e => e._string || '')
-            .filter(s => /[\u3400-\u9fff]/.test(s));
+          const cjkLabels = data.filter(e => e?.__type__ === 'cc.Label').map(e => e._string || '').filter(s => /[\u3400-\u9fff]/.test(s));
           if (cjkLabels.length) throw new Error(`Map HUD vẫn còn chữ Trung hiển thị: ${[...new Set(cjkLabels)].join(' | ')}`);
 
           fs.writeFileSync(path, JSON.stringify(data, null, 2) + '\n', 'utf8');
