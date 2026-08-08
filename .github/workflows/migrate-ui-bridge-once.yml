@@ -6,6 +6,7 @@ on:
       - feat/modern-vietnamese-ui-overhaul
     paths:
       - scripts/migrate-ui-bridge.mjs
+      - scripts/clean-ui-bridge-imports.mjs
       - .github/workflows/migrate-ui-bridge-once.yml
 
 permissions:
@@ -24,7 +25,10 @@ jobs:
       - name: Migrate redesigned controllers to stable runtime bridge
         run: node scripts/migrate-ui-bridge.mjs
 
-      - name: Verify no giant controller-local helper blocks remain
+      - name: Remove migrated I18n import statements
+        run: node scripts/clean-ui-bridge-imports.mjs
+
+      - name: Verify bridge migration
         shell: bash
         run: |
           MATCHES=$(grep -R -l "const LOCAL_UI_TRANSLATIONS" assets/scripts/map/ui assets/scripts/chat assets/scripts/union || true)
@@ -33,11 +37,12 @@ jobs:
             echo "$MATCHES"
             exit 1
           fi
-          if grep -R -n "from .*i18n/I18n" assets/scripts/map/ui/MapUILogic.ts assets/scripts/map/ui/GeneralListLogic.ts assets/scripts/map/ui/GeneralItemLogic.ts assets/scripts/map/ui/DrawLogic.ts assets/scripts/map/ui/WarReportLogic.ts assets/scripts/map/ui/WarReportItemLogic.ts assets/scripts/map/ui/WarReportDesLogic.ts assets/scripts/map/ui/DrawRLogic.ts assets/scripts/map/ui/GeneralInfoLogic.ts assets/scripts/map/ui/SkillLogic.ts assets/scripts/map/ui/SkillItemLogic.ts assets/scripts/map/ui/SkillInfoLogic.ts assets/scripts/map/ui/TransformLogic.ts assets/scripts/chat/ChatLogic.ts assets/scripts/chat/ChatItemLogic.ts assets/scripts/union/UnionLogic.ts assets/scripts/union/UnionLobbyLogic.ts assets/scripts/union/UnionItemLogic.ts; then
-            echo "Redesigned controller still imports i18n bridge"
+          if grep -R -n "i18n/I18n" assets/scripts/map/ui/MapUILogic.ts assets/scripts/map/ui/GeneralListLogic.ts assets/scripts/map/ui/GeneralItemLogic.ts assets/scripts/map/ui/DrawLogic.ts assets/scripts/map/ui/WarReportLogic.ts assets/scripts/map/ui/WarReportItemLogic.ts assets/scripts/map/ui/WarReportDesLogic.ts assets/scripts/map/ui/DrawRLogic.ts assets/scripts/map/ui/GeneralInfoLogic.ts assets/scripts/map/ui/SkillLogic.ts assets/scripts/map/ui/SkillItemLogic.ts assets/scripts/map/ui/SkillInfoLogic.ts assets/scripts/map/ui/TransformLogic.ts assets/scripts/chat/ChatLogic.ts assets/scripts/chat/ChatItemLogic.ts assets/scripts/union/UnionLogic.ts assets/scripts/union/UnionLobbyLogic.ts assets/scripts/union/UnionItemLogic.ts; then
+            echo "Redesigned controller still imports I18n directly"
             exit 1
           fi
           grep -n "__SLG_ANCIENT_UI__" assets/scripts/Main.ts
+          grep -n "function ui(): any" assets/scripts/map/ui/DrawLogic.ts
 
       - name: Commit migration
         shell: bash
