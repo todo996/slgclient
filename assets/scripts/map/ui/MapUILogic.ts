@@ -1,43 +1,38 @@
-import { _decorator, Color, Component, Label, Layout, Node, Prefab, UITransform, Vec2, instantiate } from 'cc';
+import { _decorator, Component, Prefab, Node, Layout, Label, instantiate, UITransform, Vec2 } from 'cc';
 const { ccclass, property } = _decorator;
 
-import { AudioManager } from '../../common/AudioManager';
-import { LogicEvent } from '../../common/LogicEvent';
-import { GeneralData } from '../../general/GeneralProxy';
-import LoginCommand from '../../login/LoginCommand';
-import { Skill } from '../../skill/SkillProxy';
-import UnionCommand from '../../union/UnionCommand';
+import LoginCommand from "../../login/LoginCommand";
+import ArmySelectNodeLogic from "./ArmySelectNodeLogic";
+import CityArmySettingLogic from "./CityArmySettingLogic";
+import FacilityListLogic from "./FacilityListLogic";
+import MapUICommand from "./MapUICommand";
+import Dialog, { DialogType } from "./Dialog";
+import UnionCommand from "../../union/UnionCommand";
+import MapCommand from "../MapCommand";
+import FortressAbout from "./FortressAbout";
+import CityAboutLogic from "./CityAboutLogic";
+import GeneralListLogic from "./GeneralListLogic";
+import TransformLogic from "./TransformLogic";
+import { Tools } from "../../utils/Tools";
+import GeneralInfoLogic from "./GeneralInfoLogic";
+import WarReportLogic from "./WarReportLogic";
+import DrawRLogic from "./DrawRLogic";
+import { GeneralData } from "../../general/GeneralProxy";
+import SkillLogic from "./SkillLogic";
+import { SkillConf } from "../../config/skill/Skill";
+import SkillInfoLogic from "./SkillInfoLogic";
 import { EventMgr } from '../../utils/EventMgr';
-import { Tools } from '../../utils/Tools';
-import MapCommand from '../MapCommand';
-import ArmySelectNodeLogic from './ArmySelectNodeLogic';
-import CityAboutLogic from './CityAboutLogic';
-import CityArmySettingLogic from './CityArmySettingLogic';
-import Dialog, { DialogType } from './Dialog';
-import DrawRLogic from './DrawRLogic';
-import FacilityListLogic from './FacilityListLogic';
-import FortressAbout from './FortressAbout';
-import GeneralInfoLogic from './GeneralInfoLogic';
-import GeneralListLogic from './GeneralListLogic';
-import MapUICommand from './MapUICommand';
-import SkillInfoLogic from './SkillInfoLogic';
-import SkillLogic from './SkillLogic';
-import TransformLogic from './TransformLogic';
-import WarReportLogic from './WarReportLogic';
+import { AudioManager } from '../../common/AudioManager';
+import { Skill } from '../../skill/SkillProxy';
+import { LogicEvent } from '../../common/LogicEvent';
 
-function ui(): any {
-    const bridge = (globalThis as any).__SLG_ANCIENT_UI__;
-    if (!bridge) {
-        throw new Error('Ancient UI bridge has not been initialized.');
-    }
-    return bridge;
-}
 
 
 @ccclass('MapUILogic')
 export default class MapUILogic extends Component {
+
     @property(Node)
-    contentNode: Node = null;
+    contentNode:Node = null;
 
     @property(Prefab)
     facilityPrefab: Prefab = null;
@@ -70,7 +65,6 @@ export default class MapUILogic extends Component {
     @property(Prefab)
     warReportPrefab: Prefab = null;
     protected _warReportNode: Node = null;
-
     @property(Prefab)
     armySelectPrefab: Prefab = null;
     protected _armySelectNode: Node = null;
@@ -94,6 +88,7 @@ export default class MapUILogic extends Component {
     @property(Prefab)
     collectPrefab: Prefab = null;
     protected _collectNode: Node = null;
+
 
     @property(Prefab)
     transFormPrefab: Prefab = null;
@@ -119,9 +114,11 @@ export default class MapUILogic extends Component {
     settingPrefab: Prefab = null;
     protected _settingNode: Node = null;
 
+
     @property(Prefab)
     cloudAniPrefab: Prefab = null;
     protected _cloudAniNode: Node = null;
+
 
     @property(Node)
     widgetNode: Node = null;
@@ -135,20 +132,22 @@ export default class MapUILogic extends Component {
     @property(Label)
     ridLabel: Label = null;
 
-    protected _resArray: any[] = [];
-    protected _yieldArray: any[] = [];
+    protected _resArray: any = [];
+    protected _yieldArray: any = [];
 
     protected onLoad(): void {
-        this._resArray.push({ key: 'gold', name: 'Vàng ' });
-        this._resArray.push({ key: 'wood', name: 'Gỗ ' });
-        this._resArray.push({ key: 'iron', name: 'Sắt ' });
-        this._resArray.push({ key: 'stone', name: 'Đá ' });
-        this._resArray.push({ key: 'grain', name: 'Lương ' });
 
-        this._yieldArray.push({ key: 'wood_yield', name: 'Gỗ+' });
-        this._yieldArray.push({ key: 'iron_yield', name: 'Sắt+' });
-        this._yieldArray.push({ key: 'stone_yield', name: 'Đá+' });
-        this._yieldArray.push({ key: 'grain_yield', name: 'Lương+' });
+        this._resArray.push({key:"grain", name:"Lương:"});
+        this._resArray.push({key:"wood", name:"Gỗ:"});
+        this._resArray.push({key:"iron", name:"Sắt:"});
+        this._resArray.push({key:"stone", name:"Đá:"});
+        this._resArray.push({key:"gold", name:"Vàng:"});
+
+        this._yieldArray.push({key:"wood_yield", name:"Gỗ+"});
+        this._yieldArray.push({key:"iron_yield", name:"Sắt+"});
+        this._yieldArray.push({key:"stone_yield", name:"Đá+"});
+        this._yieldArray.push({key:"grain_yield", name:"Lương+"});
+
 
         EventMgr.on(LogicEvent.openCityAbout, this.openCityAbout, this);
         EventMgr.on(LogicEvent.closeCityAbout, this.closeCityAbout, this);
@@ -171,150 +170,48 @@ export default class MapUILogic extends Component {
         EventMgr.on(LogicEvent.beforeScrollToMap, this.beforeScrollToMap, this);
         EventMgr.on(LogicEvent.showTip, this.showTip, this);
 
-        this.applyModernMapHud();
+
+
         this.updateRoleRes();
         this.updateRole();
-
-        const unionId = MapCommand.getInstance().cityProxy.myUnionId;
+        let unionId = MapCommand.getInstance().cityProxy.myUnionId;
         if (unionId > 0) {
             UnionCommand.getInstance().unionApplyList(unionId);
         }
     }
 
-    private applyModernMapHud(): void {
-        ui().localizeNode(this.node);
-
-        const hudRoot = this.widgetNode || this.node;
-        const profile = ui().ensureUiChild(hudRoot, '__MapProfilePanel');
-        profile.setPosition(-500, 307, 0);
-        profile.setSiblingIndex(0);
-        ui().drawAncientPanel(profile, 270, 94, 10, new Color(16, 14, 12, 230));
-
-        this.nameLabel.node.setParent(profile);
-        this.nameLabel.node.setPosition(28, 18, 0);
-        this.nameLabel.useSystemFont = true;
-        this.nameLabel.fontFamily = 'Times New Roman';
-        this.nameLabel.fontSize = 21;
-        this.nameLabel.lineHeight = 27;
-        this.nameLabel.enableWrapText = false;
-        this.nameLabel.overflow = Label.Overflow.SHRINK;
-        this.nameLabel.color = ui().ANCIENT_UI.gold;
-        ui().ensureUiTransform(this.nameLabel.node, 190, 30);
-
-        this.ridLabel.node.setParent(profile);
-        this.ridLabel.node.setPosition(28, -20, 0);
-        this.ridLabel.useSystemFont = true;
-        this.ridLabel.fontFamily = 'Arial';
-        this.ridLabel.fontSize = 14;
-        this.ridLabel.lineHeight = 19;
-        this.ridLabel.enableWrapText = false;
-        this.ridLabel.overflow = Label.Overflow.SHRINK;
-        this.ridLabel.color = ui().ANCIENT_UI.muted;
-        ui().ensureUiTransform(this.ridLabel.node, 190, 24);
-
-        const profileMark = ui().createUiText(profile, '__ProfileMark', 'T', 29, ui().ANCIENT_UI.gold, 54, 54, true);
-        profileMark.node.setPosition(-90, 0, 0);
-
-        this.srollLayout.type = Layout.Type.HORIZONTAL;
-        this.srollLayout.spacingX = 5;
-        this.srollLayout.node.setPosition(210, 326, 0);
-        ui().ensureUiTransform(this.srollLayout.node, 850, 48);
-        const resourceChildren = this.srollLayout.node.children;
-        for (let i = 0; i < resourceChildren.length; i += 1) {
-            const child = resourceChildren[i];
-            child.active = i < 6;
-            if (!child.active) {
-                continue;
-            }
-            ui().suppressLegacyChrome(child, 1);
-            ui().ensureUiTransform(child, i === 0 ? 120 : 138, 44);
-            ui().drawAncientPanel(child, i === 0 ? 120 : 138, 44, 6, ui().ANCIENT_UI.panelSoft);
-            const label = child.getChildByName('New Label')?.getComponent(Label);
-            if (label) {
-                label.useSystemFont = true;
-                label.fontFamily = 'Arial';
-                label.fontSize = 15;
-                label.lineHeight = 20;
-                label.enableWrapText = false;
-                label.overflow = Label.Overflow.SHRINK;
-                label.color = ui().ANCIENT_UI.text;
-                ui().ensureUiTransform(label.node, i === 0 ? 108 : 126, 32);
-            }
-        }
-
-        const menu: Array<[string, string, number]> = [
-            ['onClickGeneral', 'Tướng', 178],
-            ['openDraw', 'Chiêu mộ', 118],
-            ['openWarReport', 'Chiến báo', 58],
-            ['openUnion', 'Liên minh', -2],
-            ['openTr', 'Chợ', -62],
-            ['onClickCollection', 'Thu thuế', -122],
-            ['onClickSkillBtn', 'Kỹ năng', -182],
-        ];
-
-        for (const [handler, text, y] of menu) {
-            const button = ui().findButtonByHandler(this.node, handler);
-            if (!button) {
-                continue;
-            }
-            button.node.setParent(hudRoot);
-            button.node.setPosition(-552, y, 0);
-            ui().styleAncientButton(button.node, text, 'dark', 160, 52);
-            button.node.setSiblingIndex(hudRoot.children.length - 1);
-        }
-
-        const chat = ui().findButtonByHandler(this.node, 'openChat');
-        if (chat) {
-            chat.node.setParent(hudRoot);
-            chat.node.setPosition(-342, -319, 0);
-            ui().styleAncientButton(chat.node, 'Trò chuyện', 'dark', 430, 50);
-            chat.node.setSiblingIndex(hudRoot.children.length - 1);
-        }
-
-        const setting = ui().findButtonByHandler(this.node, 'onClickSetting');
-        if (setting) {
-            setting.node.setParent(hudRoot);
-            setting.node.setPosition(555, -305, 0);
-            ui().styleAncientButton(setting.node, 'Cài đặt', 'gold', 145, 72);
-            setting.node.setSiblingIndex(hudRoot.children.length - 1);
-        }
-
-        const back = ui().findButtonByHandler(this.node, 'onBack');
-        if (back) {
-            back.node.setParent(profile);
-            back.node.setPosition(97, -63, 0);
-            ui().styleAncientButton(back.node, 'Đăng xuất', 'dark', 110, 32);
-        }
-    }
-
     protected robLoginUI(): void {
-        this.showTip('Tài khoản đã đăng nhập ở nơi khác', () => {
+        this.showTip("Tài khoản đã đăng nhập ở nơi khác",function () {
             EventMgr.emit(LogicEvent.enterLogin);
         });
     }
 
-    protected showTip(text: string, close: Function): void {
-        if (this._dialogNode == null) {
-            this._dialogNode = instantiate(this.dialog);
+    protected showTip(text:string, close:Function):void {
+        if (this._dialogNode == null){
+            this._dialogNode = instantiate(this.dialog)
             this._dialogNode.parent = this.contentNode;
-        } else {
+        }else{
             this._dialogNode.active = true;
         }
         this._dialogNode.setSiblingIndex(this.topLayer());
         this._dialogNode.getComponent(Dialog).show(text, DialogType.OnlyConfirm);
-        this._dialogNode.getComponent(Dialog).setClose(close);
+        this._dialogNode.getComponent(Dialog).setClose(close)
     }
+
 
     protected onDestroy(): void {
         this.clearAllNode();
         MapUICommand.getInstance().proxy.clearData();
         EventMgr.targetOff(this);
+
+        console.log("MapUILogic onDestroy")
     }
 
     protected onBack(): void {
         AudioManager.instance.playClick();
         LoginCommand.getInstance().account_logout();
     }
+
 
     protected clearAllNode(): void {
         this._facilityNode = null;
@@ -326,13 +223,17 @@ export default class MapUILogic extends Component {
         this._drawNode = null;
         this._drawResultNode = null;
         this._generalDesNode = null;
-        this._dialogNode = null;
+        this._dialogNode = null
     }
 
-    public topLayer(): number {
-        return this.contentNode.children.length + 1;
-    }
 
+
+    public topLayer():number {
+        return this.contentNode.children.length+1;
+    }
+    /**
+     * Công trình
+     */
     protected openFacility(data: any): void {
         if (this._facilityNode == null) {
             this._facilityNode = instantiate(this.facilityPrefab);
@@ -354,8 +255,11 @@ export default class MapUILogic extends Component {
         this._armySettingNode.setSiblingIndex(this.topLayer());
         this._armySettingNode.getComponent(CityArmySettingLogic).setData(cityId, order);
     }
+    /**
+     * Võ tướng
+     */
 
-    protected onClickGeneral(): void {
+    protected onClickGeneral(){
         AudioManager.instance.playClick();
         this.openGeneral([]);
     }
@@ -371,10 +275,17 @@ export default class MapUILogic extends Component {
         this._generalNode.getComponent(GeneralListLogic).setData(data, type, position);
     }
 
+
+    /**
+     * Võ tướng选择
+     * @param data
+     * @param zIndex
+     */
     protected openGeneralChoose(data: number[], position: number = 0): void {
         this.openGeneral(data, 1, position);
     }
 
+    /**打开Quân đội选择界面*/
     protected onOpenArmySelectUI(cmd: number, x: number, y: number): void {
         if (this._armySelectNode == null) {
             this._armySelectNode = instantiate(this.armySelectPrefab);
@@ -386,6 +297,10 @@ export default class MapUILogic extends Component {
         this._armySelectNode.getComponent(ArmySelectNodeLogic).setData(cmd, x, y);
     }
 
+
+    /**
+     * Võ tướngChi tiết
+     */
     protected openGeneralDes(cfgData: any, curData: any): void {
         if (this._generalDesNode == null) {
             this._generalDesNode = instantiate(this.generalDesPrefab);
@@ -397,13 +312,19 @@ export default class MapUILogic extends Component {
         this._generalDesNode.getComponent(GeneralInfoLogic).setData(cfgData, curData);
     }
 
+
+    /**
+     * 城市
+     */
     protected openCityAbout(data: any): void {
+
         if (this._cityAboutNode == null) {
             this._cityAboutNode = instantiate(this.cityAboutPrefab);
             this._cityAboutNode.parent = this.contentNode;
         } else {
             this._cityAboutNode.active = true;
         }
+
         this._cityAboutNode.setSiblingIndex(this.topLayer());
         this.widgetNode.active = false;
         EventMgr.emit(LogicEvent.scrollToMap, data.x, data.y);
@@ -425,6 +346,11 @@ export default class MapUILogic extends Component {
         this._fortressAboutNode.getComponent(FortressAbout).setData(data);
     }
 
+
+
+    /**
+     * Chiến báo
+     */
     protected openWarReport(): void {
         AudioManager.instance.playClick();
         if (this._warReportNode == null) {
@@ -437,33 +363,45 @@ export default class MapUILogic extends Component {
         this._warReportNode.getComponent(WarReportLogic).updateView();
     }
 
+    /**
+     * Nhân vật信息
+     */
     protected updateRoleRes(): void {
-        const children = this.srollLayout.node.children;
-        const roleRes = LoginCommand.getInstance().proxy.getRoleResData();
-        let i = 0;
-        const decreeLabel = children[i]?.getChildByName('New Label')?.getComponent(Label);
-        if (decreeLabel) {
-            decreeLabel.string = `Lệnh ${Tools.numberToShow(roleRes.decree)}`;
-        }
-        i += 1;
+        var children = this.srollLayout.node.children;
+        var roleRes = LoginCommand.getInstance().proxy.getRoleResData();
 
-        for (const obj of this._resArray) {
-            const label = children[i]?.getChildByName('New Label')?.getComponent(Label);
-            if (label) {
-                label.string = `${obj.name}${Tools.numberToShow(roleRes[obj.key])}`;
+        var i = 0;
+        children[i].getChildByName("New Label").getComponent(Label).string = "Lệnh:" + Tools.numberToShow(roleRes["decree"]);
+        i+=1;
+
+
+        for (let index = 0; index < this._resArray.length; index++) {
+            const obj = this._resArray[index];
+            var label = children[i].getChildByName("New Label").getComponent(Label)
+
+            if(obj.key == "gold"){
+                label.string = obj.name + Tools.numberToShow(roleRes[obj.key]);
+            }else{
+                label.string = obj.name + Tools.numberToShow(roleRes[obj.key]) + "/" + Tools.numberToShow(roleRes["depot_capacity"]);
             }
-            i += 1;
+
+            i+=1;
         }
 
-        for (const obj of this._yieldArray) {
-            const label = children[i]?.getChildByName('New Label')?.getComponent(Label);
-            if (label) {
-                label.string = `${obj.name}${Tools.numberToShow(roleRes[obj.key])}`;
-            }
-            i += 1;
+        for (let index = 0; index < this._yieldArray.length; index++) {
+            const obj = this._yieldArray[index];
+            var label = children[i].getChildByName("New Label").getComponent(Label)
+            label.string = obj.name + Tools.numberToShow(roleRes[obj.key]);
+            i+=1;
         }
+
     }
 
+
+
+    /**
+     * Chiêu mộ tướng
+     */
     protected openDraw(): void {
         AudioManager.instance.playClick();
         if (this._drawNode == null) {
@@ -475,6 +413,13 @@ export default class MapUILogic extends Component {
         this._drawNode.setSiblingIndex(this.topLayer());
     }
 
+
+
+
+    /**
+     * Chiêu mộ tướng结果
+     * @param data
+     */
     protected openDrawR(data: any): void {
         if (this._drawResultNode == null) {
             this._drawResultNode = instantiate(this.drawResultrefab);
@@ -485,6 +430,8 @@ export default class MapUILogic extends Component {
         this._drawResultNode.setSiblingIndex(this.topLayer());
         this._drawResultNode.getComponent(DrawRLogic).setData(data);
     }
+
+
 
     protected openUnion(): void {
         AudioManager.instance.playClick();
@@ -497,6 +444,7 @@ export default class MapUILogic extends Component {
         this._unionNode.setSiblingIndex(this.topLayer());
     }
 
+
     protected openChat(): void {
         AudioManager.instance.playClick();
         if (this._chatNode == null) {
@@ -507,6 +455,8 @@ export default class MapUILogic extends Component {
         }
         this._chatNode.setSiblingIndex(this.topLayer());
     }
+
+
 
     protected openTr(): void {
         AudioManager.instance.playClick();
@@ -522,17 +472,22 @@ export default class MapUILogic extends Component {
 
     protected onOpenGeneralConvert(): void {
         AudioManager.instance.playClick();
+        console.log("onOpenGeneralConvert");
         if (this._generalConvertNode == null) {
             this._generalConvertNode = instantiate(this.generalConvertPrefab);
             this._generalConvertNode.parent = this.contentNode;
+
         } else {
             this._generalConvertNode.active = true;
         }
+
         this._generalConvertNode.setSiblingIndex(this.topLayer());
+
     }
 
     protected onOpenGeneralRoster(): void {
         AudioManager.instance.playClick();
+        console.log("onOpenGeneralRoster");
         if (this._generalRosterNode == null) {
             this._generalRosterNode = instantiate(this.generalRosterPrefab);
             this._generalRosterNode.parent = this.contentNode;
@@ -540,14 +495,16 @@ export default class MapUILogic extends Component {
             this._generalRosterNode.active = true;
         }
         this._generalRosterNode.setSiblingIndex(this.topLayer());
+
     }
 
-    onClickSkillBtn(): void {
+    onClickSkillBtn(): void{
         AudioManager.instance.playClick();
         this.onOpenSkill(0);
     }
 
-    protected onOpenSkill(type: number = 0, general: GeneralData = null, skillPos: number = -1): void {
+    protected onOpenSkill(type:number=0, general:GeneralData = null, skillPos:number=-1): void {
+        console.log("onOpenSkill", type, general, skillPos);
         if (this._skillNode == null) {
             this._skillNode = instantiate(this.skillPrefab);
             this._skillNode.parent = this.contentNode;
@@ -558,14 +515,15 @@ export default class MapUILogic extends Component {
         this._skillNode.getComponent(SkillLogic).setData(type, general, skillPos);
     }
 
-    protected onCloseSkill(): void {
+    protected onCloseSkill(){
         AudioManager.instance.playClick();
         if (this._skillNode) {
-            this._skillNode.active = false;
+           this._skillNode.active = false;
         }
     }
 
-    protected onOpenSkillInfo(cfg: Skill, type: number = 0, general: GeneralData = null, skillPos: number = -1): void {
+    protected onOpenSkillInfo(cfg:Skill, type:number=0, general:GeneralData = null, skillPos:number=-1){
+        console.log("onOpenSkillInfo", cfg, type, general, skillPos);
         AudioManager.instance.playClick();
         if (this._skillInfoNode == null) {
             this._skillInfoNode = instantiate(this.skillInfoPrefab);
@@ -577,48 +535,60 @@ export default class MapUILogic extends Component {
         this._skillInfoNode.getComponent(SkillInfoLogic).setData(cfg, type, general, skillPos);
     }
 
-    protected onCollection(msg: any): void {
-        this.showTip(`Đã thu được ${msg.gold} Vàng`, null);
+
+    //Thu thuế
+    protected onCollection(msg:any):void{
+        this.showTip("Đã thu được "+msg.gold+" Vàng", null);
     }
 
     protected updateRole(): void {
-        const roleData = LoginCommand.getInstance().proxy.getRoleData();
-        this.nameLabel.string = roleData.nickName;
-        this.ridLabel.string = `ID: ${roleData.rid}`;
+        var roleData = LoginCommand.getInstance().proxy.getRoleData();
+        this.nameLabel.string = "Tên nhân vật: " + roleData.nickName;
+        this.ridLabel.string = "Nhân vậtID: " + roleData.rid + "";
     }
 
-    protected onClickCollection(): void {
+    protected onClickCollection():void {
         AudioManager.instance.playClick();
-        if (this._collectNode == null) {
+
+        if(this._collectNode == null){
             this._collectNode = instantiate(this.collectPrefab);
             this._collectNode.parent = this.contentNode;
         }
         this._collectNode.active = true;
         this._collectNode.setSiblingIndex(this.topLayer());
+
     }
 
-    protected onClickSetting(): void {
+    protected onClickSetting():void {
         AudioManager.instance.playClick();
-        if (this._settingNode == null) {
+        if(this._settingNode == null){
             this._settingNode = instantiate(this.settingPrefab);
             this._settingNode.parent = this.contentNode;
         }
         this._settingNode.active = true;
         this._settingNode.setSiblingIndex(this.topLayer());
+
     }
 
-    protected beforeScrollToMap(x: number, y: number, oldx: number, oldy: number): void {
-        const newPoint = new Vec2(x, y);
-        const oldPoint = new Vec2(oldx, oldy);
-        const dis = Vec2.squaredDistance(newPoint, oldPoint);
-        if (dis < 360000) {
+    protected beforeScrollToMap(x:number, y:number, oldx:number, oldy:number):void {
+        let newPoint = new Vec2(x, y);
+        let oldPoint = new Vec2(oldx, oldy);
+        let dis = Vec2.squaredDistance(newPoint, oldPoint);
+        console.log("beforeScrollToMap:", x, y, oldx, oldy, dis);
+
+        if(dis < 360000){
             return;
         }
-        if (this._cloudAniNode == null) {
+
+        if(this._cloudAniNode == null){
             this._cloudAniNode = instantiate(this.cloudAniPrefab);
             this._cloudAniNode.parent = this.contentNode;
         }
         this._cloudAniNode.active = true;
         this._cloudAniNode.setSiblingIndex(this.topLayer());
+
     }
+
+
+
 }

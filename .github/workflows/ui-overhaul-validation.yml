@@ -114,38 +114,6 @@ jobs:
             throw "Cocos Creator build failed with exit code $($process.ExitCode)."
           }
 
-      - name: Surface Cocos build diagnostics
-        if: failure()
-        shell: pwsh
-        run: |
-          $ErrorActionPreference = "Continue"
-          $roots = @(
-            (Join-Path $env:GITHUB_WORKSPACE "temp/builder/log"),
-            (Join-Path $env:GITHUB_WORKSPACE "temp/build/log"),
-            (Join-Path $env:GITHUB_WORKSPACE "temp")
-          )
-          $logs = @()
-          foreach ($root in $roots) {
-            if (Test-Path $root) {
-              $logs += Get-ChildItem -Path $root -Filter "*.log" -File -Recurse -ErrorAction SilentlyContinue
-            }
-          }
-          $logs = $logs | Sort-Object LastWriteTime -Descending | Select-Object -Unique -First 5
-          if (-not $logs) {
-            Write-Host "No Cocos builder log files found under project temp directories."
-            exit 0
-          }
-          foreach ($log in $logs) {
-            Write-Host "Inspecting Cocos log: $($log.FullName)"
-            $matches = Select-String -Path $log.FullName -Pattern 'Could not load|ENOENT|Exception:|error TS|SyntaxError|ReferenceError|TypeError|build failed|Build failed|Error:' -Context 2,3 -ErrorAction SilentlyContinue | Select-Object -Last 20
-            foreach ($match in $matches) {
-              $message = (($match.Context.PreContext + $match.Line + $match.Context.PostContext) -join ' | ') -replace '[\r\n]+',' '
-              $message = $message -replace '%','%25' -replace '\r','%0D' -replace '\n','%0A'
-              Write-Output "::error title=Cocos build detail::$message"
-            }
-          }
-          exit 0
-
       - name: Validate production output
         shell: pwsh
         run: |

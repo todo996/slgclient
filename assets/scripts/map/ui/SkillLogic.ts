@@ -1,86 +1,64 @@
 import { _decorator, Component, ScrollView } from 'cc';
-const { ccclass, property } = _decorator;
+const {ccclass, property} = _decorator;
 
-import { AudioManager } from '../../common/AudioManager';
-import { LogicEvent } from '../../common/LogicEvent';
-import { GeneralData } from '../../general/GeneralProxy';
-import SkillCommand from '../../skill/SkillCommand';
-import { Skill } from '../../skill/SkillProxy';
+import { GeneralData } from "../../general/GeneralProxy";
+import SkillCommand from "../../skill/SkillCommand";
+import { Skill } from "../../skill/SkillProxy";
 import { EventMgr } from '../../utils/EventMgr';
+import { AudioManager } from '../../common/AudioManager';
 import ListLogic from '../../utils/ListLogic';
-
-function ui(): any {
-    const bridge = (globalThis as any).__SLG_ANCIENT_UI__;
-    if (!bridge) {
-        throw new Error('Ancient UI bridge has not been initialized.');
-    }
-    return bridge;
-}
-
+import { LogicEvent } from '../../common/LogicEvent';
 
 @ccclass('SkillLogic')
 export default class SkillLogic extends Component {
+
     @property(ScrollView)
     scrollView: ScrollView = null;
 
     _general: GeneralData = null;
-    _type = 0;
-    _skillPos = -1;
+    _type: number = 0;
+    _skillPos : number = -1;
 
-    protected onEnable(): void {
-        this.applyModernSkillList();
+
+
+    protected onEnable():void{
+
         EventMgr.on(LogicEvent.skillListInfo, this.onSkillList, this);
         SkillCommand.getInstance().qrySkillList();
     }
 
-    protected onDisable(): void {
-        EventMgr.targetOff(this);
+    protected onDisable():void {
+        EventMgr.targetOff(this)
     }
 
-    private applyModernSkillList(): void {
-        ui().applyAncientScreenChrome(this.node, 'Kỹ năng');
-        this.scrollView.node.setPosition(0, -10, 0);
-        ui().ensureUiTransform(this.scrollView.node, 1120, 520);
-        const view = this.scrollView.node.getChildByName('view') || this.scrollView.node.getChildByName('View');
-        if (view) {
-            ui().ensureUiTransform(view, 1120, 520);
-        }
-        if (this.scrollView.content) {
-            ui().ensureUiTransform(this.scrollView.content, 1120, 520);
-        }
+    protected onSkillList(){
 
-        const close = ui().findButtonByHandler(this.node, 'onClickClose');
-        if (close) {
-            close.node.setPosition(-574, 320, 0);
-            ui().styleAncientButton(close.node, '←', 'dark', 72, 52);
-            close.node.setSiblingIndex(this.node.children.length - 1);
-        }
-    }
+        var skills = SkillCommand.getInstance().proxy.skills;
+        var skillConfs = SkillCommand.getInstance().proxy.skillConfs;
 
-    protected onSkillList(): void {
-        const skills = SkillCommand.getInstance().proxy.skills;
-        const skillConfs = SkillCommand.getInstance().proxy.skillConfs;
-        const arr: Skill[] = [];
-        for (let i = 0; i < skillConfs.length; i += 1) {
-            let found = false;
-            const cfg = skillConfs[i];
-            const dSkill = new Skill();
+        var arr = [];
+        for (let i = 0; i < skillConfs.length; i++) {
+            var found = false;
+            let cfg = skillConfs[i];
+
+            let dSkill = new Skill();
             dSkill.cfgId = cfg.cfgId;
             dSkill.generals = [];
 
-            for (let j = 0; j < skills.length; j += 1) {
-                const skill = skills[j];
-                if (skill.cfgId == cfg.cfgId) {
+            for (let j = 0; j < skills.length; j++) {
+                var skill = skills[j];
+                if (skill.cfgId == cfg.cfgId){
                     found = true;
                     arr.push(skill);
-                    break;
+                    break
                 }
             }
-            if (!found) {
+            if(found == false){
                 arr.push(dSkill);
             }
         }
-        const comp = this.scrollView.node.getComponent(ListLogic);
+
+        var comp = this.scrollView.node.getComponent(ListLogic);
         comp.setData(arr);
     }
 
@@ -89,14 +67,17 @@ export default class SkillLogic extends Component {
         AudioManager.instance.playClick();
     }
 
-    protected onClickItem(data: Skill, target: any): void {
+    protected onClickItem(data: Skill, target): void {
         AudioManager.instance.playClick();
         EventMgr.emit(LogicEvent.openSkillInfo, data, this._type, this._general, this._skillPos);
     }
 
-    public setData(type: number, general: GeneralData, skillPos: number): void {
+
+    /** type:0普通展示、type:1 Học、2:Võ tướng查看 **/
+    public setData(type:number, general:GeneralData, skillPos: number) {
         this._type = type;
         this._general = general;
         this._skillPos = skillPos;
     }
+
 }

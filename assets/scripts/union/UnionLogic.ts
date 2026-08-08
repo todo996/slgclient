@@ -1,155 +1,102 @@
-import { _decorator, Component, Label, Node } from 'cc';
+
+import { _decorator, Component, Node, Label } from 'cc';
 import { AudioManager } from '../common/AudioManager';
 import { LogicEvent } from '../common/LogicEvent';
 const { ccclass, property } = _decorator;
 
-import MapCommand from '../map/MapCommand';
-import { MapCityData } from '../map/MapCityProxy';
+import { MapCityData } from "../map/MapCityProxy";
+import MapCommand from "../map/MapCommand";
 import { EventMgr } from '../utils/EventMgr';
-
-function ui(): any {
-    const bridge = (globalThis as any).__SLG_ANCIENT_UI__;
-    if (!bridge) {
-        throw new Error('Ancient UI bridge has not been initialized.');
-    }
-    return bridge;
-}
-
 
 @ccclass('UnionLogic')
 export default class UnionLogic extends Component {
     @property(Node)
-    createNode: Node = null;
+    createNode:Node | null = null;
     @property(Node)
-    mainNode: Node = null;
+    mainNode:Node | null = null;
     @property(Node)
-    lobbyNode: Node = null;
+    lobbyNode:Node | null = null;
     @property(Node)
-    memberNode: Node = null;
+    memberNode:Node | null = null;
     @property(Node)
-    applyNode: Node = null;
+    applyNode:Node | null = null;
+
     @property(Node)
-    logNode: Node = null;
+    logNode:Node | null = null;
     @property(Label)
-    nameLab: Label = null;
-
-    protected onLoad(): void {
-        this.applyModernUnion();
+    nameLab:Label | null = null;
+    protected onLoad():void{
         this.visibleView();
-        EventMgr.on(LogicEvent.openMyUnion, this.openMyUnion, this);
-        EventMgr.on(LogicEvent.dismissUnionSuccess, this.onDismiss, this);
-        EventMgr.on(LogicEvent.closeUnion, this.closeUnion, this);
-        EventMgr.on(LogicEvent.createUnionSuccess, this.openMyUnion, this);
+        EventMgr.on(LogicEvent.openMyUnion,this.openMyUnion,this);
+        EventMgr.on(LogicEvent.dismissUnionSuccess,this.onDismiss,this);
+        EventMgr.on(LogicEvent.closeUnion,this.closeUnion,this);
+        EventMgr.on(LogicEvent.createUnionSuccess,this.openMyUnion,this);
     }
-
-    protected onDestroy(): void {
+    protected onDestroy():void{
         EventMgr.targetOff(this);
     }
-
-    private applyModernUnion(): void {
-        ui().applyAncientScreenChrome(this.node, 'Liên minh');
-        for (const panel of [this.createNode, this.mainNode, this.lobbyNode, this.memberNode, this.applyNode, this.logNode]) {
-            if (!panel) {
-                continue;
-            }
-            ui().suppressLegacyChrome(panel, 2);
-        }
-
-        if (this.nameLab) {
-            this.nameLab.useSystemFont = true;
-            this.nameLab.fontFamily = 'Times New Roman';
-            this.nameLab.color = ui().ANCIENT_UI.gold;
-            this.nameLab.fontSize = 27;
-        }
-
-        const controls: Array<[string, string, 'gold' | 'dark' | 'jade' | 'red', number]> = [
-            ['onClickClose', '←', 'dark', 72],
-            ['openCreate', 'Tạo liên minh', 'jade', 190],
-            ['onClickMember', 'Thành viên', 'dark', 170],
-            ['onClickApply', 'Đơn gia nhập', 'dark', 170],
-            ['onClickLog', 'Nhật ký', 'dark', 150],
-            ['back', 'Quay lại', 'dark', 140],
-        ];
-        for (const [handler, text, variant, width] of controls) {
-            const button = ui().findButtonByHandler(this.node, handler);
-            if (!button) {
-                continue;
-            }
-            ui().styleAncientButton(button.node, text, variant, width, handler === 'onClickClose' ? 52 : 48);
-            if (handler === 'onClickClose') {
-                button.node.setPosition(-574, 320, 0);
-                button.node.setSiblingIndex(this.node.children.length - 1);
-            }
-        }
-    }
-
     protected onClickClose(): void {
+        console.log("onClickClose");
         AudioManager.instance.playClick();
         this.closeUnion();
     }
-
     protected onClickMember(): void {
         AudioManager.instance.playClick();
         this.memberNode.active = true;
         this.mainNode.active = false;
     }
-
     protected onClickApply(): void {
         AudioManager.instance.playClick();
         this.mainNode.active = false;
         this.applyNode.active = true;
     }
-
     protected onClickLog(): void {
         AudioManager.instance.playClick();
         this.mainNode.active = false;
         this.logNode.active = true;
     }
-
-    protected openCreate(): void {
+    protected openCreate():void{
         AudioManager.instance.playClick();
         this.createNode.active = true;
     }
-
-    protected visibleView(): void {
+    protected visibleView():void{
         this.memberNode.active =
-            this.createNode.active =
-            this.lobbyNode.active =
-            this.applyNode.active =
-            this.logNode.active = false;
+        this.createNode.active =
+        this.lobbyNode.active =
+        this.applyNode.active =
+        this.memberNode.active =
+        this.logNode.active = false;
     }
 
-    protected closeUnion(): void {
+    protected closeUnion(){
         this.node.active = false;
     }
 
-    protected openMyUnion(): void {
-        this.visibleView();
-        this.mainNode.active = true;
-    }
+    protected openMyUnion():void{
 
-    protected onEnable(): void {
-        this.applyModernUnion();
-        const city: MapCityData = MapCommand.getInstance().cityProxy.getMyMainCity();
-        if (city.unionId > 0) {
+        this.visibleView();
+        this.mainNode.active = true
+    }
+    protected onEnable():void{
+
+        let city:MapCityData = MapCommand.getInstance().cityProxy.getMyMainCity();
+        if(city.unionId > 0){
             this.openMyUnion();
-        } else {
+        }else{
             this.mainNode.active = false;
             this.lobbyNode.active = true;
         }
     }
-
-    protected onDisable(): void {
+    protected onDisable():void{
         this.visibleView();
     }
-
-    protected back(): void {
+    protected back():void{
         AudioManager.instance.playClick();
         this.openMyUnion();
     }
-
-    protected onDismiss(): void {
+    protected onDismiss():void{
         this.visibleView();
-        this.lobbyNode.active = true;
+        this.lobbyNode.active = true
     }
 }
+
