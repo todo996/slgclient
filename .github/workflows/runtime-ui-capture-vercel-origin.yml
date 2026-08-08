@@ -1,0 +1,134 @@
+name: Capture current Cocos UI through Vercel origin
+
+on:
+  push:
+    branches:
+      - feat/modern-vietnamese-ui-overhaul
+    paths:
+      - .github/workflows/runtime-ui-capture-vercel-origin.yml
+
+permissions:
+  contents: read
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      PREVIEW_HOST: slgclient-6m19-6b582p2w1-yrhbmcgnrg-8940s-projects.vercel.app
+    steps:
+      - name: Checkout latest generated Cocos build
+        uses: actions/checkout@v4
+        with:
+          ref: build-web-preview
+          path: preview
+          fetch-depth: 1
+
+      - name: Locate Cocos build
+        shell: bash
+        run: |
+          set -euo pipefail
+          INDEX="$(find preview -type f -name index.html | head -n 1)"
+          test -n "$INDEX"
+          echo "BUILD_DIR=$(dirname "$INDEX")" >> "$GITHUB_ENV"
+
+      - name: Serve current build as the real Vercel hostname
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "127.0.0.1 $PREVIEW_HOST" | sudo tee -a /etc/hosts
+          openssl req -x509 -newkey rsa:2048 -nodes -days 1 \
+            -keyout /tmp/slg-key.pem -out /tmp/slg-cert.pem \
+            -subj "/CN=$PREVIEW_HOST" \
+            -addext "subjectAltName=DNS:$PREVIEW_HOST" >/dev/null 2>&1
+          cat >/tmp/https_server.py <<'PY'
+          import http.server, ssl, os
+          os.chdir(os.environ['BUILD_DIR'])
+          server=http.server.ThreadingHTTPServer(('0.0.0.0',443),http.server.SimpleHTTPRequestHandler)
+          ctx=ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+          ctx.load_cert_chain('/tmp/slg-cert.pem','/tmp/slg-key.pem')
+          server.socket=ctx.wrap_socket(server.socket,server_side=True)
+          server.serve_forever()
+          PY
+          sudo -E python3 /tmp/https_server.py >/tmp/slg-https.log 2>&1 &
+          for i in {1..30}; do
+            if curl -kfsS --resolve "$PREVIEW_HOST:443:127.0.0.1" "https://$PREVIEW_HOST/" >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/slg-https.log
+          exit 1
+
+      - name: Run actual game flow and capture five runtime screens
+        shell: bash
+        run: |
+          set -euo pipefail
+          CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          test -n "$CHROME"
+          mkdir -p screenshots
+          "$CHROME" --headless=new --no-sandbox --disable-gpu --hide-scrollbars \
+            --ignore-certificate-errors --allow-insecure-localhost \
+            --window-size=1280,720 --remote-debugging-port=9222 \
+            --user-data-dir=/tmp/slg-runtime-profile about:blank >/tmp/slg-chrome.log 2>&1 &
+          for i in {1..40}; do curl -fsS http://127.0.0.1:9222/json >/dev/null && break; sleep 1; done
+
+          cat >/tmp/capture.mjs <<'NODE'
+          import fs from 'node:fs';
+          const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+          const host=process.env.PREVIEW_HOST;
+          const targets=await fetch('http://127.0.0.1:9222/json').then(r=>r.json());
+          const page=targets.find(t=>t.type==='page');
+          if(!page) throw new Error('No Chrome page target');
+          const ws=new WebSocket(page.webSocketDebuggerUrl);
+          let seq=0; const pending=new Map(); const events=[];
+          ws.onmessage=ev=>{
+            const m=JSON.parse(ev.data);
+            if(m.id&&pending.has(m.id)){const p=pending.get(m.id);pending.delete(m.id);m.error?p.reject(new Error(JSON.stringify(m.error))):p.resolve(m.result);return;}
+            if(m.method==='Runtime.consoleAPICalled') events.push('console '+JSON.stringify(m.params.args?.map(a=>a.value??a.description)));
+            if(m.method==='Runtime.exceptionThrown') events.push('exception '+JSON.stringify(m.params.exceptionDetails));
+            if(m.method==='Network.loadingFailed') events.push('network-failed '+JSON.stringify({error:m.params?.errorText,type:m.params?.type}));
+            if(m.method==='Network.webSocketCreated') events.push('websocket '+String(m.params?.url||''));
+          };
+          await new Promise((resolve,reject)=>{ws.onopen=resolve;ws.onerror=reject;});
+          const send=(method,params={})=>new Promise((resolve,reject)=>{const id=++seq;pending.set(id,{resolve,reject});ws.send(JSON.stringify({id,method,params}));});
+          await send('Page.enable'); await send('Runtime.enable'); await send('Network.enable');
+          await send('Emulation.setDeviceMetricsOverride',{width:1280,height:720,deviceScaleFactor:1,mobile:false});
+          await send('Page.navigate',{url:`https://${host}/`});
+          await sleep(26000);
+          const shot=async n=>{const s=await send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});fs.writeFileSync(`screenshots/${n}.png`,Buffer.from(s.data,'base64'));console.log('captured',n);};
+          const click=async(x,y)=>{await send('Input.dispatchMouseEvent',{type:'mouseMoved',x,y});await send('Input.dispatchMouseEvent',{type:'mousePressed',x,y,button:'left',clickCount:1});await send('Input.dispatchMouseEvent',{type:'mouseReleased',x,y,button:'left',clickCount:1});await sleep(850);};
+          const type=async t=>{await send('Input.insertText',{text:t});await sleep(400);};
+          const state=async label=>{const r=await send('Runtime.evaluate',{expression:`JSON.stringify({label:${JSON.stringify(label)},href:location.href,inputs:[...document.querySelectorAll('input')].map(i=>({type:i.type,value:i.value,display:getComputedStyle(i).display}))})`,returnByValue:true});fs.appendFileSync('screenshots/runtime-state.txt',(r.result?.value||'')+'\n');};
+
+          // Actual LoginScene -> actual Login prefab.
+          await click(640,508); await sleep(2500); await shot('01-dang-nhap');
+          const username=`preview${Date.now().toString().slice(-9)}`;
+          const password='Preview2026!';
+          await click(640,299); await type(username);
+          await click(640,373); await type(password);
+          // Blur EditBox then activate actual register button.
+          await click(640,570); await sleep(700); await click(640,570);
+          await sleep(22000); await state('after-register'); await shot('debug-after-register');
+          // Real create-role button for a fresh account.
+          await click(638,529); await sleep(34000); await state('after-role-create');
+          await shot('02-ban-do');
+          // Rebuilt Map HUD real menu coordinates.
+          await click(75,164); await sleep(5500); await shot('03-tuong');
+          await click(1190,50); await sleep(1800);
+          await click(75,268); await sleep(5500); await shot('04-chieu-mo');
+          await click(1190,50); await sleep(1800);
+          await click(75,216); await sleep(5500); await shot('05-chien-bao');
+          await state('finished');
+          fs.writeFileSync('screenshots/browser-events.txt',events.slice(-1000).join('\n'));
+          ws.close();
+          NODE
+          node /tmp/capture.mjs 2>&1 | tee screenshots/capture.log
+          cp /tmp/slg-chrome.log screenshots/chrome.log || true
+          ls -lh screenshots
+
+      - name: Upload screenshots from actual Cocos runtime
+        uses: actions/upload-artifact@v4
+        with:
+          name: slgclient-current-real-runtime-5-screens
+          path: screenshots/
+          if-no-files-found: error
+          retention-days: 3
