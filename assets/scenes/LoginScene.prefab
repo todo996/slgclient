@@ -147,10 +147,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 115,
-      "g": 115,
-      "b": 115,
-      "a": 255
+      "r": 29,
+      "g": 23,
+      "b": 18,
+      "a": 245
     },
     "_spriteFrame": {
       "__uuid__": "721562eb-0d12-4ccc-9323-7de7cfca55d0@f9941",
@@ -225,8 +225,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 1280,
-      "height": 720
+      "width": 650,
+      "height": 620
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -433,9 +433,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 239,
-      "b": 194,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
     "_string": "VÀO TRÒ CHƠI",
@@ -535,10 +535,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "91c3a02a-a4ef-442a-9e69-847a1f31ac7f@f9941",
@@ -673,31 +673,31 @@
     "_transition": 3,
     "_normalColor": {
       "__type__": "cc.Color",
-      "r": 230,
-      "g": 230,
-      "b": 230,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_hoverColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 196,
+      "g": 168,
+      "b": 115,
       "a": 255
     },
     "_pressedColor": {
       "__type__": "cc.Color",
-      "r": 200,
-      "g": 200,
-      "b": 200,
+      "r": 64,
+      "g": 43,
+      "b": 24,
       "a": 255
     },
     "_disabledColor": {
       "__type__": "cc.Color",
-      "r": 120,
-      "g": 120,
-      "b": 120,
-      "a": 200
+      "r": 177,
+      "g": 163,
+      "b": 139,
+      "a": 255
     },
     "_normalSprite": {
       "__uuid__": "20835ba4-6145-4fbc-a58a-051ce700aa3e@f9941",

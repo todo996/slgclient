@@ -171,10 +171,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 29,
+      "g": 23,
+      "b": 18,
+      "a": 245
     },
     "_spriteFrame": {
       "__uuid__": "cd7186fe-9b9b-4907-aa5b-80dc0c0ba9a5@f9941",
@@ -249,8 +249,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 1280,
-      "height": 720
+      "width": 1180,
+      "height": 680
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -344,24 +344,24 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 231,
+      "g": 190,
+      "b": 109,
       "a": 255
     },
-    "_string": "联盟",
+    "_string": "LIÊN MINH",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 40,
     "_fontSize": 40,
-    "_fontFamily": "Arial",
-    "_lineHeight": 40,
+    "_fontFamily": "Times New Roman",
+    "_lineHeight": 48,
     "_overflow": 0,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 0,
@@ -555,10 +555,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "f2ee59e7-5b12-49e0-a2ee-a4068c58d1f3@f9941",
@@ -693,31 +693,31 @@
     "_transition": 0,
     "_normalColor": {
       "__type__": "cc.Color",
-      "r": 230,
-      "g": 230,
-      "b": 230,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_hoverColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 196,
+      "g": 168,
+      "b": 115,
       "a": 255
     },
     "_pressedColor": {
       "__type__": "cc.Color",
-      "r": 200,
-      "g": 200,
-      "b": 200,
+      "r": 64,
+      "g": 43,
+      "b": 24,
       "a": 255
     },
     "_disabledColor": {
       "__type__": "cc.Color",
-      "r": 120,
-      "g": 120,
-      "b": 120,
-      "a": 200
+      "r": 177,
+      "g": 163,
+      "b": 139,
+      "a": 255
     },
     "_normalSprite": {
       "__uuid__": "f2ee59e7-5b12-49e0-a2ee-a4068c58d1f3@f9941",
@@ -1004,9 +1004,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
     "_string": "",
@@ -1017,7 +1017,7 @@
     "_fontFamily": "Arial",
     "_lineHeight": 40,
     "_overflow": 0,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
@@ -1157,9 +1157,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
     "_string": "",
@@ -1170,7 +1170,7 @@
     "_fontFamily": "Arial",
     "_lineHeight": 40,
     "_overflow": 0,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
@@ -1477,9 +1477,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
     "_string": "",
@@ -1490,7 +1490,7 @@
     "_fontFamily": "Arial",
     "_lineHeight": 30,
     "_overflow": 1,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
@@ -1756,10 +1756,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "bd1bcaba-bd7d-4a71-b143-997c882383e4@f9941",
@@ -1949,9 +1949,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
     "_string": "",
@@ -2144,12 +2144,12 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 187,
-      "g": 187,
-      "b": 187,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
-    "_string": "请编辑公告内容",
+    "_string": "Vui lòng nhập nội dung thông báo",
     "_horizontalAlign": 0,
     "_verticalAlign": 1,
     "_actualFontSize": 20,
@@ -2364,10 +2364,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 43,
+      "g": 32,
+      "b": 23,
+      "a": 245
     },
     "_spriteFrame": null,
     "_type": 1,
@@ -2583,12 +2583,12 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 0,
-      "g": 0,
-      "b": 0,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
-    "_string": "提交",
+    "_string": "Gửi",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 20,
@@ -2600,7 +2600,7 @@
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 1,
@@ -2686,10 +2686,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "5d572b55-9243-4277-b649-d29ac4fcb01f@f9941",
@@ -2827,31 +2827,31 @@
     "_transition": 2,
     "_normalColor": {
       "__type__": "cc.Color",
-      "r": 230,
-      "g": 230,
-      "b": 230,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_hoverColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 196,
+      "g": 168,
+      "b": 115,
       "a": 255
     },
     "_pressedColor": {
       "__type__": "cc.Color",
-      "r": 200,
-      "g": 200,
-      "b": 200,
+      "r": 64,
+      "g": 43,
+      "b": 24,
       "a": 255
     },
     "_disabledColor": {
       "__type__": "cc.Color",
-      "r": 120,
-      "g": 120,
-      "b": 120,
-      "a": 200
+      "r": 177,
+      "g": 163,
+      "b": 139,
+      "a": 255
     },
     "_normalSprite": {
       "__uuid__": "5d572b55-9243-4277-b649-d29ac4fcb01f@f9941",
@@ -2921,8 +2921,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 100,
-      "height": 40
+      "width": 210,
+      "height": 54
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -3129,12 +3129,12 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 0,
-      "g": 0,
-      "b": 0,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
-    "_string": "取消",
+    "_string": "Huỷ",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 20,
@@ -3146,7 +3146,7 @@
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 1,
@@ -3232,10 +3232,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "a68bd8c2-5846-4bbe-b56a-eef66911be32@f9941",
@@ -3373,31 +3373,31 @@
     "_transition": 2,
     "_normalColor": {
       "__type__": "cc.Color",
-      "r": 230,
-      "g": 230,
-      "b": 230,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_hoverColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 196,
+      "g": 168,
+      "b": 115,
       "a": 255
     },
     "_pressedColor": {
       "__type__": "cc.Color",
-      "r": 200,
-      "g": 200,
-      "b": 200,
+      "r": 64,
+      "g": 43,
+      "b": 24,
       "a": 255
     },
     "_disabledColor": {
       "__type__": "cc.Color",
-      "r": 120,
-      "g": 120,
-      "b": 120,
-      "a": 200
+      "r": 177,
+      "g": 163,
+      "b": 139,
+      "a": 255
     },
     "_normalSprite": {
       "__uuid__": "a68bd8c2-5846-4bbe-b56a-eef66911be32@f9941",
@@ -3730,12 +3730,12 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 0,
-      "g": 0,
-      "b": 0,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
-    "_string": "修改",
+    "_string": "Chỉnh sửa",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 20,
@@ -3747,7 +3747,7 @@
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 1,
@@ -3833,10 +3833,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "a68bd8c2-5846-4bbe-b56a-eef66911be32@f9941",
@@ -3974,31 +3974,31 @@
     "_transition": 2,
     "_normalColor": {
       "__type__": "cc.Color",
-      "r": 230,
-      "g": 230,
-      "b": 230,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_hoverColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 196,
+      "g": 168,
+      "b": 115,
       "a": 255
     },
     "_pressedColor": {
       "__type__": "cc.Color",
-      "r": 200,
-      "g": 200,
-      "b": 200,
+      "r": 64,
+      "g": 43,
+      "b": 24,
       "a": 255
     },
     "_disabledColor": {
       "__type__": "cc.Color",
-      "r": 120,
-      "g": 120,
-      "b": 120,
-      "a": 200
+      "r": 177,
+      "g": 163,
+      "b": 139,
+      "a": 255
     },
     "_normalSprite": {
       "__uuid__": "a68bd8c2-5846-4bbe-b56a-eef66911be32@f9941",
@@ -4163,12 +4163,12 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
-    "_string": "公告",
+    "_string": "Thông báo",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 30,
@@ -4176,7 +4176,7 @@
     "_fontFamily": "Arial",
     "_lineHeight": 40,
     "_overflow": 0,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
@@ -4596,12 +4596,12 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 0,
-      "g": 0,
-      "b": 0,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
-    "_string": "申请列表",
+    "_string": "Danh sách đơn",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 30,
@@ -4613,7 +4613,7 @@
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 1,
@@ -4699,10 +4699,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "5d572b55-9243-4277-b649-d29ac4fcb01f@f9941",
@@ -4891,10 +4891,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 43,
+      "g": 32,
+      "b": 23,
+      "a": 245
     },
     "_spriteFrame": {
       "__uuid__": "441ca042-9587-4302-99fe-c078230ba690@f9941",
@@ -4995,31 +4995,31 @@
     "_transition": 2,
     "_normalColor": {
       "__type__": "cc.Color",
-      "r": 230,
-      "g": 230,
-      "b": 230,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_hoverColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 196,
+      "g": 168,
+      "b": 115,
       "a": 255
     },
     "_pressedColor": {
       "__type__": "cc.Color",
-      "r": 200,
-      "g": 200,
-      "b": 200,
+      "r": 64,
+      "g": 43,
+      "b": 24,
       "a": 255
     },
     "_disabledColor": {
       "__type__": "cc.Color",
-      "r": 120,
-      "g": 120,
-      "b": 120,
-      "a": 200
+      "r": 177,
+      "g": 163,
+      "b": 139,
+      "a": 255
     },
     "_normalSprite": {
       "__uuid__": "5d572b55-9243-4277-b649-d29ac4fcb01f@f9941",
@@ -5299,12 +5299,12 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 0,
-      "g": 0,
-      "b": 0,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
-    "_string": "成员",
+    "_string": "Thành viên",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 30,
@@ -5316,7 +5316,7 @@
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 1,
@@ -5402,10 +5402,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "a68bd8c2-5846-4bbe-b56a-eef66911be32@f9941",
@@ -5544,31 +5544,31 @@
     "_transition": 2,
     "_normalColor": {
       "__type__": "cc.Color",
-      "r": 230,
-      "g": 230,
-      "b": 230,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_hoverColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 196,
+      "g": 168,
+      "b": 115,
       "a": 255
     },
     "_pressedColor": {
       "__type__": "cc.Color",
-      "r": 200,
-      "g": 200,
-      "b": 200,
+      "r": 64,
+      "g": 43,
+      "b": 24,
       "a": 255
     },
     "_disabledColor": {
       "__type__": "cc.Color",
-      "r": 120,
-      "g": 120,
-      "b": 120,
-      "a": 200
+      "r": 177,
+      "g": 163,
+      "b": 139,
+      "a": 255
     },
     "_normalSprite": {
       "__uuid__": "a68bd8c2-5846-4bbe-b56a-eef66911be32@f9941",
@@ -5848,12 +5848,12 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 0,
-      "g": 0,
-      "b": 0,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
-    "_string": "日志",
+    "_string": "Nhật ký",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 30,
@@ -5865,7 +5865,7 @@
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 1,
@@ -5951,10 +5951,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "5d572b55-9243-4277-b649-d29ac4fcb01f@f9941",
@@ -6093,31 +6093,31 @@
     "_transition": 2,
     "_normalColor": {
       "__type__": "cc.Color",
-      "r": 230,
-      "g": 230,
-      "b": 230,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_hoverColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 196,
+      "g": 168,
+      "b": 115,
       "a": 255
     },
     "_pressedColor": {
       "__type__": "cc.Color",
-      "r": 200,
-      "g": 200,
-      "b": 200,
+      "r": 64,
+      "g": 43,
+      "b": 24,
       "a": 255
     },
     "_disabledColor": {
       "__type__": "cc.Color",
-      "r": 120,
-      "g": 120,
-      "b": 120,
-      "a": 200
+      "r": 177,
+      "g": 163,
+      "b": 139,
+      "a": 255
     },
     "_normalSprite": {
       "__uuid__": "5d572b55-9243-4277-b649-d29ac4fcb01f@f9941",
@@ -6669,12 +6669,12 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
-    "_string": "创建",
+    "_string": "Tạo",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 25,
@@ -6686,7 +6686,7 @@
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 1,
@@ -6771,10 +6771,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "5d572b55-9243-4277-b649-d29ac4fcb01f@f9941",
@@ -6874,31 +6874,31 @@
     "_transition": 3,
     "_normalColor": {
       "__type__": "cc.Color",
-      "r": 230,
-      "g": 230,
-      "b": 230,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_hoverColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 196,
+      "g": 168,
+      "b": 115,
       "a": 255
     },
     "_pressedColor": {
       "__type__": "cc.Color",
-      "r": 200,
-      "g": 200,
-      "b": 200,
+      "r": 64,
+      "g": 43,
+      "b": 24,
       "a": 255
     },
     "_disabledColor": {
       "__type__": "cc.Color",
-      "r": 120,
-      "g": 120,
-      "b": 120,
-      "a": 200
+      "r": 177,
+      "g": 163,
+      "b": 139,
+      "a": 255
     },
     "_normalSprite": {
       "__uuid__": "20835ba4-6145-4fbc-a58a-051ce700aa3e@f9941",
@@ -7879,9 +7879,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 0,
-      "g": 0,
-      "b": 0,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
     "_string": "",
@@ -7892,11 +7892,11 @@
     "_fontFamily": "Arial",
     "_lineHeight": 40,
     "_overflow": 0,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 0,
@@ -8142,12 +8142,12 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
-    "_string": "加入",
+    "_string": "Gia nhập",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 0,
@@ -8159,7 +8159,7 @@
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 1,
@@ -8244,10 +8244,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "5d572b55-9243-4277-b649-d29ac4fcb01f@f9941",
@@ -8347,31 +8347,31 @@
     "_transition": 3,
     "_normalColor": {
       "__type__": "cc.Color",
-      "r": 230,
-      "g": 230,
-      "b": 230,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_hoverColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 196,
+      "g": 168,
+      "b": 115,
       "a": 255
     },
     "_pressedColor": {
       "__type__": "cc.Color",
-      "r": 200,
-      "g": 200,
-      "b": 200,
+      "r": 64,
+      "g": 43,
+      "b": 24,
       "a": 255
     },
     "_disabledColor": {
       "__type__": "cc.Color",
-      "r": 120,
-      "g": 120,
-      "b": 120,
-      "a": 200
+      "r": 177,
+      "g": 163,
+      "b": 139,
+      "a": 255
     },
     "_normalSprite": {
       "__uuid__": "20835ba4-6145-4fbc-a58a-051ce700aa3e@f9941",
@@ -8441,7 +8441,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 100,
+      "width": 210,
       "height": 70
     },
     "_anchorPoint": {
@@ -8485,9 +8485,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_spriteFrame": {
@@ -8556,30 +8556,30 @@
     "_transition": 0,
     "_normalColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_hoverColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 196,
+      "g": 168,
+      "b": 115,
       "a": 255
     },
     "_pressedColor": {
       "__type__": "cc.Color",
-      "r": 211,
-      "g": 211,
-      "b": 211,
+      "r": 64,
+      "g": 43,
+      "b": 24,
       "a": 255
     },
     "_disabledColor": {
       "__type__": "cc.Color",
-      "r": 124,
-      "g": 124,
-      "b": 124,
+      "r": 177,
+      "g": 163,
+      "b": 139,
       "a": 255
     },
     "_normalSprite": null,
@@ -8943,10 +8943,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 0,
-      "g": 0,
-      "b": 0,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "7d8f9b89-4fd1-4c9f-a3ab-38ec7cded7ca@f9941",
@@ -8989,7 +8989,7 @@
     },
     "_enabled": true,
     "__prefab": null,
-    "_opacity": 155,
+    "_opacity": 190,
     "_id": ""
   },
   {
@@ -9142,10 +9142,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 43,
+      "g": 32,
+      "b": 23,
+      "a": 245
     },
     "_spriteFrame": {
       "__uuid__": "15f8a947-a396-40d9-98cb-e3e6f21f06f3@f9941",
@@ -9319,24 +9319,24 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 122,
-      "b": 17,
+      "r": 231,
+      "g": 190,
+      "b": 109,
       "a": 255
     },
-    "_string": "创建联盟",
+    "_string": "Tạo liên minh",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 36,
     "_fontSize": 36,
-    "_fontFamily": "Arial",
-    "_lineHeight": 40,
+    "_fontFamily": "Times New Roman",
+    "_lineHeight": 44,
     "_overflow": 0,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 0,
@@ -9582,10 +9582,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "bd1bcaba-bd7d-4a71-b143-997c882383e4@f9941",
@@ -9735,9 +9735,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
     "_string": "",
@@ -9890,24 +9890,24 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 187,
-      "g": 187,
-      "b": 187,
+      "r": 231,
+      "g": 190,
+      "b": 109,
       "a": 255
     },
-    "_string": "轻微联盟起个昵称",
+    "_string": "Hãy đặt tên cho liên minh",
     "_horizontalAlign": 0,
     "_verticalAlign": 1,
-    "_actualFontSize": 20,
-    "_fontSize": 20,
-    "_fontFamily": "Arial",
-    "_lineHeight": 50,
+    "_actualFontSize": 28,
+    "_fontSize": 28,
+    "_fontFamily": "Times New Roman",
+    "_lineHeight": 34,
     "_overflow": 1,
     "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 0,
@@ -10051,10 +10051,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 43,
+      "g": 32,
+      "b": 23,
+      "a": 245
     },
     "_spriteFrame": null,
     "_type": 1,
@@ -10195,10 +10195,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "7a183548-a288-4480-81da-fce082d32408@f9941",
@@ -10299,31 +10299,31 @@
     "_transition": 3,
     "_normalColor": {
       "__type__": "cc.Color",
-      "r": 230,
-      "g": 230,
-      "b": 230,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_hoverColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 196,
+      "g": 168,
+      "b": 115,
       "a": 255
     },
     "_pressedColor": {
       "__type__": "cc.Color",
-      "r": 200,
-      "g": 200,
-      "b": 200,
+      "r": 64,
+      "g": 43,
+      "b": 24,
       "a": 255
     },
     "_disabledColor": {
       "__type__": "cc.Color",
-      "r": 120,
-      "g": 120,
-      "b": 120,
-      "a": 200
+      "r": 177,
+      "g": 163,
+      "b": 139,
+      "a": 255
     },
     "_normalSprite": {
       "__uuid__": "7a183548-a288-4480-81da-fce082d32408@f9941",
@@ -10564,12 +10564,12 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
-    "_string": "创建",
+    "_string": "Tạo",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 25,
@@ -10581,7 +10581,7 @@
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 1,
@@ -10638,10 +10638,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "5d572b55-9243-4277-b649-d29ac4fcb01f@f9941",
@@ -10713,31 +10713,31 @@
     "_transition": 3,
     "_normalColor": {
       "__type__": "cc.Color",
-      "r": 230,
-      "g": 230,
-      "b": 230,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_hoverColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 196,
+      "g": 168,
+      "b": 115,
       "a": 255
     },
     "_pressedColor": {
       "__type__": "cc.Color",
-      "r": 200,
-      "g": 200,
-      "b": 200,
+      "r": 64,
+      "g": 43,
+      "b": 24,
       "a": 255
     },
     "_disabledColor": {
       "__type__": "cc.Color",
-      "r": 120,
-      "g": 120,
-      "b": 120,
-      "a": 200
+      "r": 177,
+      "g": 163,
+      "b": 139,
+      "a": 255
     },
     "_normalSprite": {
       "__uuid__": "20835ba4-6145-4fbc-a58a-051ce700aa3e@f9941",
@@ -10958,10 +10958,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "34c2d5e8-0053-4a66-ac32-67dd893831e7@f9941",
@@ -11033,31 +11033,31 @@
     "_transition": 0,
     "_normalColor": {
       "__type__": "cc.Color",
-      "r": 230,
-      "g": 230,
-      "b": 230,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_hoverColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 196,
+      "g": 168,
+      "b": 115,
       "a": 255
     },
     "_pressedColor": {
       "__type__": "cc.Color",
-      "r": 200,
-      "g": 200,
-      "b": 200,
+      "r": 64,
+      "g": 43,
+      "b": 24,
       "a": 255
     },
     "_disabledColor": {
       "__type__": "cc.Color",
-      "r": 120,
-      "g": 120,
-      "b": 120,
-      "a": 200
+      "r": 177,
+      "g": 163,
+      "b": 139,
+      "a": 255
     },
     "_normalSprite": {
       "__uuid__": "34c2d5e8-0053-4a66-ac32-67dd893831e7@f9941",
@@ -11443,12 +11443,12 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
-    "_string": "解散",
+    "_string": "Giải tán",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 25,
@@ -11460,7 +11460,7 @@
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 1,
@@ -11545,10 +11545,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "5d572b55-9243-4277-b649-d29ac4fcb01f@f9941",
@@ -11648,31 +11648,31 @@
     "_transition": 3,
     "_normalColor": {
       "__type__": "cc.Color",
-      "r": 230,
-      "g": 230,
-      "b": 230,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_hoverColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 196,
+      "g": 168,
+      "b": 115,
       "a": 255
     },
     "_pressedColor": {
       "__type__": "cc.Color",
-      "r": 200,
-      "g": 200,
-      "b": 200,
+      "r": 64,
+      "g": 43,
+      "b": 24,
       "a": 255
     },
     "_disabledColor": {
       "__type__": "cc.Color",
-      "r": 120,
-      "g": 120,
-      "b": 120,
-      "a": 200
+      "r": 177,
+      "g": 163,
+      "b": 139,
+      "a": 255
     },
     "_normalSprite": {
       "__uuid__": "20835ba4-6145-4fbc-a58a-051ce700aa3e@f9941",
@@ -11947,12 +11947,12 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
-    "_string": "退出",
+    "_string": "Thoát",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 25,
@@ -11964,7 +11964,7 @@
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 1,
@@ -12049,10 +12049,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "5d572b55-9243-4277-b649-d29ac4fcb01f@f9941",
@@ -12152,31 +12152,31 @@
     "_transition": 3,
     "_normalColor": {
       "__type__": "cc.Color",
-      "r": 230,
-      "g": 230,
-      "b": 230,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_hoverColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 196,
+      "g": 168,
+      "b": 115,
       "a": 255
     },
     "_pressedColor": {
       "__type__": "cc.Color",
-      "r": 200,
-      "g": 200,
-      "b": 200,
+      "r": 64,
+      "g": 43,
+      "b": 24,
       "a": 255
     },
     "_disabledColor": {
       "__type__": "cc.Color",
-      "r": 120,
-      "g": 120,
-      "b": 120,
-      "a": 200
+      "r": 177,
+      "g": 163,
+      "b": 139,
+      "a": 255
     },
     "_normalSprite": {
       "__uuid__": "20835ba4-6145-4fbc-a58a-051ce700aa3e@f9941",
@@ -12451,12 +12451,12 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
-    "_string": "返回",
+    "_string": "Quay lại",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 25,
@@ -12468,7 +12468,7 @@
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 1,
@@ -12553,10 +12553,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "5d572b55-9243-4277-b649-d29ac4fcb01f@f9941",
@@ -12656,31 +12656,31 @@
     "_transition": 3,
     "_normalColor": {
       "__type__": "cc.Color",
-      "r": 230,
-      "g": 230,
-      "b": 230,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_hoverColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 196,
+      "g": 168,
+      "b": 115,
       "a": 255
     },
     "_pressedColor": {
       "__type__": "cc.Color",
-      "r": 200,
-      "g": 200,
-      "b": 200,
+      "r": 64,
+      "g": 43,
+      "b": 24,
       "a": 255
     },
     "_disabledColor": {
       "__type__": "cc.Color",
-      "r": 120,
-      "g": 120,
-      "b": 120,
-      "a": 200
+      "r": 177,
+      "g": 163,
+      "b": 139,
+      "a": 255
     },
     "_normalSprite": {
       "__uuid__": "20835ba4-6145-4fbc-a58a-051ce700aa3e@f9941",
@@ -12845,12 +12845,12 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
-    "_string": "成员列表",
+    "_string": "Danh sách thành viên",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 25,
@@ -12858,7 +12858,7 @@
     "_fontFamily": "Arial",
     "_lineHeight": 30,
     "_overflow": 0,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
@@ -13823,24 +13823,24 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 0,
-      "g": 0,
-      "b": 0,
+      "r": 231,
+      "g": 190,
+      "b": 109,
       "a": 255
     },
     "_string": "",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 0,
-    "_fontSize": 25,
-    "_fontFamily": "Arial",
-    "_lineHeight": 40,
+    "_actualFontSize": 28,
+    "_fontSize": 28,
+    "_fontFamily": "Times New Roman",
+    "_lineHeight": 34,
     "_overflow": 0,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 0,
@@ -13976,9 +13976,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 0,
-      "g": 0,
-      "b": 0,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
     "_string": "",
@@ -13989,7 +13989,7 @@
     "_fontFamily": "Arial",
     "_lineHeight": 40,
     "_overflow": 0,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
@@ -14129,9 +14129,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 0,
-      "g": 0,
-      "b": 0,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
     "_string": "",
@@ -14142,7 +14142,7 @@
     "_fontFamily": "Arial",
     "_lineHeight": 40,
     "_overflow": 0,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
@@ -14392,12 +14392,12 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
-    "_string": "跳转",
+    "_string": "Đi tới",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 0,
@@ -14409,7 +14409,7 @@
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 1,
@@ -14494,10 +14494,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "5d572b55-9243-4277-b649-d29ac4fcb01f@f9941",
@@ -14597,31 +14597,31 @@
     "_transition": 3,
     "_normalColor": {
       "__type__": "cc.Color",
-      "r": 230,
-      "g": 230,
-      "b": 230,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_hoverColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 196,
+      "g": 168,
+      "b": 115,
       "a": 255
     },
     "_pressedColor": {
       "__type__": "cc.Color",
-      "r": 200,
-      "g": 200,
-      "b": 200,
+      "r": 64,
+      "g": 43,
+      "b": 24,
       "a": 255
     },
     "_disabledColor": {
       "__type__": "cc.Color",
-      "r": 120,
-      "g": 120,
-      "b": 120,
-      "a": 200
+      "r": 177,
+      "g": 163,
+      "b": 139,
+      "a": 255
     },
     "_normalSprite": {
       "__uuid__": "20835ba4-6145-4fbc-a58a-051ce700aa3e@f9941",
@@ -14735,9 +14735,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_spriteFrame": {
@@ -14809,30 +14809,30 @@
     "_transition": 0,
     "_normalColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_hoverColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 196,
+      "g": 168,
+      "b": 115,
       "a": 255
     },
     "_pressedColor": {
       "__type__": "cc.Color",
-      "r": 211,
-      "g": 211,
-      "b": 211,
+      "r": 64,
+      "g": 43,
+      "b": 24,
       "a": 255
     },
     "_disabledColor": {
       "__type__": "cc.Color",
-      "r": 124,
-      "g": 124,
-      "b": 124,
+      "r": 177,
+      "g": 163,
+      "b": 139,
       "a": 255
     },
     "_normalSprite": null,
@@ -15269,12 +15269,12 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
-    "_string": "踢出",
+    "_string": "Khai trừ",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 0,
@@ -15286,7 +15286,7 @@
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 1,
@@ -15371,10 +15371,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "5d572b55-9243-4277-b649-d29ac4fcb01f@f9941",
@@ -15474,31 +15474,31 @@
     "_transition": 3,
     "_normalColor": {
       "__type__": "cc.Color",
-      "r": 230,
-      "g": 230,
-      "b": 230,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_hoverColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 196,
+      "g": 168,
+      "b": 115,
       "a": 255
     },
     "_pressedColor": {
       "__type__": "cc.Color",
-      "r": 200,
-      "g": 200,
-      "b": 200,
+      "r": 64,
+      "g": 43,
+      "b": 24,
       "a": 255
     },
     "_disabledColor": {
       "__type__": "cc.Color",
-      "r": 120,
-      "g": 120,
-      "b": 120,
-      "a": 200
+      "r": 177,
+      "g": 163,
+      "b": 139,
+      "a": 255
     },
     "_normalSprite": {
       "__uuid__": "20835ba4-6145-4fbc-a58a-051ce700aa3e@f9941",
@@ -15773,12 +15773,12 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
-    "_string": "禅让",
+    "_string": "Chuyển nhượng",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 0,
@@ -15790,7 +15790,7 @@
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 1,
@@ -15875,10 +15875,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "5d572b55-9243-4277-b649-d29ac4fcb01f@f9941",
@@ -15978,31 +15978,31 @@
     "_transition": 3,
     "_normalColor": {
       "__type__": "cc.Color",
-      "r": 230,
-      "g": 230,
-      "b": 230,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_hoverColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 196,
+      "g": 168,
+      "b": 115,
       "a": 255
     },
     "_pressedColor": {
       "__type__": "cc.Color",
-      "r": 200,
-      "g": 200,
-      "b": 200,
+      "r": 64,
+      "g": 43,
+      "b": 24,
       "a": 255
     },
     "_disabledColor": {
       "__type__": "cc.Color",
-      "r": 120,
-      "g": 120,
-      "b": 120,
-      "a": 200
+      "r": 177,
+      "g": 163,
+      "b": 139,
+      "a": 255
     },
     "_normalSprite": {
       "__uuid__": "20835ba4-6145-4fbc-a58a-051ce700aa3e@f9941",
@@ -16277,12 +16277,12 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
-    "_string": "任命",
+    "_string": "Bổ nhiệm",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 0,
@@ -16294,7 +16294,7 @@
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 1,
@@ -16379,10 +16379,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "5d572b55-9243-4277-b649-d29ac4fcb01f@f9941",
@@ -16482,31 +16482,31 @@
     "_transition": 3,
     "_normalColor": {
       "__type__": "cc.Color",
-      "r": 230,
-      "g": 230,
-      "b": 230,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_hoverColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 196,
+      "g": 168,
+      "b": 115,
       "a": 255
     },
     "_pressedColor": {
       "__type__": "cc.Color",
-      "r": 200,
-      "g": 200,
-      "b": 200,
+      "r": 64,
+      "g": 43,
+      "b": 24,
       "a": 255
     },
     "_disabledColor": {
       "__type__": "cc.Color",
-      "r": 120,
-      "g": 120,
-      "b": 120,
-      "a": 200
+      "r": 177,
+      "g": 163,
+      "b": 139,
+      "a": 255
     },
     "_normalSprite": {
       "__uuid__": "20835ba4-6145-4fbc-a58a-051ce700aa3e@f9941",
@@ -16781,12 +16781,12 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
-    "_string": "解任",
+    "_string": "Miễn nhiệm",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 0,
@@ -16798,7 +16798,7 @@
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 1,
@@ -16883,10 +16883,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "5d572b55-9243-4277-b649-d29ac4fcb01f@f9941",
@@ -16986,31 +16986,31 @@
     "_transition": 3,
     "_normalColor": {
       "__type__": "cc.Color",
-      "r": 230,
-      "g": 230,
-      "b": 230,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_hoverColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 196,
+      "g": 168,
+      "b": 115,
       "a": 255
     },
     "_pressedColor": {
       "__type__": "cc.Color",
-      "r": 200,
-      "g": 200,
-      "b": 200,
+      "r": 64,
+      "g": 43,
+      "b": 24,
       "a": 255
     },
     "_disabledColor": {
       "__type__": "cc.Color",
-      "r": 120,
-      "g": 120,
-      "b": 120,
-      "a": 200
+      "r": 177,
+      "g": 163,
+      "b": 139,
+      "a": 255
     },
     "_normalSprite": {
       "__uuid__": "20835ba4-6145-4fbc-a58a-051ce700aa3e@f9941",
@@ -17514,12 +17514,12 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
-    "_string": "申请列表",
+    "_string": "Danh sách đơn",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 25,
@@ -17527,7 +17527,7 @@
     "_fontFamily": "Arial",
     "_lineHeight": 30,
     "_overflow": 0,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
@@ -18486,9 +18486,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 0,
-      "g": 0,
-      "b": 0,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
     "_string": "",
@@ -18499,7 +18499,7 @@
     "_fontFamily": "Arial",
     "_lineHeight": 40,
     "_overflow": 0,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
@@ -18749,12 +18749,12 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
-    "_string": "同意",
+    "_string": "Đồng ý",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 20,
@@ -18766,7 +18766,7 @@
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 1,
@@ -18851,10 +18851,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "5d572b55-9243-4277-b649-d29ac4fcb01f@f9941",
@@ -18954,31 +18954,31 @@
     "_transition": 3,
     "_normalColor": {
       "__type__": "cc.Color",
-      "r": 230,
-      "g": 230,
-      "b": 230,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_hoverColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 196,
+      "g": 168,
+      "b": 115,
       "a": 255
     },
     "_pressedColor": {
       "__type__": "cc.Color",
-      "r": 200,
-      "g": 200,
-      "b": 200,
+      "r": 64,
+      "g": 43,
+      "b": 24,
       "a": 255
     },
     "_disabledColor": {
       "__type__": "cc.Color",
-      "r": 120,
-      "g": 120,
-      "b": 120,
-      "a": 200
+      "r": 177,
+      "g": 163,
+      "b": 139,
+      "a": 255
     },
     "_normalSprite": {
       "__uuid__": "20835ba4-6145-4fbc-a58a-051ce700aa3e@f9941",
@@ -19253,12 +19253,12 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
-    "_string": "拒绝",
+    "_string": "Từ chối",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 20,
@@ -19270,7 +19270,7 @@
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 1,
@@ -19355,10 +19355,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "5d572b55-9243-4277-b649-d29ac4fcb01f@f9941",
@@ -19458,31 +19458,31 @@
     "_transition": 3,
     "_normalColor": {
       "__type__": "cc.Color",
-      "r": 230,
-      "g": 230,
-      "b": 230,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_hoverColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 196,
+      "g": 168,
+      "b": 115,
       "a": 255
     },
     "_pressedColor": {
       "__type__": "cc.Color",
-      "r": 200,
-      "g": 200,
-      "b": 200,
+      "r": 64,
+      "g": 43,
+      "b": 24,
       "a": 255
     },
     "_disabledColor": {
       "__type__": "cc.Color",
-      "r": 120,
-      "g": 120,
-      "b": 120,
-      "a": 200
+      "r": 177,
+      "g": 163,
+      "b": 139,
+      "a": 255
     },
     "_normalSprite": {
       "__uuid__": "20835ba4-6145-4fbc-a58a-051ce700aa3e@f9941",
@@ -19983,12 +19983,12 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
-    "_string": "返回",
+    "_string": "Quay lại",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 25,
@@ -20000,7 +20000,7 @@
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 1,
@@ -20085,10 +20085,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "5d572b55-9243-4277-b649-d29ac4fcb01f@f9941",
@@ -20188,31 +20188,31 @@
     "_transition": 3,
     "_normalColor": {
       "__type__": "cc.Color",
-      "r": 230,
-      "g": 230,
-      "b": 230,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_hoverColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 196,
+      "g": 168,
+      "b": 115,
       "a": 255
     },
     "_pressedColor": {
       "__type__": "cc.Color",
-      "r": 200,
-      "g": 200,
-      "b": 200,
+      "r": 64,
+      "g": 43,
+      "b": 24,
       "a": 255
     },
     "_disabledColor": {
       "__type__": "cc.Color",
-      "r": 120,
-      "g": 120,
-      "b": 120,
-      "a": 200
+      "r": 177,
+      "g": 163,
+      "b": 139,
+      "a": 255
     },
     "_normalSprite": {
       "__uuid__": "20835ba4-6145-4fbc-a58a-051ce700aa3e@f9941",
@@ -20538,24 +20538,24 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 231,
+      "g": 190,
+      "b": 109,
       "a": 255
     },
-    "_string": "联盟日志",
+    "_string": "Nhật ký liên minh",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 25,
-    "_fontSize": 25,
-    "_fontFamily": "Arial",
-    "_lineHeight": 30,
+    "_actualFontSize": 28,
+    "_fontSize": 28,
+    "_fontFamily": "Times New Roman",
+    "_lineHeight": 34,
     "_overflow": 0,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 0,
@@ -21507,9 +21507,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 0,
-      "g": 0,
-      "b": 0,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
     "_string": "",
@@ -21520,7 +21520,7 @@
     "_fontFamily": "Arial",
     "_lineHeight": 40,
     "_overflow": 0,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
@@ -21660,9 +21660,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 0,
-      "g": 0,
-      "b": 0,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
     "_string": "",
@@ -21673,7 +21673,7 @@
     "_fontFamily": "Arial",
     "_lineHeight": 40,
     "_overflow": 0,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
@@ -22152,12 +22152,12 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
-    "_string": "返回",
+    "_string": "Quay lại",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 25,
@@ -22169,7 +22169,7 @@
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 1,
@@ -22254,10 +22254,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "5d572b55-9243-4277-b649-d29ac4fcb01f@f9941",
@@ -22357,31 +22357,31 @@
     "_transition": 3,
     "_normalColor": {
       "__type__": "cc.Color",
-      "r": 230,
-      "g": 230,
-      "b": 230,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_hoverColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 196,
+      "g": 168,
+      "b": 115,
       "a": 255
     },
     "_pressedColor": {
       "__type__": "cc.Color",
-      "r": 200,
-      "g": 200,
-      "b": 200,
+      "r": 64,
+      "g": 43,
+      "b": 24,
       "a": 255
     },
     "_disabledColor": {
       "__type__": "cc.Color",
-      "r": 120,
-      "g": 120,
-      "b": 120,
-      "a": 200
+      "r": 177,
+      "g": 163,
+      "b": 139,
+      "a": 255
     },
     "_normalSprite": {
       "__uuid__": "20835ba4-6145-4fbc-a58a-051ce700aa3e@f9941",

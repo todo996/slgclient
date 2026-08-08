@@ -144,9 +144,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 0,
-      "g": 0,
-      "b": 0,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
     "_string": "",
@@ -157,7 +157,7 @@
     "_fontFamily": "Arial",
     "_lineHeight": 40,
     "_overflow": 0,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
@@ -534,9 +534,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 0,
-      "g": 0,
-      "b": 0,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
     "_string": "Label",
@@ -547,7 +547,7 @@
     "_fontFamily": "Arial",
     "_lineHeight": 25,
     "_overflow": 0,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
@@ -637,10 +637,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "812884e0-ebed-4ee0-a86a-372c8cec104b@f9941",
@@ -848,9 +848,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 0,
-      "g": 0,
-      "b": 0,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
     "_string": "Label",
@@ -861,7 +861,7 @@
     "_fontFamily": "Arial",
     "_lineHeight": 25,
     "_overflow": 0,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
@@ -951,10 +951,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "812884e0-ebed-4ee0-a86a-372c8cec104b@f9941",
@@ -1162,9 +1162,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 0,
-      "g": 0,
-      "b": 0,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
     "_string": "Label",
@@ -1175,7 +1175,7 @@
     "_fontFamily": "Arial",
     "_lineHeight": 25,
     "_overflow": 0,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
@@ -1265,10 +1265,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "812884e0-ebed-4ee0-a86a-372c8cec104b@f9941",
@@ -1476,9 +1476,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 0,
-      "g": 0,
-      "b": 0,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
     "_string": "Label",
@@ -1489,7 +1489,7 @@
     "_fontFamily": "Arial",
     "_lineHeight": 25,
     "_overflow": 0,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
@@ -1579,10 +1579,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "812884e0-ebed-4ee0-a86a-372c8cec104b@f9941",
@@ -1790,9 +1790,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 0,
-      "g": 0,
-      "b": 0,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
     "_string": "Label",
@@ -1803,7 +1803,7 @@
     "_fontFamily": "Arial",
     "_lineHeight": 25,
     "_overflow": 0,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
@@ -1893,10 +1893,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "812884e0-ebed-4ee0-a86a-372c8cec104b@f9941",
@@ -2104,9 +2104,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 0,
-      "g": 0,
-      "b": 0,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
     "_string": "Label",
@@ -2117,7 +2117,7 @@
     "_fontFamily": "Arial",
     "_lineHeight": 25,
     "_overflow": 0,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
@@ -2207,10 +2207,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "812884e0-ebed-4ee0-a86a-372c8cec104b@f9941",
@@ -2418,9 +2418,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 0,
-      "g": 0,
-      "b": 0,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
     "_string": "Label",
@@ -2431,7 +2431,7 @@
     "_fontFamily": "Arial",
     "_lineHeight": 25,
     "_overflow": 0,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
@@ -2521,10 +2521,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "812884e0-ebed-4ee0-a86a-372c8cec104b@f9941",
@@ -2732,9 +2732,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 0,
-      "g": 0,
-      "b": 0,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
     "_string": "Label",
@@ -2745,7 +2745,7 @@
     "_fontFamily": "Arial",
     "_lineHeight": 25,
     "_overflow": 0,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
@@ -2835,10 +2835,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "812884e0-ebed-4ee0-a86a-372c8cec104b@f9941",
@@ -3046,9 +3046,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 0,
-      "g": 0,
-      "b": 0,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
     "_string": "Label",
@@ -3059,7 +3059,7 @@
     "_fontFamily": "Arial",
     "_lineHeight": 25,
     "_overflow": 0,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
@@ -3149,10 +3149,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "812884e0-ebed-4ee0-a86a-372c8cec104b@f9941",
@@ -3522,10 +3522,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 43,
+      "g": 32,
+      "b": 23,
+      "a": 245
     },
     "_spriteFrame": {
       "__uuid__": "4d960245-e403-4704-90a5-b9adb4761779@f9941",
@@ -3676,9 +3676,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
     "_string": "Label",
@@ -3689,7 +3689,7 @@
     "_fontFamily": "Arial",
     "_lineHeight": 30,
     "_overflow": 0,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
@@ -4047,9 +4047,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
     "_string": "Label",
@@ -4060,11 +4060,11 @@
     "_fontFamily": "Arial",
     "_lineHeight": 40,
     "_overflow": 0,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 0,
@@ -4150,9 +4150,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_spriteFrame": {
@@ -4284,30 +4284,30 @@
     "_transition": 0,
     "_normalColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_hoverColor": {
       "__type__": "cc.Color",
-      "r": 211,
-      "g": 211,
-      "b": 211,
+      "r": 196,
+      "g": 168,
+      "b": 115,
       "a": 255
     },
     "_pressedColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 64,
+      "g": 43,
+      "b": 24,
       "a": 255
     },
     "_disabledColor": {
       "__type__": "cc.Color",
-      "r": 124,
-      "g": 124,
-      "b": 124,
+      "r": 177,
+      "g": 163,
+      "b": 139,
       "a": 255
     },
     "_normalSprite": {
@@ -4584,10 +4584,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 43,
+      "g": 32,
+      "b": 23,
+      "a": 245
     },
     "_spriteFrame": {
       "__uuid__": "4d960245-e403-4704-90a5-b9adb4761779@f9941",
@@ -4738,9 +4738,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
     "_string": "Label",
@@ -4751,7 +4751,7 @@
     "_fontFamily": "Arial",
     "_lineHeight": 30,
     "_overflow": 0,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
@@ -5109,9 +5109,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
     "_string": "Label",
@@ -5122,11 +5122,11 @@
     "_fontFamily": "Arial",
     "_lineHeight": 40,
     "_overflow": 0,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 0,
@@ -5211,9 +5211,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_spriteFrame": {
@@ -5342,30 +5342,30 @@
     "_transition": 0,
     "_normalColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_hoverColor": {
       "__type__": "cc.Color",
-      "r": 211,
-      "g": 211,
-      "b": 211,
+      "r": 196,
+      "g": 168,
+      "b": 115,
       "a": 255
     },
     "_pressedColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 64,
+      "g": 43,
+      "b": 24,
       "a": 255
     },
     "_disabledColor": {
       "__type__": "cc.Color",
-      "r": 124,
-      "g": 124,
-      "b": 124,
+      "r": 177,
+      "g": 163,
+      "b": 139,
       "a": 255
     },
     "_normalSprite": {
@@ -5642,10 +5642,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 43,
+      "g": 32,
+      "b": 23,
+      "a": 245
     },
     "_spriteFrame": {
       "__uuid__": "4d960245-e403-4704-90a5-b9adb4761779@f9941",
@@ -5796,9 +5796,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
     "_string": "Label",
@@ -5809,7 +5809,7 @@
     "_fontFamily": "Arial",
     "_lineHeight": 30,
     "_overflow": 0,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
@@ -6167,9 +6167,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
     "_string": "Label",
@@ -6180,11 +6180,11 @@
     "_fontFamily": "Arial",
     "_lineHeight": 40,
     "_overflow": 0,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 0,
@@ -6270,9 +6270,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_spriteFrame": {
@@ -6404,30 +6404,30 @@
     "_transition": 0,
     "_normalColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_hoverColor": {
       "__type__": "cc.Color",
-      "r": 211,
-      "g": 211,
-      "b": 211,
+      "r": 196,
+      "g": 168,
+      "b": 115,
       "a": 255
     },
     "_pressedColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 64,
+      "g": 43,
+      "b": 24,
       "a": 255
     },
     "_disabledColor": {
       "__type__": "cc.Color",
-      "r": 124,
-      "g": 124,
-      "b": 124,
+      "r": 177,
+      "g": 163,
+      "b": 139,
       "a": 255
     },
     "_normalSprite": {

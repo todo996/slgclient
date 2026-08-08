@@ -169,9 +169,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 24,
-      "g": 19,
-      "b": 15,
+      "r": 18,
+      "g": 14,
+      "b": 11,
       "a": 248
     },
     "_spriteFrame": {
@@ -208,7 +208,7 @@
     "__prefab": {
       "__id__": 8
     },
-    "_opacity": 205,
+    "_opacity": 190,
     "_id": ""
   },
   {
@@ -451,10 +451,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 120,
-      "g": 45,
-      "b": 38,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "f2ee59e7-5b12-49e0-a2ee-a4068c58d1f3@f9941",
@@ -589,31 +589,31 @@
     "_transition": 0,
     "_normalColor": {
       "__type__": "cc.Color",
-      "r": 230,
-      "g": 230,
-      "b": 230,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_hoverColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 196,
+      "g": 168,
+      "b": 115,
       "a": 255
     },
     "_pressedColor": {
       "__type__": "cc.Color",
-      "r": 200,
-      "g": 200,
-      "b": 200,
+      "r": 64,
+      "g": 43,
+      "b": 24,
       "a": 255
     },
     "_disabledColor": {
       "__type__": "cc.Color",
-      "r": 120,
-      "g": 120,
-      "b": 120,
-      "a": 200
+      "r": 177,
+      "g": 163,
+      "b": 139,
+      "a": 255
     },
     "_normalSprite": {
       "__uuid__": "f2ee59e7-5b12-49e0-a2ee-a4068c58d1f3@f9941",
@@ -1219,7 +1219,7 @@
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 0,
@@ -1355,9 +1355,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 177,
-      "g": 163,
-      "b": 139,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
     "_string": "(10/100)",
@@ -1508,9 +1508,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 239,
-      "g": 225,
-      "b": 198,
+      "r": 231,
+      "g": 190,
+      "b": 109,
       "a": 255
     },
     "_string": "Thẻ tướng:",
@@ -1518,14 +1518,14 @@
     "_verticalAlign": 1,
     "_actualFontSize": 28,
     "_fontSize": 28,
-    "_fontFamily": "Arial",
-    "_lineHeight": 36,
+    "_fontFamily": "Times New Roman",
+    "_lineHeight": 34,
     "_overflow": 0,
     "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 0,
@@ -1791,7 +1791,7 @@
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 1,
@@ -1876,10 +1876,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 89,
-      "g": 59,
-      "b": 29,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "5d572b55-9243-4277-b649-d29ac4fcb01f@f9941",
@@ -2014,31 +2014,31 @@
     "_transition": 3,
     "_normalColor": {
       "__type__": "cc.Color",
-      "r": 230,
-      "g": 230,
-      "b": 230,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_hoverColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 196,
+      "g": 168,
+      "b": 115,
       "a": 255
     },
     "_pressedColor": {
       "__type__": "cc.Color",
-      "r": 200,
-      "g": 200,
-      "b": 200,
+      "r": 64,
+      "g": 43,
+      "b": 24,
       "a": 255
     },
     "_disabledColor": {
       "__type__": "cc.Color",
-      "r": 120,
-      "g": 120,
-      "b": 120,
-      "a": 200
+      "r": 177,
+      "g": 163,
+      "b": 139,
+      "a": 255
     },
     "_normalSprite": {
       "__uuid__": "20835ba4-6145-4fbc-a58a-051ce700aa3e@f9941",
@@ -2316,24 +2316,24 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 239,
-      "g": 225,
-      "b": 198,
+      "r": 231,
+      "g": 190,
+      "b": 109,
       "a": 255
     },
     "_string": "Danh sách tướng",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 17,
-    "_fontSize": 17,
-    "_fontFamily": "Arial",
-    "_lineHeight": 21,
+    "_actualFontSize": 28,
+    "_fontSize": 28,
+    "_fontFamily": "Times New Roman",
+    "_lineHeight": 34,
     "_overflow": 1,
     "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 1,
@@ -2418,10 +2418,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 89,
-      "g": 59,
-      "b": 29,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "5d572b55-9243-4277-b649-d29ac4fcb01f@f9941",
@@ -2556,31 +2556,31 @@
     "_transition": 3,
     "_normalColor": {
       "__type__": "cc.Color",
-      "r": 230,
-      "g": 230,
-      "b": 230,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_hoverColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 196,
+      "g": 168,
+      "b": 115,
       "a": 255
     },
     "_pressedColor": {
       "__type__": "cc.Color",
-      "r": 200,
-      "g": 200,
-      "b": 200,
+      "r": 64,
+      "g": 43,
+      "b": 24,
       "a": 255
     },
     "_disabledColor": {
       "__type__": "cc.Color",
-      "r": 120,
-      "g": 120,
-      "b": 120,
-      "a": 200
+      "r": 177,
+      "g": 163,
+      "b": 139,
+      "a": 255
     },
     "_normalSprite": {
       "__uuid__": "20835ba4-6145-4fbc-a58a-051ce700aa3e@f9941",
@@ -2705,8 +2705,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 1280,
-      "height": 720
+      "width": 1180,
+      "height": 680
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",

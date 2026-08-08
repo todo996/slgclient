@@ -159,10 +159,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 29,
+      "g": 23,
+      "b": 18,
+      "a": 245
     },
     "_spriteFrame": {
       "__uuid__": "cd7186fe-9b9b-4907-aa5b-80dc0c0ba9a5@f9941",
@@ -237,8 +237,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 1280,
-      "height": 720
+      "width": 1180,
+      "height": 680
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -445,12 +445,12 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
-    "_string": "确定",
+    "_string": "Xác nhận",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 30,
@@ -462,7 +462,7 @@
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 1,
@@ -547,10 +547,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 18,
+      "g": 14,
+      "b": 11,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "a68bd8c2-5846-4bbe-b56a-eef66911be32@f9941",
@@ -685,31 +685,31 @@
     "_transition": 3,
     "_normalColor": {
       "__type__": "cc.Color",
-      "r": 230,
-      "g": 230,
-      "b": 230,
+      "r": 84,
+      "g": 57,
+      "b": 29,
       "a": 255
     },
     "_hoverColor": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 196,
+      "g": 168,
+      "b": 115,
       "a": 255
     },
     "_pressedColor": {
       "__type__": "cc.Color",
-      "r": 200,
-      "g": 200,
-      "b": 200,
+      "r": 64,
+      "g": 43,
+      "b": 24,
       "a": 255
     },
     "_disabledColor": {
       "__type__": "cc.Color",
-      "r": 120,
-      "g": 120,
-      "b": 120,
-      "a": 200
+      "r": 177,
+      "g": 163,
+      "b": 139,
+      "a": 255
     },
     "_normalSprite": {
       "__uuid__": "20835ba4-6145-4fbc-a58a-051ce700aa3e@f9941",
@@ -779,8 +779,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 100,
-      "height": 40
+      "width": 210,
+      "height": 54
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -1262,24 +1262,24 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 231,
+      "g": 190,
+      "b": 109,
       "a": 255
     },
-    "_string": "恭喜你获得新武将",
+    "_string": "CHIÊU MỘ",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 40,
     "_fontSize": 40,
-    "_fontFamily": "Arial",
-    "_lineHeight": 40,
+    "_fontFamily": "Times New Roman",
+    "_lineHeight": 48,
     "_overflow": 0,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
-    "_isBold": false,
+    "_isBold": true,
     "_isUnderline": false,
     "_underlineHeight": 0,
     "_cacheMode": 0,
