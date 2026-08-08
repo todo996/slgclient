@@ -169,10 +169,10 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
+      "r": 24,
+      "g": 19,
+      "b": 15,
+      "a": 248
     },
     "_spriteFrame": {
       "__uuid__": "cd7186fe-9b9b-4907-aa5b-80dc0c0ba9a5@f9941",
@@ -208,7 +208,7 @@
     "__prefab": {
       "__id__": 8
     },
-    "_opacity": 255,
+    "_opacity": 205,
     "_id": ""
   },
   {
@@ -351,8 +351,8 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 590,
-      "y": 290,
+      "x": 585,
+      "y": 310,
       "z": 0
     },
     "_lrot": {
@@ -451,9 +451,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 120,
+      "g": 45,
+      "b": 38,
       "a": 255
     },
     "_spriteFrame": {
@@ -683,8 +683,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 101,
-      "height": 145
+      "width": 64,
+      "height": 48
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -740,7 +740,7 @@
     "_lpos": {
       "__type__": "cc.Vec3",
       "x": 0,
-      "y": -16.656,
+      "y": -10,
       "z": 0
     },
     "_lrot": {
@@ -1064,10 +1064,10 @@
     "isHorizontal": false,
     "columnCount": 5,
     "autoColumnCount": false,
-    "spaceColumn": 30,
-    "spaceRow": 30,
-    "updateInterval": 0.1,
-    "scale": 0.5,
+    "spaceColumn": 18,
+    "spaceRow": 18,
+    "updateInterval": 0.06,
+    "scale": 0.54,
     "itemClickEvents": [],
     "isVirtual": true,
     "_id": ""
@@ -1107,8 +1107,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 1050,
-      "height": 590
+      "width": 1120,
+      "height": 575
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -1202,20 +1202,20 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 231,
+      "g": 190,
+      "b": 109,
       "a": 255
     },
-    "_string": "武将",
+    "_string": "TƯỚNG",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 40,
-    "_fontSize": 40,
-    "_fontFamily": "Arial",
-    "_lineHeight": 40,
+    "_actualFontSize": 36,
+    "_fontSize": 36,
+    "_fontFamily": "Times New Roman",
+    "_lineHeight": 44,
     "_overflow": 0,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
@@ -1355,20 +1355,20 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 134,
-      "g": 36,
-      "b": 22,
+      "r": 177,
+      "g": 163,
+      "b": 139,
       "a": 255
     },
     "_string": "(10/100)",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 28,
-    "_fontSize": 28,
+    "_actualFontSize": 17,
+    "_fontSize": 17,
     "_fontFamily": "Arial",
-    "_lineHeight": 36,
+    "_lineHeight": 21,
     "_overflow": 0,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
@@ -1508,12 +1508,12 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 134,
-      "g": 36,
-      "b": 22,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
-    "_string": "武将卡：",
+    "_string": "Thẻ tướng:",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 28,
@@ -1521,7 +1521,7 @@
     "_fontFamily": "Arial",
     "_lineHeight": 36,
     "_overflow": 0,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_isItalic": false,
@@ -1774,18 +1774,18 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
-    "_string": "转换",
+    "_string": "Chuyển đổi",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 20,
-    "_fontSize": 20,
+    "_actualFontSize": 17,
+    "_fontSize": 17,
     "_fontFamily": "Arial",
-    "_lineHeight": 40,
+    "_lineHeight": 21,
     "_overflow": 1,
     "_enableWrapText": false,
     "_font": null,
@@ -1876,9 +1876,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 89,
+      "g": 59,
+      "b": 29,
       "a": 255
     },
     "_spriteFrame": {
@@ -2316,18 +2316,18 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 239,
+      "g": 225,
+      "b": 198,
       "a": 255
     },
-    "_string": "图鉴",
+    "_string": "Danh sách tướng",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 20,
-    "_fontSize": 20,
+    "_actualFontSize": 17,
+    "_fontSize": 17,
     "_fontFamily": "Arial",
-    "_lineHeight": 40,
+    "_lineHeight": 21,
     "_overflow": 1,
     "_enableWrapText": false,
     "_font": null,
@@ -2418,9 +2418,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 89,
+      "g": 59,
+      "b": 29,
       "a": 255
     },
     "_spriteFrame": {
