@@ -1,0 +1,76 @@
+/* Skin đăng nhập/tạo nhân vật: giữ khung cũ, làm lại vùng chữ và input. */
+.auth-panel {
+  width: min(470px, 94vw);
+  color: var(--color-text-light);
+  background: linear-gradient(rgba(22, 18, 15, 0.9), rgba(22, 18, 15, 0.94));
+  border: 22px solid transparent;
+  border-image: url("/game-assets/ui/auth/panel.png") 22 fill stretch;
+  border-radius: 0;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.58);
+}
+
+.auth-panel .game-panel__header {
+  width: min(286px, 78%);
+  min-height: 45px;
+  margin: -13px auto 0;
+  padding: 5px 32px 10px;
+  background: url("/game-assets/ui/auth/title-ribbon.png") center / 100% 100% no-repeat;
+  border: 0;
+}
+
+.auth-panel .game-panel__title {
+  color: #f2ddac;
+  font-size: clamp(19px, 4.8vw, 25px);
+  text-shadow: 0 2px 2px rgba(0, 0, 0, 0.92), 0 0 7px rgba(180, 119, 41, 0.35);
+}
+
+.auth-panel .game-panel__body { padding: 14px 14px 8px; }
+.auth-panel .panel-intro { color: #cbbd9f; font-size: 13px; }
+.auth-panel .form-field__label,
+.auth-panel .gender-fieldset legend { color: #e3cf9f; text-shadow: 0 1px 2px #000; }
+
+.auth-panel .game-input {
+  color: #2b2116;
+  background: linear-gradient(180deg, rgba(246, 229, 189, 0.98), rgba(219, 190, 137, 0.98));
+  border: 1px solid #9a733a;
+  box-shadow: inset 0 1px 3px rgba(48, 29, 12, 0.28), 0 0 0 1px rgba(25, 15, 8, 0.85);
+}
+
+.auth-panel .game-input:focus {
+  border-color: #d7a64d;
+  box-shadow: inset 0 1px 3px rgba(48, 29, 12, 0.22), 0 0 0 2px rgba(211, 153, 60, 0.32);
+}
+
+.auth-panel .game-button {
+  color: #f4dfac;
+  background: linear-gradient(180deg, #73512d 0%, #4c321c 52%, #332115 100%);
+  border-color: #b88b42;
+  border-radius: 4px;
+  box-shadow: 0 3px 0 #1d130d, inset 0 1px rgba(255, 226, 160, 0.28), inset 0 0 0 1px rgba(29, 18, 10, 0.65);
+  text-shadow: 0 2px 2px rgba(0, 0, 0, 0.9);
+}
+
+.auth-panel .game-button--primary {
+  background: linear-gradient(180deg, #8e3d2d 0%, #67271f 52%, #421813 100%);
+}
+
+.auth-panel .gender-fieldset {
+  border-color: rgba(184, 139, 66, 0.68);
+  background: rgba(8, 7, 6, 0.24);
+}
+
+.auth-panel .gender-option {
+  color: #dfcea7;
+  background: rgba(47, 35, 24, 0.78);
+  border-color: rgba(154, 115, 58, 0.72);
+}
+
+.auth-panel .gender-option:has(input:checked) {
+  color: #f3d483;
+  border-color: #d1a24f;
+  background: rgba(99, 55, 30, 0.84);
+  box-shadow: inset 0 0 0 1px rgba(248, 210, 119, 0.18), 0 0 10px rgba(179, 111, 41, 0.18);
+}
+
+.auth-panel .form-hint { color: #9e927c; }
+.top-hud[hidden] { display: none; }

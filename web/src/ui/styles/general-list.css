@@ -1,0 +1,215 @@
+.general-list-panel {
+  --general-list-scale: 1;
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  overflow: hidden;
+  background: rgba(10, 7, 4, 0.72);
+  pointer-events: auto;
+}
+
+.general-list-panel__stage {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1280px;
+  height: 720px;
+  overflow: hidden;
+  transform: translate(-50%, -50%) scale(var(--general-list-scale));
+  transform-origin: center;
+  background:
+    linear-gradient(rgba(15, 10, 5, 0.12), rgba(15, 10, 5, 0.24)),
+    url("/game-assets/ui/general/background.jpg") center / cover no-repeat;
+  color: #f8e9c5;
+  font-family: Arial, "Noto Sans", sans-serif;
+  text-shadow: 0 2px 2px #241308;
+}
+
+.general-list-panel__stage::before {
+  content: "";
+  position: absolute;
+  inset: 20px;
+  border: 2px solid rgba(196, 144, 68, 0.55);
+  box-shadow: inset 0 0 36px rgba(0, 0, 0, 0.52);
+  pointer-events: none;
+}
+
+.general-list-panel__title {
+  position: absolute;
+  left: 390px;
+  top: 15px;
+  width: 500px;
+  margin: 0;
+  color: #ffe9ad;
+  font-size: 34px;
+  line-height: 64px;
+  text-align: center;
+  letter-spacing: 0.1em;
+  text-shadow: 0 3px 2px #35190a, 0 0 8px rgba(255, 205, 108, 0.35);
+}
+
+.general-list-panel__close {
+  position: absolute;
+  right: 35px;
+  top: 31px;
+  width: 70px;
+  height: 70px;
+  padding: 0;
+  border: 0;
+  background: url("/game-assets/ui/general/close.png") center / contain no-repeat;
+}
+
+.general-list-panel__counter {
+  position: absolute;
+  right: 70px;
+  bottom: 20px;
+  min-width: 170px;
+  color: #f6dfaa;
+  font-size: 25px;
+  text-align: right;
+}
+
+.general-list-panel__side-button {
+  position: absolute;
+  left: 32px;
+  width: 132px;
+  height: 72px;
+  padding: 0 12px 5px;
+  border: 0;
+  color: #f8e5b6;
+  background: url("/game-assets/ui/general/button-green.png") center / 100% 100% no-repeat;
+  font-size: 22px;
+  font-weight: 700;
+  text-shadow: 0 2px 2px #1d1007;
+}
+
+.general-list-panel__scroll {
+  position: absolute;
+  left: 180px;
+  top: 84px;
+  width: 1050px;
+  height: 590px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #8e602b rgba(23, 14, 7, 0.45);
+  -webkit-overflow-scrolling: touch;
+}
+
+.general-list-panel__content {
+  display: grid;
+  grid-template-columns: repeat(3, 350px);
+  grid-auto-rows: 480px;
+  align-items: start;
+  min-height: 100%;
+  padding-bottom: 12px;
+}
+
+.general-list-panel__empty {
+  grid-column: 1 / -1;
+  align-self: center;
+  margin: 0;
+  color: #f5dfaa;
+  font-size: 27px;
+  text-align: center;
+}
+
+.general-card {
+  position: relative;
+  width: 350px;
+  height: 480px;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  text-align: left;
+  isolation: isolate;
+}
+
+.general-card:focus-visible {
+  outline: 4px solid #f3d071;
+  outline-offset: -8px;
+}
+
+.general-card__background,
+.general-card__portrait,
+.general-card__wrap,
+.general-card__used {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.general-card__background { z-index: 0; }
+.general-card__portrait { z-index: 1; object-fit: cover; }
+.general-card__wrap { z-index: 2; }
+
+.general-card__name {
+  position: absolute;
+  z-index: 3;
+  left: 28px;
+  bottom: 83px;
+  max-width: 230px;
+  color: #fff2c6;
+  font-size: 27px;
+  font-weight: 700;
+  white-space: nowrap;
+  text-shadow: 0 2px 2px #1c0c05, 0 0 5px #000;
+}
+
+.general-card__level,
+.general-card__camp,
+.general-card__cost,
+.general-card__arm {
+  position: absolute;
+  z-index: 3;
+  color: #fff5da;
+  font-size: 20px;
+  font-weight: 700;
+  text-shadow: 0 2px 2px #1d0d05;
+}
+
+.general-card__level { left: 29px; bottom: 48px; }
+.general-card__camp { right: 32px; top: 28px; }
+.general-card__cost { right: 29px; bottom: 50px; }
+.general-card__arm { right: 31px; bottom: 84px; }
+
+.general-card__stars {
+  position: absolute;
+  z-index: 4;
+  left: 24px;
+  top: 25px;
+  display: flex;
+  gap: 1px;
+}
+
+.general-card__star {
+  width: 29px;
+  height: 29px;
+  object-fit: contain;
+  filter: saturate(0.35) brightness(0.75);
+}
+
+.general-card__star.is-upgraded {
+  filter: drop-shadow(0 0 3px #fff2a4) saturate(1.25) brightness(1.12);
+}
+
+.general-card__used {
+  z-index: 5;
+  inset: auto 16px 106px auto;
+  width: 113px;
+  height: 62px;
+  object-fit: contain;
+}
+
+.general-card:active { transform: scale(0.985); }
+
+@media (max-width: 760px) {
+  .general-list-panel__stage {
+    transform: translate(-50%, -50%) scale(var(--general-list-scale));
+  }
+}

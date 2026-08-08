@@ -1,0 +1,28 @@
+.army-panel { --army-panel-scale: 1; position: fixed; inset: 0; z-index: 48; background: rgba(9,6,3,.72); pointer-events: auto; }
+.army-panel__stage { position: absolute; left: 50%; top: 50%; width: 1280px; height: 720px; transform: translate(-50%,-50%) scale(var(--army-panel-scale)); transform-origin: center; overflow: hidden; color: #f6e5bc; background: linear-gradient(rgba(14,8,3,.15),rgba(14,8,3,.35)), url("/game-assets/ui/army/background.png") center/cover no-repeat; text-shadow: 0 2px 2px #1c0d05; }
+.army-panel__stage > h2 { position: absolute; left: 390px; top: 18px; width: 500px; margin: 0; color: #ffe5a5; text-align: center; font-size: 34px; }
+.army-panel__close { position: absolute; z-index: 4; right: 34px; top: 30px; width: 70px; height: 70px; border: 0; background: url("/game-assets/ui/army/close.png") center/contain no-repeat; }
+.army-panel__slots { position: absolute; left: 50px; top: 110px; width: 215px; display: grid; gap: 10px; }
+.army-panel__slot { min-height: 82px; padding: 10px 18px; border: 1px solid #95632d; color: #f1ddb1; background: rgba(31,17,7,.78); font-size: 22px; text-align: left; }
+.army-panel__slot small { display: block; color: #cdb681; margin-top: 6px; }
+.army-panel__slot.is-active { background: rgba(126,70,23,.82); box-shadow: inset 0 0 0 2px #e2ba67; }
+.army-panel__body { position: absolute; left: 285px; top: 100px; width: 925px; height: 565px; display: grid; grid-template-columns: 1fr 285px; grid-template-rows: 365px 1fr; gap: 15px; }
+.army-panel__generals { display: grid; grid-template-columns: repeat(3, 1fr); overflow: hidden; }
+.army-panel__general-slot { position: relative; min-height: 355px; border: 1px solid #95632d; color: #f1d895; background: rgba(32,18,7,.7); overflow: hidden; }
+.army-panel__general-slot .general-card--compact { position: absolute; left: -25px; top: -63px; transform: scale(.68); }
+.army-panel__general-slot > strong { display: block; font-size: 72px; }
+.army-panel__general-slot > span { display: block; font-size: 22px; }
+.army-panel__stats { padding: 16px; overflow: auto; background: rgba(30,17,7,.73); border: 1px solid #95632d; }
+.army-panel__stats > div { display: grid; grid-template-columns: 120px 1fr; min-height: 45px; align-items: center; border-bottom: 1px solid rgba(202,153,78,.3); }
+.army-panel__actions { grid-column: 1/-1; display: flex; align-items: center; gap: 12px; padding: 10px; background: rgba(27,15,7,.68); }
+.army-action { min-width: 130px; height: 60px; border: 0; color: #ffedbd; background: url("/game-assets/ui/general/button-green.png") center/100% 100% no-repeat; font-weight: 700; font-size: 20px; }
+.army-action--red { background-image: url("/game-assets/ui/general/button-red.png"); }
+.army-action:disabled { opacity: .45; }
+.army-panel__command { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.army-panel__command input { width: 68px; height: 44px; color: #2b1d10; background: #f2dfb8; border: 1px solid #815626; text-align: center; }
+.army-chooser__content { position: absolute; left: 80px; top: 100px; width: 1120px; height: 570px; display: grid; grid-template-columns: repeat(4,260px); align-content: start; overflow: auto; }
+.army-chooser__content .general-card--compact { transform: scale(.68); transform-origin: top left; margin-right: -112px; margin-bottom: -154px; }
+.army-conscript__content { position: absolute; left: 260px; top: 130px; width: 760px; padding: 35px; background: rgba(29,16,7,.78); border: 2px solid #9a6b32; }
+.army-conscript__content label { display: grid; grid-template-columns: 260px 150px 180px; align-items: center; min-height: 80px; font-size: 22px; border-bottom: 1px solid rgba(204,159,89,.35); }
+.army-conscript__content input { height: 48px; color: #2c2013; background: #f4e2bd; border: 1px solid #805526; font-size: 22px; text-align: center; }
+.army-panel__empty { grid-column: 1/-1; align-self: center; text-align: center; font-size: 28px; }
