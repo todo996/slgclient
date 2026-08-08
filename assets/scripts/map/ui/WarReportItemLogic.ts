@@ -8,7 +8,7 @@ import {
     drawAncientPanel,
     localizeNode,
     suppressLegacyChrome,
-} from '../../i18n/I18n';
+} from '../../common/AudioManager';
 import LoginCommand from '../../login/LoginCommand';
 import { Role } from '../../login/LoginProxy';
 import DateUtil from '../../utils/DateUtil';

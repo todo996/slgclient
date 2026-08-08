@@ -12,7 +12,7 @@ import {
     ensureUiTransform,
     findButtonByHandler,
     styleAncientButton,
-} from '../../i18n/I18n';
+} from '../../common/AudioManager';
 import LoginCommand from '../../login/LoginCommand';
 import DateUtil from '../../utils/DateUtil';
 import { EventMgr } from '../../utils/EventMgr';

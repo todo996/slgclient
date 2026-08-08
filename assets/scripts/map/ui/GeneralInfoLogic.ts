@@ -9,7 +9,7 @@ import {
     localizeNode,
     styleAncientButton,
     suppressLegacyChrome,
-} from '../../i18n/I18n';
+} from '../../common/AudioManager';
 import { EventMgr } from '../../utils/EventMgr';
 const { ccclass, property } = _decorator;
 

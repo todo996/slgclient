@@ -14,7 +14,7 @@ import {
     localizeNode,
     styleAncientButton,
     suppressLegacyChrome,
-} from '../../i18n/I18n';
+} from '../../common/AudioManager';
 import LoginCommand from '../../login/LoginCommand';
 import { Skill } from '../../skill/SkillProxy';
 import UnionCommand from '../../union/UnionCommand';

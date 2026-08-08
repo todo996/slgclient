@@ -12,7 +12,7 @@ import {
     ensureUiTransform,
     findButtonByHandler,
     styleAncientButton,
-} from '../../i18n/I18n';
+} from '../../common/AudioManager';
 import { EventMgr } from '../../utils/EventMgr';
 import ListLogic from '../../utils/ListLogic';
 import MapUICommand from './MapUICommand';

@@ -9,7 +9,7 @@ import {
     ensureUiTransform,
     findButtonByHandler,
     styleAncientButton,
-} from '../../i18n/I18n';
+} from '../../common/AudioManager';
 import SkillCommand from '../../skill/SkillCommand';
 import { Skill } from '../../skill/SkillProxy';
 import { EventMgr } from '../../utils/EventMgr';

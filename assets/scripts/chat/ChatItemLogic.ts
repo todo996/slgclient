@@ -4,7 +4,7 @@ import {
     drawAncientPanel,
     localizeNode,
     suppressLegacyChrome,
-} from '../i18n/I18n';
+} from '../common/AudioManager';
 import DateUtil from '../utils/DateUtil';
 import { ChatMsg } from './ChatProxy';
 

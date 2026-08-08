@@ -13,7 +13,7 @@ import {
     findButtonByHandler,
     styleAncientButton,
     styleAncientEditBox,
-} from '../i18n/I18n';
+} from '../common/AudioManager';
 import MapCommand from '../map/MapCommand';
 import { MapCityData } from '../map/MapCityProxy';
 import { EventMgr } from '../utils/EventMgr';

@@ -15,7 +15,7 @@ import {
     findButtonByHandler,
     localizeNode,
     styleAncientButton,
-} from '../../i18n/I18n';
+} from '../../common/AudioManager';
 import LoginCommand from '../../login/LoginCommand';
 import { EventMgr } from '../../utils/EventMgr';
 import MapUICommand from './MapUICommand';

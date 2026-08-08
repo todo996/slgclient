@@ -9,7 +9,7 @@ import {
     localizeNode,
     styleAncientButton,
     suppressLegacyChrome,
-} from '../../i18n/I18n';
+} from '../../common/AudioManager';
 
 const { ccclass, property } = _decorator;
 import { WarReport } from './MapUIProxy';

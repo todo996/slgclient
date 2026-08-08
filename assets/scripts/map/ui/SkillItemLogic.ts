@@ -1,7 +1,7 @@
 import { _decorator, Component, Label, Node, SpriteFrame, UITransform } from 'cc';
 const { ccclass, property } = _decorator;
 
-import { ANCIENT_UI, drawAncientPanel, localizeNode, suppressLegacyChrome } from '../../i18n/I18n';
+import { ANCIENT_UI, drawAncientPanel, localizeNode, suppressLegacyChrome } from '../../common/AudioManager';
 import SkillCommand from '../../skill/SkillCommand';
 import { Skill } from '../../skill/SkillProxy';
 import SkillIconLogic from './SkillIconLogic';

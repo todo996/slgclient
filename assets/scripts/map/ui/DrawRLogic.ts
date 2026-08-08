@@ -7,7 +7,7 @@ import {
     ensureUiTransform,
     findButtonByHandler,
     styleAncientButton,
-} from '../../i18n/I18n';
+} from '../../common/AudioManager';
 import GeneralItemLogic, { GeneralItemType } from './GeneralItemLogic';
 
 @ccclass('DrawRLogic')
