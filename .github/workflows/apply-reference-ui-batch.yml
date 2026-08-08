@@ -1,0 +1,321 @@
+name: Apply reference UI batch once
+
+on:
+  push:
+    branches:
+      - feat/modern-vietnamese-ui-overhaul
+    paths:
+      - .github/workflows/apply-reference-ui-batch.yml
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/modern-vietnamese-ui-overhaul
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Rebuild real prefabs in Vietnamese Three Kingdoms style
+        shell: bash
+        run: |
+          cat > "$RUNNER_TEMP/apply-reference-ui.cjs" <<'NODE'
+          const fs = require('fs');
+
+          const COLORS = {
+            gold: { __type__: 'cc.Color', r: 231, g: 190, b: 109, a: 255 },
+            goldSoft: { __type__: 'cc.Color', r: 196, g: 168, b: 115, a: 255 },
+            text: { __type__: 'cc.Color', r: 239, g: 225, b: 198, a: 255 },
+            muted: { __type__: 'cc.Color', r: 177, g: 163, b: 139, a: 255 },
+            dark: { __type__: 'cc.Color', r: 18, g: 14, b: 11, a: 248 },
+            panel: { __type__: 'cc.Color', r: 29, g: 23, b: 18, a: 245 },
+            panel2: { __type__: 'cc.Color', r: 43, g: 32, b: 23, a: 245 },
+            frame: { __type__: 'cc.Color', r: 125, g: 87, b: 46, a: 255 },
+            red: { __type__: 'cc.Color', r: 116, g: 44, b: 35, a: 255 },
+            button: { __type__: 'cc.Color', r: 84, g: 57, b: 29, a: 255 },
+            buttonPressed: { __type__: 'cc.Color', r: 64, g: 43, b: 24, a: 255 },
+          };
+
+          const targetFiles = [
+            'assets/scenes/LoginScene.prefab',
+            'assets/prefab/login.prefab',
+            'assets/scenes/MapUIScene.prefab',
+            'assets/prefab/GeneralRoster.prefab',
+            'assets/prefab/GeneralRosterList.prefab',
+            'assets/prefab/GeneralList.prefab',
+            'assets/prefab/GeneralItem.prefab',
+            'assets/prefab/GeneralInfo.prefab',
+            'assets/prefab/GeneralDes.prefab',
+            'assets/prefab/Draw.prefab',
+            'assets/prefab/DrawResult.prefab',
+            'assets/prefab/WarReport.prefab',
+            'assets/prefab/WarReportItem.prefab',
+            'assets/prefab/WarReportDes.prefab',
+            'assets/prefab/Union.prefab',
+            'assets/prefab/Collect.prefab',
+            'assets/prefab/Chat.prefab',
+            'assets/prefab/Skill.prefab',
+            'assets/prefab/SkilInfo.prefab',
+            'assets/prefab/SkillIcon.prefab',
+            'assets/prefab/SkillItem.prefab',
+            'assets/prefab/Setting.prefab',
+            'assets/prefab/Dialog.prefab',
+          ].filter(fs.existsSync);
+
+          const translations = new Map([
+            ['账号登录', 'ĐĂNG NHẬP'], ['帐号登录', 'ĐĂNG NHẬP'], ['用户登录', 'ĐĂNG NHẬP'],
+            ['进入游戏', 'VÀO TRÒ CHƠI'], ['请输入用户名', 'Tên đăng nhập'], ['请输入账号', 'Tên đăng nhập'],
+            ['请输入帐号', 'Tên đăng nhập'], ['请输入密码', 'Mật khẩu'], ['登录', 'ĐĂNG NHẬP'],
+            ['登陆', 'ĐĂNG NHẬP'], ['注册账号', 'ĐĂNG KÝ TÀI KHOẢN'], ['注册', 'ĐĂNG KÝ TÀI KHOẢN'],
+            ['武将', 'Tướng'], ['将领', 'Tướng'], ['战报', 'Chiến báo'], ['招募', 'Chiêu mộ'],
+            ['联盟', 'Liên minh'], ['聊天', 'Trò chuyện'], ['技能', 'Kỹ năng'], ['设置', 'Cài đặt'],
+            ['征收', 'Thu thuế'], ['税收', 'Thu thuế'], ['转换', 'Chuyển đổi'], ['市场', 'Chợ'],
+            ['商店', 'Chợ'], ['任务', 'Nhiệm vụ'], ['邮件', 'Thư'], ['排行', 'Xếp hạng'], ['好友', 'Bạn bè'],
+            ['木材', 'Gỗ'], ['铁矿', 'Sắt'], ['石料', 'Đá'], ['粮食', 'Lương'], ['黄金', 'Vàng'],
+            ['金币', 'Vàng'], ['政令', 'Lệnh'], ['坐标', 'Tọa độ'], ['世界', 'Thế giới'],
+            ['详情', 'Chi tiết'], ['确定', 'Xác nhận'], ['取消', 'Hủy'], ['关闭', 'Đóng'],
+            ['返回', 'Quay lại'], ['退出', 'Đăng xuất'], ['创建联盟', 'Tạo liên minh'], ['加入联盟', 'Gia nhập liên minh'],
+            ['申请加入', 'Xin gia nhập'], ['战斗报告', 'Chiến báo'], ['全部', 'Tất cả'], ['攻击', 'Tấn công'],
+            ['防守', 'Phòng thủ'], ['侦察', 'Trinh sát'], ['成功', 'Thành công'], ['失败', 'Thất bại'],
+            ['胜利', 'Chiến thắng'], ['奖励', 'Phần thưởng'], ['获得', 'Nhận'], ['数量', 'Số lượng'],
+            ['当前', 'Hiện tại'], ['今日', 'Hôm nay'], ['次数', 'Số lần'], ['冷却', 'Hồi chiêu'],
+            ['升级', 'Nâng cấp'], ['等级', 'Cấp'], ['拥有', 'Đang có'], ['在线', 'Online'],
+            ['发送', 'Gửi'], ['输入内容', 'Nhập nội dung'], ['系统', 'Hệ thống'], ['私聊', 'Riêng'],
+            ['世界频道', 'Thế giới'], ['联盟频道', 'Liên minh'], ['普通', 'Thường'], ['稀有', 'Hiếm'],
+            ['阵容', 'Đội hình'], ['排序', 'Sắp xếp'], ['查看详情', 'Xem chi tiết'], ['单抽', 'Chiêu mộ 1 lần'],
+            ['十连抽', 'Chiêu mộ 10 lần'], ['概率', 'Tỉ lệ'], ['剩余', 'Còn lại'], ['材料', 'Nguyên liệu'],
+            ['主动技能', 'Kỹ năng chủ động'], ['被动技能', 'Kỹ năng bị động'], ['适合武将', 'Tướng phù hợp'],
+          ]);
+
+          // Tái sử dụng toàn bộ từ điển Việt hóa hiện có thay vì tạo chữ giả trong prefab.
+          for (const dictPath of [
+            'assets/scripts/i18n/GameTerms.ts',
+            'assets/scripts/i18n/GeneralNames.ts',
+            'assets/scripts/i18n/RuntimeTerms.ts',
+          ]) {
+            if (!fs.existsSync(dictPath)) continue;
+            const src = fs.readFileSync(dictPath, 'utf8');
+            const re = /["']([^"'\r\n]+)["']\s*:\s*["']([^"'\r\n]*)["']/g;
+            let match;
+            while ((match = re.exec(src))) translations.set(match[1], match[2]);
+          }
+          const translationEntries = [...translations.entries()].sort((a, b) => b[0].length - a[0].length);
+
+          function tr(value) {
+            if (typeof value !== 'string' || !value) return value;
+            if (translations.has(value)) return translations.get(value);
+            let out = value;
+            for (const [from, to] of translationEntries) {
+              if (from.length >= 2 && out.includes(from)) out = out.split(from).join(to);
+            }
+            return out;
+          }
+
+          function copyColor(color) { return { ...color }; }
+
+          function processFile(path) {
+            const data = JSON.parse(fs.readFileSync(path, 'utf8'));
+            const nodes = new Map();
+            data.forEach((entry, index) => { if (entry?.__type__ === 'cc.Node') nodes.set(index, entry); });
+            const rootId = [...nodes.keys()].find(id => nodes.get(id)?._parent == null) ?? 1;
+            const rootName = (nodes.get(rootId)?._name || path.split('/').pop().replace('.prefab', '')).toLowerCase();
+            const nodeName = (id) => (nodes.get(id)?._name || '').toLowerCase();
+            const children = (id) => nodes.get(id)?._children?.map(r => r.__id__) || [];
+            const comps = (id) => (nodes.get(id)?._components || []).map(r => data[r.__id__]).filter(Boolean);
+            const descendants = (id, out = []) => { for (const c of children(id)) { out.push(c); descendants(c, out); } return out; };
+            const parentId = (id) => nodes.get(id)?._parent?.__id__ ?? -1;
+
+            function uiTransform(id) { return comps(id).find(c => c.__type__ === 'cc.UITransform'); }
+            function setSize(id, w, h) { const ui = uiTransform(id); if (ui?._contentSize) { ui._contentSize.width = w; ui._contentSize.height = h; } }
+            function setPos(id, x, y) { const n = nodes.get(id); if (n?._lpos) { n._lpos.x = x; n._lpos.y = y; } }
+            function labelsUnder(id) {
+              const result = [];
+              for (const nId of [id, ...descendants(id, [])]) for (const c of comps(nId)) if (c.__type__ === 'cc.Label') result.push(c);
+              return result;
+            }
+            function isArt(name) {
+              return /general|hero|head|avatar|portrait|rolepic|skillpic|skill_icon|map|army|city|build|cloud|character|illustration|banner|flag|itempic|respic|quality|star/.test(name);
+            }
+            function isChrome(name) {
+              return /mask|background|(^|_)bg($|_)|diban|panel|frame|kuang|board|base|bottom|topbar|sidebar|titlebar|tab|button|btn|input|edit|itembg|cellbg|line|scrollbg|window|popup|dialog/.test(name);
+            }
+            function titleLike(name, text) {
+              return /title|biaoti|header|caption/.test(name) || /ĐĂNG NHẬP|TƯỚNG|CHIÊU MỘ|CHIẾN BÁO|LIÊN MINH|THU THUẾ|TRÒ CHUYỆN|KỸ NĂNG|CÀI ĐẶT/.test((text || '').toUpperCase());
+            }
+
+            // Màn hình tối + panel đồng-vàng, giữ nguyên ảnh map/tướng/kỹ năng và mọi component logic.
+            for (const [id, node] of nodes) {
+              const name = nodeName(id);
+              const parentName = nodeName(parentId(id));
+              for (const comp of comps(id)) {
+                if (comp.__type__ === 'cc.Label') {
+                  comp._string = tr(comp._string || '');
+                  comp._font = null;
+                  comp._isSystemFontUsed = true;
+                  const title = titleLike(name + parentName, comp._string);
+                  comp._fontFamily = title ? 'Times New Roman' : 'Arial';
+                  comp._color = copyColor(title ? COLORS.gold : COLORS.text);
+                  comp._enableWrapText = false;
+                  if (title) {
+                    comp._isBold = true;
+                    const size = Math.max(comp._fontSize || 0, rootName.includes('item') ? 18 : 28);
+                    comp._fontSize = size;
+                    comp._actualFontSize = size;
+                    comp._lineHeight = Math.ceil(size * 1.2);
+                  }
+                }
+                if (comp.__type__ === 'cc.RichText') {
+                  comp._string = tr(comp._string || '');
+                  comp._fontFamily = 'Arial';
+                  comp._fontColor = copyColor(COLORS.text);
+                }
+                if (comp.__type__ === 'cc.EditBox') {
+                  if (typeof comp._placeholder === 'string') comp._placeholder = tr(comp._placeholder);
+                  if (typeof comp.placeholder === 'string') comp.placeholder = tr(comp.placeholder);
+                }
+                if (comp.__type__ === 'cc.UIOpacity' && /mask/.test(name)) comp._opacity = 190;
+                if (comp.__type__ === 'cc.Sprite' && !isArt(name)) {
+                  if (/mask|background|(^|_)bg($|_)/.test(name)) comp._color = copyColor(COLORS.dark);
+                  else if (/frame|kuang|line|border|titlebar/.test(name)) comp._color = copyColor(COLORS.frame);
+                  else if (isChrome(name) || isChrome(parentName)) comp._color = copyColor(COLORS.panel2);
+                }
+                if (comp.__type__ === 'cc.Button') {
+                  comp._normalColor = copyColor(COLORS.button);
+                  comp._hoverColor = copyColor(COLORS.goldSoft);
+                  comp._pressedColor = copyColor(COLORS.buttonPressed);
+                  comp._disabledColor = copyColor(COLORS.muted);
+                  for (const sprite of comps(id).filter(c => c.__type__ === 'cc.Sprite')) {
+                    if (!isArt(name)) sprite._color = copyColor(COLORS.button);
+                  }
+                  const ls = labelsUnder(id);
+                  if (ls.length) {
+                    ls[0]._color = copyColor(COLORS.gold);
+                    ls[0]._font = null;
+                    ls[0]._isSystemFontUsed = true;
+                    ls[0]._fontFamily = 'Arial';
+                    ls[0]._isBold = true;
+                  }
+                }
+              }
+            }
+
+            // Hạ độ sáng của lớp che toàn màn hình để giữ cảm giác bản đồ/chiến trường phía sau.
+            for (const id of children(rootId)) {
+              const name = nodeName(id);
+              if (name === 'mask') {
+                const ui = uiTransform(id);
+                if (ui?._contentSize) {
+                  ui._contentSize.width = Math.max(ui._contentSize.width, 1280);
+                  ui._contentSize.height = Math.max(ui._contentSize.height, 720);
+                }
+              }
+            }
+
+            // Khung chính theo đúng tỉ lệ desktop 16:9 của bộ ảnh mẫu. Chỉ đổi node top-level thật, không tạo panel giả.
+            const desired = rootName.includes('collect') ? [720, 600]
+              : rootName.includes('login') ? [650, 620]
+              : rootName.includes('setting') || rootName.includes('dialog') ? [720, 560]
+              : [1180, 680];
+            const candidates = children(rootId).filter(id => {
+              const name = nodeName(id);
+              const ui = uiTransform(id);
+              return ui?._contentSize && ui._contentSize.width >= 420 && ui._contentSize.height >= 300 && name !== 'mask' && !isArt(name);
+            });
+            if (candidates.length) {
+              candidates.sort((a, b) => {
+                const ua = uiTransform(a)._contentSize, ub = uiTransform(b)._contentSize;
+                return (ub.width * ub.height) - (ua.width * ua.height);
+              });
+              const panelId = candidates[0];
+              setSize(panelId, desired[0], desired[1]);
+              setPos(panelId, 0, 0);
+              for (const sprite of comps(panelId).filter(c => c.__type__ === 'cc.Sprite')) sprite._color = copyColor(COLORS.panel);
+            }
+
+            // Căn lại các nút hành động lớn ở đáy theo phong cách vàng-đồng; vẫn là Button thật với clickEvents cũ.
+            const realButtons = [];
+            data.forEach((entry) => {
+              if (entry?.__type__ !== 'cc.Button' || !entry.node || !Number.isInteger(entry.node.__id__)) return;
+              const id = entry.node.__id__;
+              const events = (entry._clickEvents || []).map(r => data[r.__id__]).filter(Boolean);
+              const handlers = events.map(e => e.handler).filter(Boolean);
+              realButtons.push({ id, handlers, entry });
+            });
+            for (const btn of realButtons) {
+              const labels = labelsUnder(btn.id);
+              const text = labels.map(l => l._string || '').join(' ');
+              if (/ĐĂNG NHẬP|ĐĂNG KÝ|VÀO TRÒ CHƠI|CHIÊU MỘ|THU THUẾ|NÂNG CẤP|XÁC NHẬN|GỬI|GIA NHẬP|TẠO LIÊN MINH/i.test(text)) {
+                const ui = uiTransform(btn.id);
+                if (ui?._contentSize) {
+                  ui._contentSize.width = Math.max(ui._contentSize.width, 210);
+                  ui._contentSize.height = Math.max(ui._contentSize.height, 54);
+                }
+                for (const s of comps(btn.id).filter(c => c.__type__ === 'cc.Sprite')) s._color = copyColor(COLORS.button);
+              }
+            }
+
+            // Tiêu đề màn hình lấy từ node tiêu đề có sẵn; không tạo chức năng hay dữ liệu mới.
+            const titleByScreen = rootName.includes('draw') ? 'CHIÊU MỘ'
+              : rootName.includes('warreport') ? 'CHIẾN BÁO'
+              : rootName.includes('union') ? 'LIÊN MINH'
+              : rootName.includes('collect') ? 'THU THUẾ'
+              : rootName === 'chat' ? 'TRÒ CHUYỆN'
+              : rootName.includes('skill') || rootName.includes('skilinfo') ? 'KỸ NĂNG'
+              : rootName.includes('generalroster') || rootName === 'generallist' ? 'TƯỚNG'
+              : rootName.includes('setting') ? 'CÀI ĐẶT'
+              : null;
+            if (titleByScreen) {
+              const titleLabels = [];
+              data.forEach((entry) => {
+                if (entry?.__type__ !== 'cc.Label' || !entry.node) return;
+                const name = nodeName(entry.node.__id__);
+                if (titleLike(name, entry._string) && !/item|cell/.test(name)) titleLabels.push(entry);
+              });
+              if (titleLabels.length) {
+                const label = titleLabels[0];
+                label._string = titleByScreen;
+                label._fontFamily = 'Times New Roman';
+                label._color = copyColor(COLORS.gold);
+                label._isBold = true;
+                label._fontSize = Math.max(label._fontSize || 0, 30);
+                label._actualFontSize = label._fontSize;
+              }
+            }
+
+            const residual = data
+              .filter(e => e?.__type__ === 'cc.Label')
+              .map(e => e._string || '')
+              .filter(s => /[\u3400-\u9fff]/.test(s));
+            if (residual.length) console.log(`[CJK remaining][${path}]`, [...new Set(residual)].slice(0, 30));
+
+            fs.writeFileSync(path, JSON.stringify(data, null, 2) + '\n', 'utf8');
+            return { path, realButtons: realButtons.length, residual: [...new Set(residual)] };
+          }
+
+          const reports = targetFiles.map(processFile);
+          console.log(JSON.stringify(reports.map(r => ({ path: r.path, realButtons: r.realButtons, cjk: r.residual.length })), null, 2));
+          NODE
+          node "$RUNNER_TEMP/apply-reference-ui.cjs"
+
+      - name: Validate UI source checks
+        shell: bash
+        run: |
+          npm ci
+          npm run build:ui
+
+      - name: Commit real prefab changes
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/scenes/LoginScene.prefab assets/scenes/MapUIScene.prefab assets/prefab
+          if git diff --cached --quiet; then
+            echo 'No prefab changes were required.'
+            exit 0
+          fi
+          git commit -m "feat(ui): restyle real game screens to reference art direction"
+          git push origin HEAD:feat/modern-vietnamese-ui-overhaul
