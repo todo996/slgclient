@@ -1,38 +1,55 @@
-import { _decorator, Component, Prefab, Node, Layout, Label, instantiate, UITransform, Vec2 } from 'cc';
+import { _decorator, Color, Component, Label, Layout, Node, Prefab, UITransform, Vec2, instantiate, Button, EditBox, Graphics, HorizontalTextAlignment, Sprite, VerticalTextAlignment } from 'cc';
 const { ccclass, property } = _decorator;
 
-import LoginCommand from "../../login/LoginCommand";
-import ArmySelectNodeLogic from "./ArmySelectNodeLogic";
-import CityArmySettingLogic from "./CityArmySettingLogic";
-import FacilityListLogic from "./FacilityListLogic";
-import MapUICommand from "./MapUICommand";
-import Dialog, { DialogType } from "./Dialog";
-import UnionCommand from "../../union/UnionCommand";
-import MapCommand from "../MapCommand";
-import FortressAbout from "./FortressAbout";
-import CityAboutLogic from "./CityAboutLogic";
-import GeneralListLogic from "./GeneralListLogic";
-import TransformLogic from "./TransformLogic";
-import { Tools } from "../../utils/Tools";
-import GeneralInfoLogic from "./GeneralInfoLogic";
-import WarReportLogic from "./WarReportLogic";
-import DrawRLogic from "./DrawRLogic";
-import { GeneralData } from "../../general/GeneralProxy";
-import SkillLogic from "./SkillLogic";
-import { SkillConf } from "../../config/skill/Skill";
-import SkillInfoLogic from "./SkillInfoLogic";
-import { EventMgr } from '../../utils/EventMgr';
 import { AudioManager } from '../../common/AudioManager';
-import { Skill } from '../../skill/SkillProxy';
 import { LogicEvent } from '../../common/LogicEvent';
+import { GeneralData } from '../../general/GeneralProxy';
+import LoginCommand from '../../login/LoginCommand';
+import { Skill } from '../../skill/SkillProxy';
+import UnionCommand from '../../union/UnionCommand';
+import { EventMgr } from '../../utils/EventMgr';
+import { Tools } from '../../utils/Tools';
+import MapCommand from '../MapCommand';
+import ArmySelectNodeLogic from './ArmySelectNodeLogic';
+import CityAboutLogic from './CityAboutLogic';
+import CityArmySettingLogic from './CityArmySettingLogic';
+import Dialog, { DialogType } from './Dialog';
+import DrawRLogic from './DrawRLogic';
+import FacilityListLogic from './FacilityListLogic';
+import FortressAbout from './FortressAbout';
+import GeneralInfoLogic from './GeneralInfoLogic';
+import GeneralListLogic from './GeneralListLogic';
+import MapUICommand from './MapUICommand';
+import SkillInfoLogic from './SkillInfoLogic';
+import SkillLogic from './SkillLogic';
+import TransformLogic from './TransformLogic';
+import WarReportLogic from './WarReportLogic';
 
+const ANCIENT_UI = {
+    gold: new Color(231,190,109,255), goldSoft: new Color(196,168,115,235), text: new Color(239,225,198,255),
+    muted: new Color(177,163,139,255), panel: new Color(17,14,12,242), panelSoft: new Color(31,25,20,236),
+    border: new Color(152,107,54,235), jade: new Color(38,76,63,255), red: new Color(117,47,39,255), success: new Color(111,183,97,255),
+};
+const UI_TX: any = {'武将':'Tướng','将领':'Tướng','征兵':'Chiêu mộ','战报':'Chiến báo','联盟':'Liên minh','市场':'Chợ','税收':'Thu thuế','聊天':'Trò chuyện','技能':'Kỹ năng','设置':'Cài đặt','世界':'Thế giới','关闭':'Đóng','成员':'Thành viên','申请':'Đăng ký','日志':'Nhật ký','木材':'Gỗ','铁矿':'Sắt','石料':'Đá','粮食':'Lương thực'};
+function localizeNode(root: Node): void { for (const l of root.getComponentsInChildren(Label)) { l.useSystemFont=true; l.fontFamily='Arial'; l.string=UI_TX[l.string] || l.string; } }
+function ensureUiTransform(n: Node,w:number,h:number): UITransform { const t=n.getComponent(UITransform)||n.addComponent(UITransform); t.setContentSize(w,h); return t; }
+function ensureUiChild(p:Node,name:string):Node { let n=p.getChildByName(name); if(!n){n=new Node(name);n.setParent(p);} return n; }
+function hideDirectUiSprites(n:Node):void { for(const s of n.getComponents(Sprite)) s.enabled=false; }
+function suppressLegacyChrome(root:Node,max:number=2):void { const walk=(n:Node,d:number)=>{if(d>max)return;const x=n.name.toLowerCase();if(/(^bg$|background|diban|panel|frame|kuang|border|base|bottom|top|di$)/.test(x)&&!/(icon|pic|head|avatar|portrait|general|skill|map|army|star)/.test(x))hideDirectUiSprites(n);for(const c of n.children)walk(c,d+1);};walk(root,0); }
+function drawAncientPanel(n:Node,w:number,h:number,r:number=10,fill:Color=ANCIENT_UI.panel):void { ensureUiTransform(n,w,h);const s=ensureUiChild(n,'__AncientSkin');s.setSiblingIndex(0);ensureUiTransform(s,w,h);const g=s.getComponent(Graphics)||s.addComponent(Graphics);g.clear();g.fillColor=fill;g.roundRect(-w/2,-h/2,w,h,r);g.fill();g.strokeColor=ANCIENT_UI.border;g.lineWidth=2;g.roundRect(-w/2+3,-h/2+3,w-6,h-6,Math.max(4,r-2));g.stroke(); }
+function createUiText(p:Node,name:string,text:string,size:number,color:Color,w:number,h:number,title:boolean=false):Label { const n=ensureUiChild(p,name);ensureUiTransform(n,w,h);const l=n.getComponent(Label)||n.addComponent(Label);l.useSystemFont=true;l.fontFamily=title?'Times New Roman':'Arial';l.string=text;l.fontSize=size;l.lineHeight=Math.ceil(size*1.25);l.enableWrapText=false;l.overflow=Label.Overflow.SHRINK;l.horizontalAlign=HorizontalTextAlignment.CENTER;l.verticalAlign=VerticalTextAlignment.CENTER;l.color=color;return l; }
+function getButtonHandler(b:Button):string { for(const e of (b.clickEvents as any[])||[]) if(e&&typeof e.handler==='string'&&e.handler)return e.handler; return ''; }
+function findButtonByHandler(root:Node,h:string):Button|null { return root.getComponentsInChildren(Button).find(b=>getButtonHandler(b)===h)||null; }
+function styleAncientButton(n:Node,text:string,v:'gold'|'dark'|'jade'|'red'='dark',w:number=180,h:number=50):Button { ensureUiTransform(n,w,h);hideDirectUiSprites(n);const s=ensureUiChild(n,'__AncientBtn');s.setSiblingIndex(0);ensureUiTransform(s,w,h);const g=s.getComponent(Graphics)||s.addComponent(Graphics);g.clear();g.fillColor=v==='gold'?new Color(120,78,28,255):v==='jade'?ANCIENT_UI.jade:v==='red'?ANCIENT_UI.red:ANCIENT_UI.panelSoft;g.roundRect(-w/2,-h/2,w,h,7);g.fill();g.strokeColor=v==='gold'?ANCIENT_UI.gold:ANCIENT_UI.border;g.lineWidth=2;g.roundRect(-w/2+2,-h/2+2,w-4,h-4,6);g.stroke();for(const l of n.getComponentsInChildren(Label))if(l.node.name!=='__AncientLabel')l.node.active=false;const l=createUiText(n,'__AncientLabel',text,v==='gold'?21:18,v==='gold'?new Color(255,239,194,255):ANCIENT_UI.text,w-18,h-8,true);l.node.active=true;l.node.setSiblingIndex(n.children.length-1);const b=n.getComponent(Button)||n.addComponent(Button);b.transition=Button.Transition.SCALE;b.zoomScale=.97;b.duration=.08;return b; }
+function styleAncientEditBox(e:EditBox,p:string,w:number,h:number):void { const n=e.node;ensureUiTransform(n,w,h);hideDirectUiSprites(n);const s=ensureUiChild(n,'__AncientInput');s.setSiblingIndex(0);ensureUiTransform(s,w,h);const g=s.getComponent(Graphics)||s.addComponent(Graphics);g.clear();g.fillColor=new Color(18,16,14,238);g.roundRect(-w/2,-h/2,w,h,7);g.fill();g.strokeColor=ANCIENT_UI.border;g.lineWidth=1;g.roundRect(-w/2+1,-h/2+1,w-2,h-2,7);g.stroke();e.placeholder=p;if(e.placeholderLabel){e.placeholderLabel.useSystemFont=true;e.placeholderLabel.fontFamily='Arial';}if(e.textLabel){e.textLabel.useSystemFont=true;e.textLabel.fontFamily='Arial';} }
+function addAncientScreenTitle(root:Node,title:string):void { const h=ensureUiChild(root,'__AncientHeader');h.setPosition(0,320,0);h.setSiblingIndex(root.children.length-1);const l=createUiText(h,'__AncientTitle',title,39,ANCIENT_UI.gold,360,58,true);l.node.setPosition(0,0,0); }
+function applyAncientScreenChrome(root:Node,title:string):void { localizeNode(root);suppressLegacyChrome(root,2);const b=ensureUiChild(root,'__AncientBackdrop');b.setSiblingIndex(0);drawAncientPanel(b,1280,720,0,new Color(12,10,9,205));addAncientScreenTitle(root,title); }
 
 
 @ccclass('MapUILogic')
 export default class MapUILogic extends Component {
-
     @property(Node)
-    contentNode:Node = null;
+    contentNode: Node = null;
 
     @property(Prefab)
     facilityPrefab: Prefab = null;
@@ -65,6 +82,7 @@ export default class MapUILogic extends Component {
     @property(Prefab)
     warReportPrefab: Prefab = null;
     protected _warReportNode: Node = null;
+
     @property(Prefab)
     armySelectPrefab: Prefab = null;
     protected _armySelectNode: Node = null;
@@ -88,7 +106,6 @@ export default class MapUILogic extends Component {
     @property(Prefab)
     collectPrefab: Prefab = null;
     protected _collectNode: Node = null;
-
 
     @property(Prefab)
     transFormPrefab: Prefab = null;
@@ -114,11 +131,9 @@ export default class MapUILogic extends Component {
     settingPrefab: Prefab = null;
     protected _settingNode: Node = null;
 
-
     @property(Prefab)
     cloudAniPrefab: Prefab = null;
     protected _cloudAniNode: Node = null;
-
 
     @property(Node)
     widgetNode: Node = null;
@@ -132,22 +147,20 @@ export default class MapUILogic extends Component {
     @property(Label)
     ridLabel: Label = null;
 
-    protected _resArray: any = [];
-    protected _yieldArray: any = [];
+    protected _resArray: any[] = [];
+    protected _yieldArray: any[] = [];
 
     protected onLoad(): void {
+        this._resArray.push({ key: 'gold', name: 'Vàng ' });
+        this._resArray.push({ key: 'wood', name: 'Gỗ ' });
+        this._resArray.push({ key: 'iron', name: 'Sắt ' });
+        this._resArray.push({ key: 'stone', name: 'Đá ' });
+        this._resArray.push({ key: 'grain', name: 'Lương ' });
 
-        this._resArray.push({key:"grain", name:"Lương:"});
-        this._resArray.push({key:"wood", name:"Gỗ:"});
-        this._resArray.push({key:"iron", name:"Sắt:"});
-        this._resArray.push({key:"stone", name:"Đá:"});
-        this._resArray.push({key:"gold", name:"Vàng:"});
-
-        this._yieldArray.push({key:"wood_yield", name:"Gỗ+"});
-        this._yieldArray.push({key:"iron_yield", name:"Sắt+"});
-        this._yieldArray.push({key:"stone_yield", name:"Đá+"});
-        this._yieldArray.push({key:"grain_yield", name:"Lương+"});
-
+        this._yieldArray.push({ key: 'wood_yield', name: 'Gỗ+' });
+        this._yieldArray.push({ key: 'iron_yield', name: 'Sắt+' });
+        this._yieldArray.push({ key: 'stone_yield', name: 'Đá+' });
+        this._yieldArray.push({ key: 'grain_yield', name: 'Lương+' });
 
         EventMgr.on(LogicEvent.openCityAbout, this.openCityAbout, this);
         EventMgr.on(LogicEvent.closeCityAbout, this.closeCityAbout, this);
@@ -170,48 +183,150 @@ export default class MapUILogic extends Component {
         EventMgr.on(LogicEvent.beforeScrollToMap, this.beforeScrollToMap, this);
         EventMgr.on(LogicEvent.showTip, this.showTip, this);
 
-
-
+        this.applyModernMapHud();
         this.updateRoleRes();
         this.updateRole();
-        let unionId = MapCommand.getInstance().cityProxy.myUnionId;
+
+        const unionId = MapCommand.getInstance().cityProxy.myUnionId;
         if (unionId > 0) {
             UnionCommand.getInstance().unionApplyList(unionId);
         }
     }
 
+    private applyModernMapHud(): void {
+        localizeNode(this.node);
+
+        const hudRoot = this.widgetNode || this.node;
+        const profile = ensureUiChild(hudRoot, '__MapProfilePanel');
+        profile.setPosition(-500, 307, 0);
+        profile.setSiblingIndex(0);
+        drawAncientPanel(profile, 270, 94, 10, new Color(16, 14, 12, 230));
+
+        this.nameLabel.node.setParent(profile);
+        this.nameLabel.node.setPosition(28, 18, 0);
+        this.nameLabel.useSystemFont = true;
+        this.nameLabel.fontFamily = 'Times New Roman';
+        this.nameLabel.fontSize = 21;
+        this.nameLabel.lineHeight = 27;
+        this.nameLabel.enableWrapText = false;
+        this.nameLabel.overflow = Label.Overflow.SHRINK;
+        this.nameLabel.color = ANCIENT_UI.gold;
+        ensureUiTransform(this.nameLabel.node, 190, 30);
+
+        this.ridLabel.node.setParent(profile);
+        this.ridLabel.node.setPosition(28, -20, 0);
+        this.ridLabel.useSystemFont = true;
+        this.ridLabel.fontFamily = 'Arial';
+        this.ridLabel.fontSize = 14;
+        this.ridLabel.lineHeight = 19;
+        this.ridLabel.enableWrapText = false;
+        this.ridLabel.overflow = Label.Overflow.SHRINK;
+        this.ridLabel.color = ANCIENT_UI.muted;
+        ensureUiTransform(this.ridLabel.node, 190, 24);
+
+        const profileMark = createUiText(profile, '__ProfileMark', 'T', 29, ANCIENT_UI.gold, 54, 54, true);
+        profileMark.node.setPosition(-90, 0, 0);
+
+        this.srollLayout.type = Layout.Type.HORIZONTAL;
+        this.srollLayout.spacingX = 5;
+        this.srollLayout.node.setPosition(210, 326, 0);
+        ensureUiTransform(this.srollLayout.node, 850, 48);
+        const resourceChildren = this.srollLayout.node.children;
+        for (let i = 0; i < resourceChildren.length; i += 1) {
+            const child = resourceChildren[i];
+            child.active = i < 6;
+            if (!child.active) {
+                continue;
+            }
+            suppressLegacyChrome(child, 1);
+            ensureUiTransform(child, i === 0 ? 120 : 138, 44);
+            drawAncientPanel(child, i === 0 ? 120 : 138, 44, 6, ANCIENT_UI.panelSoft);
+            const label = child.getChildByName('New Label')?.getComponent(Label);
+            if (label) {
+                label.useSystemFont = true;
+                label.fontFamily = 'Arial';
+                label.fontSize = 15;
+                label.lineHeight = 20;
+                label.enableWrapText = false;
+                label.overflow = Label.Overflow.SHRINK;
+                label.color = ANCIENT_UI.text;
+                ensureUiTransform(label.node, i === 0 ? 108 : 126, 32);
+            }
+        }
+
+        const menu: Array<[string, string, number]> = [
+            ['onClickGeneral', 'Tướng', 178],
+            ['openDraw', 'Chiêu mộ', 118],
+            ['openWarReport', 'Chiến báo', 58],
+            ['openUnion', 'Liên minh', -2],
+            ['openTr', 'Chợ', -62],
+            ['onClickCollection', 'Thu thuế', -122],
+            ['onClickSkillBtn', 'Kỹ năng', -182],
+        ];
+
+        for (const [handler, text, y] of menu) {
+            const button = findButtonByHandler(this.node, handler);
+            if (!button) {
+                continue;
+            }
+            button.node.setParent(hudRoot);
+            button.node.setPosition(-552, y, 0);
+            styleAncientButton(button.node, text, 'dark', 160, 52);
+            button.node.setSiblingIndex(hudRoot.children.length - 1);
+        }
+
+        const chat = findButtonByHandler(this.node, 'openChat');
+        if (chat) {
+            chat.node.setParent(hudRoot);
+            chat.node.setPosition(-342, -319, 0);
+            styleAncientButton(chat.node, 'Trò chuyện', 'dark', 430, 50);
+            chat.node.setSiblingIndex(hudRoot.children.length - 1);
+        }
+
+        const setting = findButtonByHandler(this.node, 'onClickSetting');
+        if (setting) {
+            setting.node.setParent(hudRoot);
+            setting.node.setPosition(555, -305, 0);
+            styleAncientButton(setting.node, 'Cài đặt', 'gold', 145, 72);
+            setting.node.setSiblingIndex(hudRoot.children.length - 1);
+        }
+
+        const back = findButtonByHandler(this.node, 'onBack');
+        if (back) {
+            back.node.setParent(profile);
+            back.node.setPosition(97, -63, 0);
+            styleAncientButton(back.node, 'Đăng xuất', 'dark', 110, 32);
+        }
+    }
+
     protected robLoginUI(): void {
-        this.showTip("Tài khoản đã đăng nhập ở nơi khác",function () {
+        this.showTip('Tài khoản đã đăng nhập ở nơi khác', () => {
             EventMgr.emit(LogicEvent.enterLogin);
         });
     }
 
-    protected showTip(text:string, close:Function):void {
-        if (this._dialogNode == null){
-            this._dialogNode = instantiate(this.dialog)
+    protected showTip(text: string, close: Function): void {
+        if (this._dialogNode == null) {
+            this._dialogNode = instantiate(this.dialog);
             this._dialogNode.parent = this.contentNode;
-        }else{
+        } else {
             this._dialogNode.active = true;
         }
         this._dialogNode.setSiblingIndex(this.topLayer());
         this._dialogNode.getComponent(Dialog).show(text, DialogType.OnlyConfirm);
-        this._dialogNode.getComponent(Dialog).setClose(close)
+        this._dialogNode.getComponent(Dialog).setClose(close);
     }
-
 
     protected onDestroy(): void {
         this.clearAllNode();
         MapUICommand.getInstance().proxy.clearData();
         EventMgr.targetOff(this);
-
-        console.log("MapUILogic onDestroy")
     }
 
     protected onBack(): void {
         AudioManager.instance.playClick();
         LoginCommand.getInstance().account_logout();
     }
-
 
     protected clearAllNode(): void {
         this._facilityNode = null;
@@ -223,17 +338,13 @@ export default class MapUILogic extends Component {
         this._drawNode = null;
         this._drawResultNode = null;
         this._generalDesNode = null;
-        this._dialogNode = null
+        this._dialogNode = null;
     }
 
-
-
-    public topLayer():number {
-        return this.contentNode.children.length+1;
+    public topLayer(): number {
+        return this.contentNode.children.length + 1;
     }
-    /**
-     * Công trình
-     */
+
     protected openFacility(data: any): void {
         if (this._facilityNode == null) {
             this._facilityNode = instantiate(this.facilityPrefab);
@@ -255,11 +366,8 @@ export default class MapUILogic extends Component {
         this._armySettingNode.setSiblingIndex(this.topLayer());
         this._armySettingNode.getComponent(CityArmySettingLogic).setData(cityId, order);
     }
-    /**
-     * Võ tướng
-     */
 
-    protected onClickGeneral(){
+    protected onClickGeneral(): void {
         AudioManager.instance.playClick();
         this.openGeneral([]);
     }
@@ -275,17 +383,10 @@ export default class MapUILogic extends Component {
         this._generalNode.getComponent(GeneralListLogic).setData(data, type, position);
     }
 
-
-    /**
-     * Võ tướng选择
-     * @param data
-     * @param zIndex
-     */
     protected openGeneralChoose(data: number[], position: number = 0): void {
         this.openGeneral(data, 1, position);
     }
 
-    /**打开Quân đội选择界面*/
     protected onOpenArmySelectUI(cmd: number, x: number, y: number): void {
         if (this._armySelectNode == null) {
             this._armySelectNode = instantiate(this.armySelectPrefab);
@@ -297,10 +398,6 @@ export default class MapUILogic extends Component {
         this._armySelectNode.getComponent(ArmySelectNodeLogic).setData(cmd, x, y);
     }
 
-
-    /**
-     * Võ tướngChi tiết
-     */
     protected openGeneralDes(cfgData: any, curData: any): void {
         if (this._generalDesNode == null) {
             this._generalDesNode = instantiate(this.generalDesPrefab);
@@ -312,19 +409,13 @@ export default class MapUILogic extends Component {
         this._generalDesNode.getComponent(GeneralInfoLogic).setData(cfgData, curData);
     }
 
-
-    /**
-     * 城市
-     */
     protected openCityAbout(data: any): void {
-
         if (this._cityAboutNode == null) {
             this._cityAboutNode = instantiate(this.cityAboutPrefab);
             this._cityAboutNode.parent = this.contentNode;
         } else {
             this._cityAboutNode.active = true;
         }
-
         this._cityAboutNode.setSiblingIndex(this.topLayer());
         this.widgetNode.active = false;
         EventMgr.emit(LogicEvent.scrollToMap, data.x, data.y);
@@ -346,11 +437,6 @@ export default class MapUILogic extends Component {
         this._fortressAboutNode.getComponent(FortressAbout).setData(data);
     }
 
-
-
-    /**
-     * Chiến báo
-     */
     protected openWarReport(): void {
         AudioManager.instance.playClick();
         if (this._warReportNode == null) {
@@ -363,45 +449,33 @@ export default class MapUILogic extends Component {
         this._warReportNode.getComponent(WarReportLogic).updateView();
     }
 
-    /**
-     * Nhân vật信息
-     */
     protected updateRoleRes(): void {
-        var children = this.srollLayout.node.children;
-        var roleRes = LoginCommand.getInstance().proxy.getRoleResData();
+        const children = this.srollLayout.node.children;
+        const roleRes = LoginCommand.getInstance().proxy.getRoleResData();
+        let i = 0;
+        const decreeLabel = children[i]?.getChildByName('New Label')?.getComponent(Label);
+        if (decreeLabel) {
+            decreeLabel.string = `Lệnh ${Tools.numberToShow(roleRes.decree)}`;
+        }
+        i += 1;
 
-        var i = 0;
-        children[i].getChildByName("New Label").getComponent(Label).string = "Lệnh:" + Tools.numberToShow(roleRes["decree"]);
-        i+=1;
-
-
-        for (let index = 0; index < this._resArray.length; index++) {
-            const obj = this._resArray[index];
-            var label = children[i].getChildByName("New Label").getComponent(Label)
-
-            if(obj.key == "gold"){
-                label.string = obj.name + Tools.numberToShow(roleRes[obj.key]);
-            }else{
-                label.string = obj.name + Tools.numberToShow(roleRes[obj.key]) + "/" + Tools.numberToShow(roleRes["depot_capacity"]);
+        for (const obj of this._resArray) {
+            const label = children[i]?.getChildByName('New Label')?.getComponent(Label);
+            if (label) {
+                label.string = `${obj.name}${Tools.numberToShow(roleRes[obj.key])}`;
             }
-
-            i+=1;
+            i += 1;
         }
 
-        for (let index = 0; index < this._yieldArray.length; index++) {
-            const obj = this._yieldArray[index];
-            var label = children[i].getChildByName("New Label").getComponent(Label)
-            label.string = obj.name + Tools.numberToShow(roleRes[obj.key]);
-            i+=1;
+        for (const obj of this._yieldArray) {
+            const label = children[i]?.getChildByName('New Label')?.getComponent(Label);
+            if (label) {
+                label.string = `${obj.name}${Tools.numberToShow(roleRes[obj.key])}`;
+            }
+            i += 1;
         }
-
     }
 
-
-
-    /**
-     * Chiêu mộ tướng
-     */
     protected openDraw(): void {
         AudioManager.instance.playClick();
         if (this._drawNode == null) {
@@ -413,13 +487,6 @@ export default class MapUILogic extends Component {
         this._drawNode.setSiblingIndex(this.topLayer());
     }
 
-
-
-
-    /**
-     * Chiêu mộ tướng结果
-     * @param data
-     */
     protected openDrawR(data: any): void {
         if (this._drawResultNode == null) {
             this._drawResultNode = instantiate(this.drawResultrefab);
@@ -430,8 +497,6 @@ export default class MapUILogic extends Component {
         this._drawResultNode.setSiblingIndex(this.topLayer());
         this._drawResultNode.getComponent(DrawRLogic).setData(data);
     }
-
-
 
     protected openUnion(): void {
         AudioManager.instance.playClick();
@@ -444,7 +509,6 @@ export default class MapUILogic extends Component {
         this._unionNode.setSiblingIndex(this.topLayer());
     }
 
-
     protected openChat(): void {
         AudioManager.instance.playClick();
         if (this._chatNode == null) {
@@ -455,8 +519,6 @@ export default class MapUILogic extends Component {
         }
         this._chatNode.setSiblingIndex(this.topLayer());
     }
-
-
 
     protected openTr(): void {
         AudioManager.instance.playClick();
@@ -472,22 +534,17 @@ export default class MapUILogic extends Component {
 
     protected onOpenGeneralConvert(): void {
         AudioManager.instance.playClick();
-        console.log("onOpenGeneralConvert");
         if (this._generalConvertNode == null) {
             this._generalConvertNode = instantiate(this.generalConvertPrefab);
             this._generalConvertNode.parent = this.contentNode;
-
         } else {
             this._generalConvertNode.active = true;
         }
-
         this._generalConvertNode.setSiblingIndex(this.topLayer());
-
     }
 
     protected onOpenGeneralRoster(): void {
         AudioManager.instance.playClick();
-        console.log("onOpenGeneralRoster");
         if (this._generalRosterNode == null) {
             this._generalRosterNode = instantiate(this.generalRosterPrefab);
             this._generalRosterNode.parent = this.contentNode;
@@ -495,16 +552,14 @@ export default class MapUILogic extends Component {
             this._generalRosterNode.active = true;
         }
         this._generalRosterNode.setSiblingIndex(this.topLayer());
-
     }
 
-    onClickSkillBtn(): void{
+    onClickSkillBtn(): void {
         AudioManager.instance.playClick();
         this.onOpenSkill(0);
     }
 
-    protected onOpenSkill(type:number=0, general:GeneralData = null, skillPos:number=-1): void {
-        console.log("onOpenSkill", type, general, skillPos);
+    protected onOpenSkill(type: number = 0, general: GeneralData = null, skillPos: number = -1): void {
         if (this._skillNode == null) {
             this._skillNode = instantiate(this.skillPrefab);
             this._skillNode.parent = this.contentNode;
@@ -515,15 +570,14 @@ export default class MapUILogic extends Component {
         this._skillNode.getComponent(SkillLogic).setData(type, general, skillPos);
     }
 
-    protected onCloseSkill(){
+    protected onCloseSkill(): void {
         AudioManager.instance.playClick();
         if (this._skillNode) {
-           this._skillNode.active = false;
+            this._skillNode.active = false;
         }
     }
 
-    protected onOpenSkillInfo(cfg:Skill, type:number=0, general:GeneralData = null, skillPos:number=-1){
-        console.log("onOpenSkillInfo", cfg, type, general, skillPos);
+    protected onOpenSkillInfo(cfg: Skill, type: number = 0, general: GeneralData = null, skillPos: number = -1): void {
         AudioManager.instance.playClick();
         if (this._skillInfoNode == null) {
             this._skillInfoNode = instantiate(this.skillInfoPrefab);
@@ -535,60 +589,48 @@ export default class MapUILogic extends Component {
         this._skillInfoNode.getComponent(SkillInfoLogic).setData(cfg, type, general, skillPos);
     }
 
-
-    //Thu thuế
-    protected onCollection(msg:any):void{
-        this.showTip("Đã thu được "+msg.gold+" Vàng", null);
+    protected onCollection(msg: any): void {
+        this.showTip(`Đã thu được ${msg.gold} Vàng`, null);
     }
 
     protected updateRole(): void {
-        var roleData = LoginCommand.getInstance().proxy.getRoleData();
-        this.nameLabel.string = "Tên nhân vật: " + roleData.nickName;
-        this.ridLabel.string = "Nhân vậtID: " + roleData.rid + "";
+        const roleData = LoginCommand.getInstance().proxy.getRoleData();
+        this.nameLabel.string = roleData.nickName;
+        this.ridLabel.string = `ID: ${roleData.rid}`;
     }
 
-    protected onClickCollection():void {
+    protected onClickCollection(): void {
         AudioManager.instance.playClick();
-
-        if(this._collectNode == null){
+        if (this._collectNode == null) {
             this._collectNode = instantiate(this.collectPrefab);
             this._collectNode.parent = this.contentNode;
         }
         this._collectNode.active = true;
         this._collectNode.setSiblingIndex(this.topLayer());
-
     }
 
-    protected onClickSetting():void {
+    protected onClickSetting(): void {
         AudioManager.instance.playClick();
-        if(this._settingNode == null){
+        if (this._settingNode == null) {
             this._settingNode = instantiate(this.settingPrefab);
             this._settingNode.parent = this.contentNode;
         }
         this._settingNode.active = true;
         this._settingNode.setSiblingIndex(this.topLayer());
-
     }
 
-    protected beforeScrollToMap(x:number, y:number, oldx:number, oldy:number):void {
-        let newPoint = new Vec2(x, y);
-        let oldPoint = new Vec2(oldx, oldy);
-        let dis = Vec2.squaredDistance(newPoint, oldPoint);
-        console.log("beforeScrollToMap:", x, y, oldx, oldy, dis);
-
-        if(dis < 360000){
+    protected beforeScrollToMap(x: number, y: number, oldx: number, oldy: number): void {
+        const newPoint = new Vec2(x, y);
+        const oldPoint = new Vec2(oldx, oldy);
+        const dis = Vec2.squaredDistance(newPoint, oldPoint);
+        if (dis < 360000) {
             return;
         }
-
-        if(this._cloudAniNode == null){
+        if (this._cloudAniNode == null) {
             this._cloudAniNode = instantiate(this.cloudAniPrefab);
             this._cloudAniNode.parent = this.contentNode;
         }
         this._cloudAniNode.active = true;
         this._cloudAniNode.setSiblingIndex(this.topLayer());
-
     }
-
-
-
 }

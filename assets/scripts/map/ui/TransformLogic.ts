@@ -1,158 +1,235 @@
-
-import { _decorator, Component, Layout, Node, Label, Slider, Toggle } from 'cc';
+import { _decorator, Component, Label, Layout, Node, Slider, Toggle, UITransform, Button, Color, EditBox, Graphics, HorizontalTextAlignment, Sprite, VerticalTextAlignment } from 'cc';
 const { ccclass, property } = _decorator;
-import LoginCommand from "../../login/LoginCommand";
-import MapCommand from "../MapCommand";
-import MapUICommand from "./MapUICommand";
-import { EventMgr } from '../../utils/EventMgr';
+
 import { AudioManager } from '../../common/AudioManager';
 import { LogicEvent } from '../../common/LogicEvent';
+import LoginCommand from '../../login/LoginCommand';
+import MapCommand from '../MapCommand';
+import { EventMgr } from '../../utils/EventMgr';
+import MapUICommand from './MapUICommand';
+
+const ANCIENT_UI = {
+    gold: new Color(231,190,109,255), goldSoft: new Color(196,168,115,235), text: new Color(239,225,198,255),
+    muted: new Color(177,163,139,255), panel: new Color(17,14,12,242), panelSoft: new Color(31,25,20,236),
+    border: new Color(152,107,54,235), jade: new Color(38,76,63,255), red: new Color(117,47,39,255), success: new Color(111,183,97,255),
+};
+const UI_TX: any = {'武将':'Tướng','将领':'Tướng','征兵':'Chiêu mộ','战报':'Chiến báo','联盟':'Liên minh','市场':'Chợ','税收':'Thu thuế','聊天':'Trò chuyện','技能':'Kỹ năng','设置':'Cài đặt','世界':'Thế giới','关闭':'Đóng','成员':'Thành viên','申请':'Đăng ký','日志':'Nhật ký','木材':'Gỗ','铁矿':'Sắt','石料':'Đá','粮食':'Lương thực'};
+function localizeNode(root: Node): void { for (const l of root.getComponentsInChildren(Label)) { l.useSystemFont=true; l.fontFamily='Arial'; l.string=UI_TX[l.string] || l.string; } }
+function ensureUiTransform(n: Node,w:number,h:number): UITransform { const t=n.getComponent(UITransform)||n.addComponent(UITransform); t.setContentSize(w,h); return t; }
+function ensureUiChild(p:Node,name:string):Node { let n=p.getChildByName(name); if(!n){n=new Node(name);n.setParent(p);} return n; }
+function hideDirectUiSprites(n:Node):void { for(const s of n.getComponents(Sprite)) s.enabled=false; }
+function suppressLegacyChrome(root:Node,max:number=2):void { const walk=(n:Node,d:number)=>{if(d>max)return;const x=n.name.toLowerCase();if(/(^bg$|background|diban|panel|frame|kuang|border|base|bottom|top|di$)/.test(x)&&!/(icon|pic|head|avatar|portrait|general|skill|map|army|star)/.test(x))hideDirectUiSprites(n);for(const c of n.children)walk(c,d+1);};walk(root,0); }
+function drawAncientPanel(n:Node,w:number,h:number,r:number=10,fill:Color=ANCIENT_UI.panel):void { ensureUiTransform(n,w,h);const s=ensureUiChild(n,'__AncientSkin');s.setSiblingIndex(0);ensureUiTransform(s,w,h);const g=s.getComponent(Graphics)||s.addComponent(Graphics);g.clear();g.fillColor=fill;g.roundRect(-w/2,-h/2,w,h,r);g.fill();g.strokeColor=ANCIENT_UI.border;g.lineWidth=2;g.roundRect(-w/2+3,-h/2+3,w-6,h-6,Math.max(4,r-2));g.stroke(); }
+function createUiText(p:Node,name:string,text:string,size:number,color:Color,w:number,h:number,title:boolean=false):Label { const n=ensureUiChild(p,name);ensureUiTransform(n,w,h);const l=n.getComponent(Label)||n.addComponent(Label);l.useSystemFont=true;l.fontFamily=title?'Times New Roman':'Arial';l.string=text;l.fontSize=size;l.lineHeight=Math.ceil(size*1.25);l.enableWrapText=false;l.overflow=Label.Overflow.SHRINK;l.horizontalAlign=HorizontalTextAlignment.CENTER;l.verticalAlign=VerticalTextAlignment.CENTER;l.color=color;return l; }
+function getButtonHandler(b:Button):string { for(const e of (b.clickEvents as any[])||[]) if(e&&typeof e.handler==='string'&&e.handler)return e.handler; return ''; }
+function findButtonByHandler(root:Node,h:string):Button|null { return root.getComponentsInChildren(Button).find(b=>getButtonHandler(b)===h)||null; }
+function styleAncientButton(n:Node,text:string,v:'gold'|'dark'|'jade'|'red'='dark',w:number=180,h:number=50):Button { ensureUiTransform(n,w,h);hideDirectUiSprites(n);const s=ensureUiChild(n,'__AncientBtn');s.setSiblingIndex(0);ensureUiTransform(s,w,h);const g=s.getComponent(Graphics)||s.addComponent(Graphics);g.clear();g.fillColor=v==='gold'?new Color(120,78,28,255):v==='jade'?ANCIENT_UI.jade:v==='red'?ANCIENT_UI.red:ANCIENT_UI.panelSoft;g.roundRect(-w/2,-h/2,w,h,7);g.fill();g.strokeColor=v==='gold'?ANCIENT_UI.gold:ANCIENT_UI.border;g.lineWidth=2;g.roundRect(-w/2+2,-h/2+2,w-4,h-4,6);g.stroke();for(const l of n.getComponentsInChildren(Label))if(l.node.name!=='__AncientLabel')l.node.active=false;const l=createUiText(n,'__AncientLabel',text,v==='gold'?21:18,v==='gold'?new Color(255,239,194,255):ANCIENT_UI.text,w-18,h-8,true);l.node.active=true;l.node.setSiblingIndex(n.children.length-1);const b=n.getComponent(Button)||n.addComponent(Button);b.transition=Button.Transition.SCALE;b.zoomScale=.97;b.duration=.08;return b; }
+function styleAncientEditBox(e:EditBox,p:string,w:number,h:number):void { const n=e.node;ensureUiTransform(n,w,h);hideDirectUiSprites(n);const s=ensureUiChild(n,'__AncientInput');s.setSiblingIndex(0);ensureUiTransform(s,w,h);const g=s.getComponent(Graphics)||s.addComponent(Graphics);g.clear();g.fillColor=new Color(18,16,14,238);g.roundRect(-w/2,-h/2,w,h,7);g.fill();g.strokeColor=ANCIENT_UI.border;g.lineWidth=1;g.roundRect(-w/2+1,-h/2+1,w-2,h-2,7);g.stroke();e.placeholder=p;if(e.placeholderLabel){e.placeholderLabel.useSystemFont=true;e.placeholderLabel.fontFamily='Arial';}if(e.textLabel){e.textLabel.useSystemFont=true;e.textLabel.fontFamily='Arial';} }
+function addAncientScreenTitle(root:Node,title:string):void { const h=ensureUiChild(root,'__AncientHeader');h.setPosition(0,320,0);h.setSiblingIndex(root.children.length-1);const l=createUiText(h,'__AncientTitle',title,39,ANCIENT_UI.gold,360,58,true);l.node.setPosition(0,0,0); }
+function applyAncientScreenChrome(root:Node,title:string):void { localizeNode(root);suppressLegacyChrome(root,2);const b=ensureUiChild(root,'__AncientBackdrop');b.setSiblingIndex(0);drawAncientPanel(b,1280,720,0,new Color(12,10,9,205));addAncientScreenTitle(root,title); }
+
 
 @ccclass('TransformLogic')
 export default class TransformLogic extends Component {
-
-
     @property(Layout)
-    fromLayout:Layout = null;
-
-
+    fromLayout: Layout = null;
     @property(Layout)
-    toLayout:Layout = null;
-
-
+    toLayout: Layout = null;
     @property(Node)
-    trNode:Node = null;
-
-
+    trNode: Node = null;
     @property(Label)
-    trLabel:Label = null;
-
+    trLabel: Label = null;
     @property(Label)
-    rateLabel:Label = null;
-
-
+    rateLabel: Label = null;
     @property(Slider)
-    trSlider:Slider = null;
+    trSlider: Slider = null;
 
     protected _nameObj: any = {};
-    protected _keyArr:string[] = []
-    protected _curFromIndex:number = -1;
-    protected _curToIndex:number = -1;
-    protected _fromChange:number = 0;
-    protected _toChange:number = 0;
+    protected _keyArr: string[] = [];
+    protected _curFromIndex = -1;
+    protected _curToIndex = -1;
+    protected _fromChange = 0;
+    protected _toChange = 0;
 
-    protected onLoad():void{
-
+    protected onLoad(): void {
         this._nameObj = {
-            wood: "Gỗx",
-            iron: "Sắtx",
-            stone: "Đáx",
-            grain: "Lương thựcx",
+            wood: 'Gỗ',
+            iron: 'Sắt',
+            stone: 'Đá',
+            grain: 'Lương thực',
         };
-
-        this._keyArr = ["wood","iron","stone","grain"]
-
+        this._keyArr = ['wood', 'iron', 'stone', 'grain'];
         EventMgr.on(LogicEvent.upateMyRoleRes, this.initView, this);
+        this.applyModernMarket();
     }
 
-    private getRate() :number {
-        var cityId = MapCommand.getInstance().cityProxy.getMyMainCity().cityId;
-        var _addition = MapUICommand.getInstance().proxy.getMyCityAddition(cityId);
-        var rate = MapUICommand.getInstance().proxy.getTransformRate() + _addition.taxRate;
-        return rate
+    private applyModernMarket(): void {
+        localizeNode(this.node);
+        applyAncientScreenChrome(this.node, 'Chợ');
+
+        const left = ensureUiChild(this.node, '__MarketLeftPanel');
+        left.setPosition(-370, 20, 0);
+        left.setSiblingIndex(0);
+        drawAncientPanel(left, 400, 490, 10);
+        const leftTitle = createUiText(left, '__MarketLeftTitle', 'TÀI NGUYÊN ĐANG CÓ', 19, ANCIENT_UI.success, 330, 42, true);
+        leftTitle.node.setPosition(0, 205, 0);
+
+        const right = ensureUiChild(this.node, '__MarketRightPanel');
+        right.setPosition(370, 20, 0);
+        right.setSiblingIndex(0);
+        drawAncientPanel(right, 400, 490, 10);
+        const rightTitle = createUiText(right, '__MarketRightTitle', 'MUỐN NHẬN', 19, ANCIENT_UI.success, 330, 42, true);
+        rightTitle.node.setPosition(0, 205, 0);
+
+        this.fromLayout.node.setPosition(-370, 2, 0);
+        this.toLayout.node.setPosition(370, 2, 0);
+        this.fromLayout.type = Layout.Type.VERTICAL;
+        this.toLayout.type = Layout.Type.VERTICAL;
+        this.fromLayout.spacingY = 10;
+        this.toLayout.spacingY = 10;
+        ensureUiTransform(this.fromLayout.node, 355, 330);
+        ensureUiTransform(this.toLayout.node, 355, 330);
+
+        this.styleResourceRows(this.fromLayout);
+        this.styleResourceRows(this.toLayout);
+
+        const rateCaption = createUiText(this.node, '__MarketRateCaption', 'TỈ LỆ GIAO DỊCH', 16, ANCIENT_UI.goldSoft, 220, 34, true);
+        rateCaption.node.setPosition(0, 95, 0);
+        this.rateLabel.node.setPosition(0, 42, 0);
+        this.rateLabel.useSystemFont = true;
+        this.rateLabel.fontFamily = 'Times New Roman';
+        this.rateLabel.fontSize = 39;
+        this.rateLabel.lineHeight = 46;
+        this.rateLabel.color = ANCIENT_UI.gold;
+        ensureUiTransform(this.rateLabel.node, 220, 54);
+
+        this.trSlider.node.setPosition(-145, -226, 0);
+        ensureUiTransform(this.trSlider.node, 500, 42);
+        this.trLabel.node.setPosition(190, -226, 0);
+        this.trLabel.useSystemFont = true;
+        this.trLabel.fontFamily = 'Arial';
+        this.trLabel.fontSize = 18;
+        this.trLabel.color = ANCIENT_UI.success;
+        ensureUiTransform(this.trLabel.node, 260, 40);
+
+        const exchange = findButtonByHandler(this.node, 'onTransForm');
+        if (exchange) {
+            exchange.node.setPosition(480, -300, 0);
+            styleAncientButton(exchange.node, 'TRAO ĐỔI', 'jade', 235, 58);
+            exchange.node.setSiblingIndex(this.node.children.length - 1);
+        }
+        const close = findButtonByHandler(this.node, 'onClickClose');
+        if (close) {
+            close.node.setPosition(-574, 320, 0);
+            styleAncientButton(close.node, '←', 'dark', 72, 52);
+            close.node.setSiblingIndex(this.node.children.length - 1);
+        }
     }
 
-    public initView():void{
+    private styleResourceRows(layout: Layout): void {
+        for (const child of layout.node.children) {
+            suppressLegacyChrome(child, 1);
+            const transform = child.getComponent(UITransform);
+            const width = transform && transform.width > 60 ? transform.width : 330;
+            const height = transform && transform.height > 30 ? transform.height : 66;
+            drawAncientPanel(child, Math.min(width, 340), Math.min(Math.max(height, 58), 72), 6, ANCIENT_UI.panelSoft);
+            const label = child.getChildByName('New Label')?.getComponent(Label);
+            if (label) {
+                label.useSystemFont = true;
+                label.fontFamily = 'Arial';
+                label.fontSize = 17;
+                label.color = ANCIENT_UI.text;
+            }
+        }
+    }
+
+    private getRate(): number {
+        const cityId = MapCommand.getInstance().cityProxy.getMyMainCity().cityId;
+        const addition = MapUICommand.getInstance().proxy.getMyCityAddition(cityId);
+        return MapUICommand.getInstance().proxy.getTransformRate() + addition.taxRate;
+    }
+
+    public initView(): void {
         this.updateView();
         this.updateBtn();
-
     }
 
-    protected updateView():void{
-        var roleRes = LoginCommand.getInstance().proxy.getRoleResData();
-        var i = 0;
-        let children_from = this.fromLayout.node.children;
-        for (var key in this._nameObj) {
-            children_from[i].getChildByName("New Label").getComponent(Label).string = this._nameObj[key] + roleRes[key];
-            i++;
+    protected updateView(): void {
+        const roleRes = LoginCommand.getInstance().proxy.getRoleResData();
+        let i = 0;
+        const childrenFrom = this.fromLayout.node.children;
+        for (const key in this._nameObj) {
+            const label = childrenFrom[i].getChildByName('New Label').getComponent(Label);
+            label.string = `${this._nameObj[key]}  ${roleRes[key]}`;
+            i += 1;
         }
         i = 0;
-        let children_to = this.toLayout.node.children;
-        for (var key in this._nameObj) {
-            children_to[i].getChildByName("New Label").getComponent(Label).string = this._nameObj[key] + roleRes[key];
-            i++;
+        const childrenTo = this.toLayout.node.children;
+        for (const key in this._nameObj) {
+            const label = childrenTo[i].getChildByName('New Label').getComponent(Label);
+            label.string = `${this._nameObj[key]}  ${roleRes[key]}`;
+            i += 1;
         }
-
-        var rate = this.getRate()
-        this.rateLabel.string = "1 / " + (rate/100)
-
+        const rate = this.getRate();
+        this.rateLabel.string = `1 : ${rate / 100}`;
     }
 
-    protected updateBtn():void{
-        this.trSlider.progress = 0.0;
-        this.trNode.active = this._curFromIndex == this._curToIndex?false:true;
+    protected updateBtn(): void {
+        this.trSlider.progress = 0;
+        this.trNode.active = this._curFromIndex != this._curToIndex;
         this.updateLable();
     }
 
-
-    protected updateLable():void{
-        var from_index = this.getFromSelectIndex();
-        var to_index = this.getToSelectIndex();
-        if (from_index < 0 || to_index < 0){
-            this.trLabel.string = ""
-        }else{
-            var roleRes = LoginCommand.getInstance().proxy.getRoleResData();
-            var from_key = this._keyArr[from_index];
-            this._fromChange = Math.round(roleRes[from_key] * this.trSlider.progress)
-
-            var rate = this.getRate()
-            this._toChange = Math.round(this._fromChange * rate / 100)
-            this.trLabel.string = this._fromChange  + "/" + this._toChange
+    protected updateLable(): void {
+        const fromIndex = this.getFromSelectIndex();
+        const toIndex = this.getToSelectIndex();
+        if (fromIndex < 0 || toIndex < 0) {
+            this.trLabel.string = 'Chọn tài nguyên để trao đổi';
+            return;
         }
+        const roleRes = LoginCommand.getInstance().proxy.getRoleResData();
+        const fromKey = this._keyArr[fromIndex];
+        this._fromChange = Math.round(roleRes[fromKey] * this.trSlider.progress);
+        const rate = this.getRate();
+        this._toChange = Math.round(this._fromChange * rate / 100);
+        this.trLabel.string = `${this._fromChange}  →  ${this._toChange}`;
     }
 
-    protected getFromSelectIndex():number{
-        let children_from = this.fromLayout.node.children;
-        for(var i = 0;i < children_from.length;i++){
-            if(children_from[i].getComponent(Toggle).isChecked){
+    protected getFromSelectIndex(): number {
+        const children = this.fromLayout.node.children;
+        for (let i = 0; i < children.length; i += 1) {
+            if (children[i].getComponent(Toggle).isChecked) {
                 return i;
             }
         }
-
         return -1;
     }
 
-
-    protected getToSelectIndex():number{
-        let children_to = this.toLayout.node.children;
-        for(var i = 0;i < children_to.length;i++){
-            if(children_to[i].getComponent(Toggle).isChecked){
+    protected getToSelectIndex(): number {
+        const children = this.toLayout.node.children;
+        for (let i = 0; i < children.length; i += 1) {
+            if (children[i].getComponent(Toggle).isChecked) {
                 return i;
             }
         }
-
         return -1;
     }
 
-
-    protected fromToggleHandle(event:any):void{
-        console.log("fromToggleHandle:",this.getFromSelectIndex())
+    protected fromToggleHandle(event: any): void {
         this._curFromIndex = this.getFromSelectIndex();
         this.updateBtn();
     }
 
-    protected toToggleHandle(event:any):void{
-        console.log("toToggleHandle:",this.getToSelectIndex())
-        this._curToIndex = this.getToSelectIndex()
+    protected toToggleHandle(event: any): void {
+        this._curToIndex = this.getToSelectIndex();
         this.updateBtn();
     }
 
-
-    protected slideHandle():void{
+    protected slideHandle(): void {
         this.updateLable();
     }
 
-    protected onDestroy():void{
+    protected onDestroy(): void {
         EventMgr.targetOff(this);
     }
 
@@ -161,22 +238,17 @@ export default class TransformLogic extends Component {
         AudioManager.instance.playClick();
     }
 
-    protected onTransForm():void{
+    protected onTransForm(): void {
         AudioManager.instance.playClick();
-        let from:number[] = [0,0,0,0];
-        let to:number[] = [0,0,0,0];
-
-        var from_index = this.getFromSelectIndex();
-        var to_index = this.getToSelectIndex();
-
-        if(from_index < 0 || to_index < 0){
-            return
+        const from: number[] = [0, 0, 0, 0];
+        const to: number[] = [0, 0, 0, 0];
+        const fromIndex = this.getFromSelectIndex();
+        const toIndex = this.getToSelectIndex();
+        if (fromIndex < 0 || toIndex < 0) {
+            return;
         }
-
-        from[from_index] = this._fromChange;
-        to[to_index] = this._toChange;
-
-        MapUICommand.getInstance().interiorTransform(from,to);
+        from[fromIndex] = this._fromChange;
+        to[toIndex] = this._toChange;
+        MapUICommand.getInstance().interiorTransform(from, to);
     }
-
 }
