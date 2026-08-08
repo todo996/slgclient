@@ -19,25 +19,27 @@ import { LogicEvent } from '../common/LogicEvent';
 import { localizeNode } from '../i18n/I18n';
 import LoginCommand from '../login/LoginCommand';
 import { NetEvent } from '../network/socket/NetInterface';
-import {
-    createGameText,
-    drawGamePanel,
-    ensureChild,
-    ensureTransform,
-    styleGameButton,
-    styleGameInput,
-} from '../ui/components/GameSurface';
-import { GameTheme } from '../ui/theme/GameTheme';
 import { EventMgr } from '../utils/EventMgr';
+
 const { ccclass, property } = _decorator;
 
 type AuthTone = 'info' | 'success' | 'error';
-
 type AuthUiState = {
     busy: boolean;
     message?: string;
     tone?: AuthTone;
 };
+
+const GOLD = new Color(231, 190, 109, 255);
+const GOLD_SOFT = new Color(196, 168, 115, 235);
+const TEXT = new Color(239, 225, 198, 255);
+const MUTED = new Color(177, 163, 139, 255);
+const PANEL = new Color(17, 14, 12, 246);
+const PANEL_2 = new Color(32, 25, 19, 246);
+const BORDER = new Color(152, 107, 54, 235);
+const JADE = new Color(35, 74, 64, 255);
+const DANGER = new Color(226, 102, 86, 255);
+const SUCCESS = new Color(111, 183, 97, 255);
 
 @ccclass('LoginScene')
 export default class LoginScene extends Component {
@@ -87,9 +89,209 @@ export default class LoginScene extends Component {
         return null;
     }
 
+    private ensureTransform(node: Node, width: number, height: number): UITransform {
+        const transform = node.getComponent(UITransform) || node.addComponent(UITransform);
+        transform.setContentSize(width, height);
+        return transform;
+    }
+
+    private ensureChild(parent: Node, name: string): Node {
+        let node = parent.getChildByName(name);
+        if (!node) {
+            node = new Node(name);
+            node.setParent(parent);
+        }
+        return node;
+    }
+
     private disableDirectSprites(node: Node): void {
         for (const sprite of node.getComponents(Sprite)) {
             sprite.enabled = false;
+        }
+    }
+
+    private drawPanel(node: Node, width: number, height: number, radius: number = 18): void {
+        this.ensureTransform(node, width, height);
+        const skin = this.ensureChild(node, '__VietnamesePanelSkin');
+        skin.setPosition(0, 0, 0);
+        skin.setSiblingIndex(0);
+        this.ensureTransform(skin, width, height);
+        const graphics = skin.getComponent(Graphics) || skin.addComponent(Graphics);
+        graphics.clear();
+
+        graphics.fillColor = new Color(5, 5, 5, 125);
+        graphics.roundRect(-width / 2 - 7, -height / 2 - 7, width + 14, height + 14, radius + 4);
+        graphics.fill();
+
+        graphics.fillColor = PANEL;
+        graphics.roundRect(-width / 2, -height / 2, width, height, radius);
+        graphics.fill();
+
+        graphics.strokeColor = new Color(78, 53, 30, 255);
+        graphics.lineWidth = 5;
+        graphics.roundRect(-width / 2, -height / 2, width, height, radius);
+        graphics.stroke();
+
+        graphics.strokeColor = BORDER;
+        graphics.lineWidth = 2;
+        graphics.roundRect(-width / 2 + 5, -height / 2 + 5, width - 10, height - 10, Math.max(6, radius - 5));
+        graphics.stroke();
+
+        const corner = 26;
+        graphics.strokeColor = GOLD;
+        graphics.lineWidth = 2;
+        graphics.moveTo(-width / 2 + 10, height / 2 - corner);
+        graphics.lineTo(-width / 2 + 10, height / 2 - 10);
+        graphics.lineTo(-width / 2 + corner, height / 2 - 10);
+        graphics.moveTo(width / 2 - corner, height / 2 - 10);
+        graphics.lineTo(width / 2 - 10, height / 2 - 10);
+        graphics.lineTo(width / 2 - 10, height / 2 - corner);
+        graphics.moveTo(-width / 2 + 10, -height / 2 + corner);
+        graphics.lineTo(-width / 2 + 10, -height / 2 + 10);
+        graphics.lineTo(-width / 2 + corner, -height / 2 + 10);
+        graphics.moveTo(width / 2 - corner, -height / 2 + 10);
+        graphics.lineTo(width / 2 - 10, -height / 2 + 10);
+        graphics.lineTo(width / 2 - 10, -height / 2 + corner);
+        graphics.stroke();
+    }
+
+    private createText(
+        parent: Node,
+        name: string,
+        text: string,
+        fontSize: number,
+        color: Color,
+        width: number,
+        height: number,
+        titleFont: boolean = false,
+    ): Label {
+        const node = this.ensureChild(parent, name);
+        this.ensureTransform(node, width, height);
+        const label = node.getComponent(Label) || node.addComponent(Label);
+        label.useSystemFont = true;
+        label.fontFamily = titleFont ? 'Times New Roman' : 'Arial';
+        label.string = text;
+        label.fontSize = fontSize;
+        label.lineHeight = Math.ceil(fontSize * 1.25);
+        label.enableWrapText = false;
+        label.overflow = Label.Overflow.SHRINK;
+        label.horizontalAlign = HorizontalTextAlignment.CENTER;
+        label.verticalAlign = VerticalTextAlignment.CENTER;
+        label.color = color;
+        return label;
+    }
+
+    private styleButton(
+        buttonNode: Node,
+        text: string,
+        variant: 'gold' | 'dark' | 'jade',
+        width: number,
+        height: number,
+    ): Button {
+        this.ensureTransform(buttonNode, width, height);
+        this.disableDirectSprites(buttonNode);
+        const background = buttonNode.getChildByName('Background');
+        if (background) {
+            this.disableDirectSprites(background);
+        }
+
+        const skin = this.ensureChild(buttonNode, '__VietnameseButtonSkin');
+        skin.setPosition(0, 0, 0);
+        skin.setSiblingIndex(0);
+        this.ensureTransform(skin, width, height);
+        const graphics = skin.getComponent(Graphics) || skin.addComponent(Graphics);
+        graphics.clear();
+
+        const fill = variant === 'gold'
+            ? new Color(122, 78, 27, 255)
+            : variant === 'jade'
+                ? JADE
+                : PANEL_2;
+        graphics.fillColor = fill;
+        graphics.roundRect(-width / 2, -height / 2, width, height, 8);
+        graphics.fill();
+        graphics.strokeColor = variant === 'gold' ? GOLD : BORDER;
+        graphics.lineWidth = 2;
+        graphics.roundRect(-width / 2 + 2, -height / 2 + 2, width - 4, height - 4, 7);
+        graphics.stroke();
+        graphics.strokeColor = new Color(244, 215, 155, variant === 'gold' ? 145 : 75);
+        graphics.lineWidth = 1;
+        graphics.roundRect(-width / 2 + 7, -height / 2 + 7, width - 14, height - 14, 5);
+        graphics.stroke();
+
+        for (const label of buttonNode.getComponentsInChildren(Label)) {
+            if (label.node.name !== '__VietnameseButtonLabel') {
+                label.node.active = false;
+            }
+        }
+        const label = this.createText(
+            buttonNode,
+            '__VietnameseButtonLabel',
+            text,
+            variant === 'gold' ? 23 : 19,
+            variant === 'gold' ? new Color(255, 237, 188, 255) : TEXT,
+            width - 24,
+            height - 10,
+            true,
+        );
+        label.node.active = true;
+        label.node.setPosition(0, 0, 0);
+        label.node.setSiblingIndex(buttonNode.children.length - 1);
+
+        const button = buttonNode.getComponent(Button) || buttonNode.addComponent(Button);
+        button.transition = Button.Transition.SCALE;
+        button.zoomScale = 0.97;
+        button.duration = 0.08;
+        return button;
+    }
+
+    private styleInput(editBox: EditBox, placeholder: string, width: number, height: number): void {
+        const node = editBox.node;
+        this.ensureTransform(node, width, height);
+        this.disableDirectSprites(node);
+        const background = node.getChildByName('Background');
+        if (background) {
+            this.disableDirectSprites(background);
+        }
+
+        const skin = this.ensureChild(node, '__VietnameseInputSkin');
+        skin.setPosition(0, 0, 0);
+        skin.setSiblingIndex(0);
+        this.ensureTransform(skin, width, height);
+        const graphics = skin.getComponent(Graphics) || skin.addComponent(Graphics);
+        graphics.clear();
+        graphics.fillColor = new Color(18, 16, 14, 238);
+        graphics.roundRect(-width / 2, -height / 2, width, height, 8);
+        graphics.fill();
+        graphics.strokeColor = new Color(127, 105, 77, 220);
+        graphics.lineWidth = 1.5;
+        graphics.roundRect(-width / 2 + 1, -height / 2 + 1, width - 2, height - 2, 8);
+        graphics.stroke();
+
+        editBox.placeholder = placeholder;
+        if (editBox.placeholderLabel) {
+            const label = editBox.placeholderLabel;
+            label.useSystemFont = true;
+            label.fontFamily = 'Arial';
+            label.fontSize = 18;
+            label.lineHeight = 24;
+            label.color = new Color(151, 139, 120, 255);
+            label.horizontalAlign = HorizontalTextAlignment.LEFT;
+            label.verticalAlign = VerticalTextAlignment.CENTER;
+            this.ensureTransform(label.node, width - 62, height - 14);
+            label.node.setPosition(12, 0, 0);
+        }
+        if (editBox.textLabel) {
+            const label = editBox.textLabel;
+            label.useSystemFont = true;
+            label.fontFamily = 'Arial';
+            label.fontSize = 19;
+            label.lineHeight = 25;
+            label.color = TEXT;
+            label.horizontalAlign = HorizontalTextAlignment.LEFT;
+            label.verticalAlign = VerticalTextAlignment.CENTER;
+            this.ensureTransform(label.node, width - 62, height - 14);
+            label.node.setPosition(12, 0, 0);
         }
     }
 
@@ -99,24 +301,27 @@ export default class LoginScene extends Component {
         if (titleRoot) {
             this.disableDirectSprites(titleRoot);
             titleRoot.setPosition(0, 246, 0);
-            ensureTransform(titleRoot, 440, 72);
+            this.ensureTransform(titleRoot, 440, 72);
         }
         if (!titleLabel) {
+            const fallback = this.createText(panel, '__LoginTitle', 'ĐĂNG NHẬP', 44, GOLD, 430, 64, true);
+            fallback.node.setPosition(0, 246, 0);
             return;
         }
 
-        ensureTransform(titleLabel.node, 430, 64);
+        this.ensureTransform(titleLabel.node, 430, 64);
         titleLabel.node.setPosition(0, 0, 0);
+        titleLabel.node.active = true;
         titleLabel.string = 'ĐĂNG NHẬP';
         titleLabel.useSystemFont = true;
-        titleLabel.fontFamily = GameTheme.typography.titleFont;
+        titleLabel.fontFamily = 'Times New Roman';
         titleLabel.fontSize = 44;
         titleLabel.lineHeight = 54;
         titleLabel.enableWrapText = false;
         titleLabel.overflow = Label.Overflow.SHRINK;
         titleLabel.horizontalAlign = HorizontalTextAlignment.CENTER;
         titleLabel.verticalAlign = VerticalTextAlignment.CENTER;
-        titleLabel.color = GameTheme.colors.gold300;
+        titleLabel.color = GOLD;
     }
 
     private configureInputs(panel: Node): void {
@@ -132,36 +337,36 @@ export default class LoginScene extends Component {
         this._accountInput.node.name = 'AccountInput';
         this._accountInput.node.setPosition(0, 125, 0);
         this._accountInput.maxLength = 50;
-        styleGameInput(this._accountInput, 'Tên đăng nhập', 'user', 454, 66);
+        this.styleInput(this._accountInput, 'Tên đăng nhập', 454, 66);
 
         this._passwordInput.node.name = 'PasswordInput';
         this._passwordInput.node.setPosition(0, 38, 0);
         this._passwordInput.maxLength = 72;
         this._passwordInput.inputFlag = EditBox.InputFlag.PASSWORD;
-        styleGameInput(this._passwordInput, 'Mật khẩu', 'lock', 454, 66);
+        this.styleInput(this._passwordInput, 'Mật khẩu', 454, 66);
 
         this.createPasswordToggle(this._passwordInput.node);
     }
 
     private createPasswordToggle(inputNode: Node): void {
-        const toggleNode = ensureChild(inputNode, '__PasswordToggle');
-        ensureTransform(toggleNode, 68, 44);
+        const toggleNode = this.ensureChild(inputNode, '__PasswordToggle');
+        this.ensureTransform(toggleNode, 68, 44);
         toggleNode.setPosition(177, 0, 0);
         toggleNode.setSiblingIndex(inputNode.children.length - 1);
 
         const button = toggleNode.getComponent(Button) || toggleNode.addComponent(Button);
         button.transition = Button.Transition.SCALE;
         button.zoomScale = 0.94;
-        button.duration = GameTheme.motion.fast;
+        button.duration = 0.08;
         toggleNode.off(Button.EventType.CLICK, this.onTogglePassword, this);
         toggleNode.on(Button.EventType.CLICK, this.onTogglePassword, this);
 
-        this._passwordToggleLabel = createGameText(
+        this._passwordToggleLabel = this.createText(
             toggleNode,
             '__PasswordToggleLabel',
             'Hiện',
-            16,
-            GameTheme.colors.gold300,
+            15,
+            GOLD,
             64,
             38,
         );
@@ -169,8 +374,8 @@ export default class LoginScene extends Component {
     }
 
     private createSeparator(panel: Node): void {
-        const separator = ensureChild(panel, '__AuthSeparator');
-        ensureTransform(separator, 410, 34);
+        const separator = this.ensureChild(panel, '__AuthSeparator');
+        this.ensureTransform(separator, 410, 34);
         separator.setPosition(0, -166, 0);
 
         const graphics = separator.getComponent(Graphics) || separator.addComponent(Graphics);
@@ -183,15 +388,7 @@ export default class LoginScene extends Component {
         graphics.lineTo(205, 0);
         graphics.stroke();
 
-        const label = createGameText(
-            separator,
-            '__SeparatorText',
-            'HOẶC',
-            15,
-            GameTheme.colors.muted,
-            92,
-            30,
-        );
+        const label = this.createText(separator, '__SeparatorText', 'HOẶC', 15, MUTED, 92, 30);
         label.node.setPosition(0, 0, 0);
     }
 
@@ -203,49 +400,23 @@ export default class LoginScene extends Component {
             return;
         }
 
-        loginNode.setPosition(0, -112, 0);
-        this._loginButton = styleGameButton(loginNode, 'ĐĂNG NHẬP', 'primary', 356, 64);
+        loginNode.setPosition(0, -100, 0);
+        this._loginButton = this.styleButton(loginNode, 'ĐĂNG NHẬP', 'gold', 356, 64);
 
-        registerNode.setPosition(0, -224, 0);
-        this._registerButton = styleGameButton(
-            registerNode,
-            'ĐĂNG KÝ TÀI KHOẢN',
-            'secondary',
-            330,
-            54,
-        );
+        registerNode.setPosition(0, -220, 0);
+        this._registerButton = this.styleButton(registerNode, 'ĐĂNG KÝ TÀI KHOẢN', 'dark', 330, 54);
 
         this.createSeparator(panel);
 
-        const forgot = createGameText(
-            panel,
-            '__ForgotPassword',
-            'Quên mật khẩu? · Chưa hỗ trợ',
-            16,
-            GameTheme.colors.muted,
-            310,
-            34,
-        );
-        forgot.node.setPosition(70, -18, 0);
-        forgot.horizontalAlign = HorizontalTextAlignment.RIGHT;
+        this._statusLabel = this.createText(panel, '__AuthStatus', '', 16, MUTED, 460, 34);
+        this._statusLabel.node.setPosition(0, -50, 0);
 
-        this._statusLabel = createGameText(
-            panel,
-            '__AuthStatus',
-            '',
-            16,
-            GameTheme.colors.muted,
-            460,
-            34,
-        );
-        this._statusLabel.node.setPosition(0, -66, 0);
-
-        const tagline = createGameText(
+        const tagline = this.createText(
             panel,
             '__AuthTagline',
             'Chinh chiến thiên hạ · Thống nhất giang sơn',
             15,
-            new Color(196, 168, 115, 230),
+            GOLD_SOFT,
             500,
             32,
             true,
@@ -264,7 +435,7 @@ export default class LoginScene extends Component {
 
         this.disableDirectSprites(panel);
         panel.setPosition(0, -2, 0);
-        drawGamePanel(panel, 650, 620, 22);
+        this.drawPanel(panel, 650, 620, 22);
 
         this.configureTitle(panel);
         this.configureInputs(panel);
@@ -307,16 +478,12 @@ export default class LoginScene extends Component {
         this._statusLabel.string = busy
             ? (state.message || 'Đang kết nối máy chủ...')
             : (state.message || '');
-        switch (state.tone) {
-            case 'error':
-                this._statusLabel.color = new Color(230, 108, 91, 255);
-                break;
-            case 'success':
-                this._statusLabel.color = GameTheme.colors.success;
-                break;
-            default:
-                this._statusLabel.color = GameTheme.colors.gold300;
-                break;
+        if (state.tone === 'error') {
+            this._statusLabel.color = DANGER;
+        } else if (state.tone === 'success') {
+            this._statusLabel.color = SUCCESS;
+        } else {
+            this._statusLabel.color = GOLD;
         }
     }
 
