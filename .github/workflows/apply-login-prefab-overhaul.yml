@@ -1,0 +1,179 @@
+name: Apply login prefab overhaul once
+
+on:
+  push:
+    branches:
+      - feat/modern-vietnamese-ui-overhaul
+    paths:
+      - .github/workflows/apply-login-prefab-overhaul.yml
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/modern-vietnamese-ui-overhaul
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Restyle real login prefabs without changing handlers
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          @'
+          const fs = require('fs');
+
+          const GOLD = { __type__: 'cc.Color', r: 231, g: 190, b: 109, a: 255 };
+          const TEXT = { __type__: 'cc.Color', r: 239, g: 225, b: 198, a: 255 };
+          const MUTED = { __type__: 'cc.Color', r: 177, g: 163, b: 139, a: 255 };
+          const BUTTON = { __type__: 'cc.Color', r: 255, g: 239, b: 194, a: 255 };
+          const DARK = { __type__: 'cc.Color', r: 35, g: 28, b: 21, a: 255 };
+
+          const replacements = [
+            ['账号登录', 'ĐĂNG NHẬP'],
+            ['帐号登录', 'ĐĂNG NHẬP'],
+            ['用户登录', 'ĐĂNG NHẬP'],
+            ['进入游戏', 'VÀO TRÒ CHƠI'],
+            ['请输入用户名', 'Tên đăng nhập'],
+            ['请输入账号', 'Tên đăng nhập'],
+            ['请输入帐号', 'Tên đăng nhập'],
+            ['请输入密码', 'Mật khẩu'],
+            ['登录', 'ĐĂNG NHẬP'],
+            ['登陆', 'ĐĂNG NHẬP'],
+            ['注册账号', 'ĐĂNG KÝ TÀI KHOẢN'],
+            ['注册', 'ĐĂNG KÝ TÀI KHOẢN'],
+            ['账号', 'Tên đăng nhập'],
+            ['帐号', 'Tên đăng nhập'],
+            ['用户名', 'Tên đăng nhập'],
+            ['密码', 'Mật khẩu'],
+            ['确定', 'Xác nhận'],
+            ['取消', 'Hủy'],
+            ['关闭', 'Đóng'],
+          ];
+
+          function translate(value) {
+            if (typeof value !== 'string') return value;
+            let next = value;
+            for (const [from, to] of replacements) next = next.split(from).join(to);
+            return next;
+          }
+
+          function setSize(data, nodeId, width, height) {
+            for (const compRef of data[nodeId]._components || []) {
+              const comp = data[compRef.__id__];
+              if (comp && comp.__type__ === 'cc.UITransform' && comp._contentSize) {
+                comp._contentSize.width = width;
+                comp._contentSize.height = height;
+              }
+            }
+          }
+
+          function setPosition(node, x, y) {
+            if (!node || !node._lpos) return;
+            node._lpos.x = x;
+            node._lpos.y = y;
+          }
+
+          function restyle(path) {
+            const data = JSON.parse(fs.readFileSync(path, 'utf8'));
+            const names = new Map();
+            data.forEach((entry, index) => {
+              if (entry && entry.__type__ === 'cc.Node') names.set(index, entry._name || '');
+            });
+
+            data.forEach((entry, index) => {
+              if (!entry || typeof entry !== 'object') return;
+              const nodeId = entry.node && Number.isInteger(entry.node.__id__) ? entry.node.__id__ : -1;
+              const nodeName = nodeId >= 0 ? (names.get(nodeId) || '') : '';
+              const parentId = nodeId >= 0 && data[nodeId]._parent ? data[nodeId]._parent.__id__ : -1;
+              const parentName = parentId >= 0 ? (names.get(parentId) || '') : '';
+
+              if (entry.__type__ === 'cc.Label') {
+                entry._string = translate(entry._string || '');
+                entry._font = null;
+                entry._isSystemFontUsed = true;
+                entry._fontFamily = /title|biaoti/i.test(nodeName + parentName) ? 'Times New Roman' : 'Arial';
+                entry._isBold = /ĐĂNG NHẬP|VÀO TRÒ CHƠI|ĐĂNG KÝ/.test(entry._string);
+                entry._enableWrapText = false;
+                if (/ĐĂNG NHẬP/.test(entry._string)) {
+                  entry._color = GOLD;
+                  entry._fontSize = Math.max(entry._fontSize || 0, 40);
+                  entry._actualFontSize = entry._fontSize;
+                } else if (/VÀO TRÒ CHƠI|ĐĂNG KÝ/.test(entry._string)) {
+                  entry._color = BUTTON;
+                } else {
+                  entry._color = TEXT;
+                }
+              }
+
+              if (entry.__type__ === 'cc.EditBox') {
+                if (typeof entry._placeholder === 'string') entry._placeholder = translate(entry._placeholder);
+                if (typeof entry.placeholder === 'string') entry.placeholder = translate(entry.placeholder);
+              }
+
+              if (entry.__type__ === 'cc.Sprite' && nodeName === 'diban1_23') {
+                entry._color = DARK;
+              }
+
+              if (entry.__type__ === 'cc.UIOpacity' && nodeName === 'mask') {
+                entry._opacity = 155;
+              }
+            });
+
+            data.forEach((entry, index) => {
+              if (!entry || entry.__type__ !== 'cc.Node') return;
+              switch (entry._name) {
+                case 'diban1_23':
+                  setPosition(entry, 0, -2);
+                  setSize(data, index, 650, 620);
+                  break;
+                case 'tipsbiaoti':
+                  setPosition(entry, 0, 246);
+                  break;
+                case 'dlbtn':
+                  setPosition(entry, 0, -100);
+                  setSize(data, index, 356, 64);
+                  break;
+                case 'zcBtn':
+                  setPosition(entry, 0, -220);
+                  setSize(data, index, 330, 54);
+                  break;
+                case 'btnEnter':
+                  setPosition(entry, 0, -148);
+                  break;
+              }
+            });
+
+            const leftovers = data
+              .filter((entry) => entry && entry.__type__ === 'cc.Label')
+              .map((entry) => entry._string || '')
+              .filter((text) => /[\u3400-\u9fff]/.test(text));
+            if (leftovers.length) {
+              throw new Error(`${path} vẫn còn chữ Trung hiển thị: ${[...new Set(leftovers)].join(' | ')}`);
+            }
+
+            fs.writeFileSync(path, JSON.stringify(data, null, 2) + '\n', 'utf8');
+          }
+
+          restyle('assets/scenes/LoginScene.prefab');
+          restyle('assets/prefab/login.prefab');
+          '@ | Set-Content -Path "$env:RUNNER_TEMP/apply-login-ui.cjs" -Encoding utf8
+          node "$env:RUNNER_TEMP/apply-login-ui.cjs"
+
+      - name: Commit prefab-only UI changes
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/scenes/LoginScene.prefab assets/prefab/login.prefab
+          if (git diff --cached --quiet) {
+            Write-Host 'No login prefab changes were required.'
+            exit 0
+          }
+          git commit -m "feat(ui): rebuild login prefabs in Vietnamese ancient style"
+          git push origin HEAD:feat/modern-vietnamese-ui-overhaul
