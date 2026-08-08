@@ -1,0 +1,47 @@
+name: Migrate UI bridge once
+
+on:
+  push:
+    branches:
+      - feat/modern-vietnamese-ui-overhaul
+    paths:
+      - scripts/migrate-ui-bridge.mjs
+
+permissions:
+  contents: write
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: feat/modern-vietnamese-ui-overhaul
+          fetch-depth: 0
+
+      - name: Migrate redesigned controllers to stable runtime bridge
+        run: node scripts/migrate-ui-bridge.mjs
+
+      - name: Verify no giant controller-local helper blocks remain
+        shell: bash
+        run: |
+          COUNT=$(grep -R -l "const LOCAL_UI_TRANSLATIONS" assets/scripts/map/ui assets/scripts/chat assets/scripts/union | wc -l)
+          if [ "$COUNT" -ne 0 ]; then
+            echo "Found $COUNT legacy inlined helper blocks"
+            exit 1
+          fi
+          if grep -R -n "from .*i18n/I18n" assets/scripts/map/ui/MapUILogic.ts assets/scripts/map/ui/GeneralListLogic.ts assets/scripts/map/ui/GeneralItemLogic.ts assets/scripts/map/ui/DrawLogic.ts assets/scripts/map/ui/WarReportLogic.ts assets/scripts/map/ui/WarReportItemLogic.ts assets/scripts/map/ui/WarReportDesLogic.ts assets/scripts/map/ui/DrawRLogic.ts assets/scripts/map/ui/GeneralInfoLogic.ts assets/scripts/map/ui/SkillLogic.ts assets/scripts/map/ui/SkillItemLogic.ts assets/scripts/map/ui/SkillInfoLogic.ts assets/scripts/map/ui/TransformLogic.ts assets/scripts/chat/ChatLogic.ts assets/scripts/chat/ChatItemLogic.ts assets/scripts/union/UnionLogic.ts assets/scripts/union/UnionLobbyLogic.ts assets/scripts/union/UnionItemLogic.ts; then
+            echo "Redesigned controller still imports i18n bridge"
+            exit 1
+          fi
+          grep -n "__SLG_ANCIENT_UI__" assets/scripts/Main.ts
+
+      - name: Commit migration
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/scripts
+          git commit -m "fix(build): route redesigned UI through Main runtime bridge"
+          git push origin HEAD:feat/modern-vietnamese-ui-overhaul
