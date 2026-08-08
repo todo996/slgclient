@@ -1,4 +1,19 @@
 import { EditBox, Label, Node, RichText } from 'cc';
+import {
+    ANCIENT_UI,
+    addAncientScreenTitle,
+    applyAncientScreenChrome,
+    createUiText,
+    drawAncientPanel,
+    ensureUiChild,
+    ensureUiTransform,
+    findButtonByHandler,
+    getButtonHandler,
+    hideDirectUiSprites,
+    styleAncientButton,
+    styleAncientEditBox,
+    suppressLegacyChrome,
+} from '../common/AudioManager';
 import { gameTermTranslations } from './GameTerms';
 import { generalNameTranslations } from './GeneralNames';
 import { runtimeTermTranslations } from './RuntimeTerms';
@@ -17,7 +32,7 @@ export {
     styleAncientButton,
     styleAncientEditBox,
     suppressLegacyChrome,
-} from '../common/AudioManager';
+};
 
 /**
  * Phông hệ thống hỗ trợ đầy đủ dấu tiếng Việt trên trình duyệt.
