@@ -29,172 +29,107 @@ jobs:
           path: source
           fetch-depth: 1
 
-      - name: Locate build and create-button coordinate
+      - name: Locate build and create-role button
         shell: bash
         run: |
           set -euo pipefail
           INDEX="$(find preview -type f -name index.html | head -n 1)"
-          if [ -z "$INDEX" ]; then
-            echo "No index.html found in build-web-preview" >&2
-            exit 1
-          fi
-          BUILD_DIR="$(dirname "$INDEX")"
-          echo "BUILD_DIR=$BUILD_DIR" >> "$GITHUB_ENV"
-
+          test -n "$INDEX"
+          echo "BUILD_DIR=$(dirname "$INDEX")" >> "$GITHUB_ENV"
           node <<'NODE' | tee /tmp/create-coordinate.txt
-          const fs = require('fs');
-          const data = JSON.parse(fs.readFileSync('source/assets/prefab/create.prefab','utf8'));
-          const ref = v => v && typeof v === 'object' && Number.isInteger(v.__id__) ? data[v.__id__] : null;
-          const nodes = data.map((o,i)=>({o,i})).filter(x=>x.o && x.o.__type__==='cc.Node');
-          let targetNode = null;
-          for (let i=0;i<data.length;i++) {
-            const o=data[i];
-            if (!o || o.__type__!=='cc.Button' || !Array.isArray(o.clickEvents)) continue;
-            const matches=o.clickEvents.some(e=>{ const ce=ref(e); return ce && ce.handler==='onClickCreate'; });
-            if (matches) { targetNode=ref(o.node); break; }
+          const fs=require('fs');
+          const data=JSON.parse(fs.readFileSync('source/assets/prefab/create.prefab','utf8'));
+          const ref=v=>v&&typeof v==='object'&&Number.isInteger(v.__id__)?data[v.__id__]:null;
+          let target=null;
+          for(const o of data){
+            if(!o||o.__type__!=='cc.Button'||!Array.isArray(o.clickEvents)) continue;
+            if(o.clickEvents.some(e=>ref(e)?.handler==='onClickCreate')) { target=ref(o.node); break; }
           }
-          function sumPos(node) {
-            let x=0,y=0,cur=node,guard=0;
-            while(cur && guard++<30) {
-              if (cur._lpos) { x += Number(cur._lpos.x||0); y += Number(cur._lpos.y||0); }
-              cur=ref(cur._parent);
-            }
-            return {x,y};
-          }
-          const pos=targetNode?sumPos(targetNode):{x:0,y:-250};
-          const sx=Math.round(640+pos.x), sy=Math.round(360-pos.y);
-          console.log(`CREATE_NODE=${targetNode?targetNode._name:'fallback'} COCOS=(${pos.x},${pos.y}) SCREEN=(${sx},${sy})`);
-          fs.writeFileSync('/tmp/create-screen.json',JSON.stringify({x:sx,y:sy}));
+          let x=0,y=0,cur=target,guard=0;
+          while(cur&&guard++<30){if(cur._lpos){x+=Number(cur._lpos.x||0);y+=Number(cur._lpos.y||0);}cur=ref(cur._parent);}
+          const out={x:Math.round(640+x),y:Math.round(360-y)};
+          console.log(`CREATE_NODE=${target?target._name:'fallback'} COCOS=(${x},${y}) SCREEN=(${out.x},${out.y})`);
+          fs.writeFileSync('/tmp/create-screen.json',JSON.stringify(out));
           NODE
 
-      - name: Start local server for the real generated build
+      - name: Start real generated build
         shell: bash
         run: |
           set -euo pipefail
           cd "$BUILD_DIR"
           python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/slg-http.log 2>&1 &
           for i in {1..40}; do
-            if curl -fsS http://127.0.0.1:4173/ >/dev/null; then exit 0; fi
+            curl -fsS http://127.0.0.1:4173/ >/dev/null && exit 0
             sleep 1
           done
           cat /tmp/slg-http.log
           exit 1
 
-      - name: Run real browser flow and capture five screens
+      - name: Register login and capture five real screens
         shell: bash
         run: |
           set -euo pipefail
           CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
-          if [ -z "$CHROME" ]; then
-            echo "Chrome/Chromium not available" >&2
-            exit 1
-          fi
+          test -n "$CHROME"
           mkdir -p screenshots
-          "$CHROME" \
-            --headless=new \
-            --no-sandbox \
-            --disable-gpu \
-            --hide-scrollbars \
-            --window-size=1280,720 \
-            --remote-debugging-port=9222 \
-            --user-data-dir=/tmp/slg-runtime-profile \
-            about:blank >/tmp/slg-chrome.log 2>&1 &
-
-          for i in {1..40}; do
-            if curl -fsS http://127.0.0.1:9222/json >/dev/null; then break; fi
-            sleep 1
-          done
+          "$CHROME" --headless=new --no-sandbox --disable-gpu --hide-scrollbars \
+            --window-size=1280,720 --remote-debugging-port=9222 \
+            --user-data-dir=/tmp/slg-runtime-profile about:blank >/tmp/slg-chrome.log 2>&1 &
+          for i in {1..40}; do curl -fsS http://127.0.0.1:9222/json >/dev/null && break; sleep 1; done
 
           cat >/tmp/runtime-capture.mjs <<'NODE'
           import fs from 'node:fs';
-          const sleep = ms => new Promise(r=>setTimeout(r,ms));
-          const targets = await fetch('http://127.0.0.1:9222/json').then(r=>r.json());
-          const page = targets.find(t=>t.type==='page');
-          if (!page) throw new Error('Chrome page target not found');
-          const ws = new WebSocket(page.webSocketDebuggerUrl);
-          let seq=0;
-          const pending=new Map();
+          const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+          const targets=await fetch('http://127.0.0.1:9222/json').then(r=>r.json());
+          const page=targets.find(t=>t.type==='page');
+          if(!page) throw new Error('No Chrome page target');
+          const ws=new WebSocket(page.webSocketDebuggerUrl);
+          let seq=0; const pending=new Map(); const events=[];
           ws.onmessage=ev=>{
-            const msg=JSON.parse(ev.data);
-            if(msg.id && pending.has(msg.id)){
-              const p=pending.get(msg.id); pending.delete(msg.id);
-              msg.error?p.reject(new Error(JSON.stringify(msg.error))):p.resolve(msg.result);
-            }
+            const m=JSON.parse(ev.data);
+            if(m.id&&pending.has(m.id)){const p=pending.get(m.id);pending.delete(m.id);m.error?p.reject(new Error(JSON.stringify(m.error))):p.resolve(m.result);return;}
+            if(m.method==='Runtime.consoleAPICalled') events.push('console '+JSON.stringify(m.params.args?.map(a=>a.value??a.description)));
+            if(m.method==='Runtime.exceptionThrown') events.push('exception '+JSON.stringify(m.params.exceptionDetails));
+            if(m.method==='Network.loadingFailed') events.push('network-failed '+JSON.stringify({url:m.params?.requestId,error:m.params?.errorText,type:m.params?.type}));
+            if(m.method==='Network.webSocketCreated') events.push('websocket '+String(m.params?.url||''));
           };
           await new Promise((resolve,reject)=>{ws.onopen=resolve;ws.onerror=reject;});
-          const send=(method,params={})=>new Promise((resolve,reject)=>{
-            const id=++seq; pending.set(id,{resolve,reject}); ws.send(JSON.stringify({id,method,params}));
-          });
-          await send('Page.enable');
-          await send('Runtime.enable');
-          await send('Network.enable');
+          const send=(method,params={})=>new Promise((resolve,reject)=>{const id=++seq;pending.set(id,{resolve,reject});ws.send(JSON.stringify({id,method,params}));});
+          await send('Page.enable'); await send('Runtime.enable'); await send('Network.enable');
           await send('Emulation.setDeviceMetricsOverride',{width:1280,height:720,deviceScaleFactor:1,mobile:false});
           await send('Page.addScriptToEvaluateOnNewDocument',{source:`window.__TAM_QUOC_CONFIG__={serverUrl:'wss://slgserver-production.up.railway.app',webUrl:'https://slgserver-production.up.railway.app',locale:'vi-VN'};`});
-          await send('Page.navigate',{url:'http://127.0.0.1:4173/'});
-          await sleep(26000);
+          await send('Page.navigate',{url:'http://127.0.0.1:4173/'}); await sleep(26000);
 
-          const shot=async name=>{
-            const s=await send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});
-            fs.writeFileSync(`screenshots/${name}.png`,Buffer.from(s.data,'base64'));
-            console.log('captured',name);
-          };
-          const click=async(x,y)=>{
-            await send('Input.dispatchMouseEvent',{type:'mouseMoved',x,y});
-            await send('Input.dispatchMouseEvent',{type:'mousePressed',x,y,button:'left',clickCount:1});
-            await send('Input.dispatchMouseEvent',{type:'mouseReleased',x,y,button:'left',clickCount:1});
-            await sleep(900);
-          };
-          const type=async text=>{ await send('Input.insertText',{text}); await sleep(400); };
-          const state=async label=>{
-            const r=await send('Runtime.evaluate',{expression:`JSON.stringify({label:${JSON.stringify(label)},ready:document.readyState,title:document.title,canvas:[...document.querySelectorAll('canvas')].map(c=>({w:c.width,h:c.height,cw:c.clientWidth,ch:c.clientHeight})),inputs:[...document.querySelectorAll('input')].map(i=>({type:i.type,value:i.value,display:getComputedStyle(i).display,opacity:getComputedStyle(i).opacity}))})`,returnByValue:true});
-            fs.appendFileSync('screenshots/runtime-state.txt',(r.result?.value||'')+'\n');
-          };
+          const shot=async n=>{const s=await send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});fs.writeFileSync(`screenshots/${n}.png`,Buffer.from(s.data,'base64'));console.log('captured',n);};
+          const click=async(x,y)=>{await send('Input.dispatchMouseEvent',{type:'mouseMoved',x,y});await send('Input.dispatchMouseEvent',{type:'mousePressed',x,y,button:'left',clickCount:1});await send('Input.dispatchMouseEvent',{type:'mouseReleased',x,y,button:'left',clickCount:1});await sleep(850);};
+          const type=async t=>{await send('Input.insertText',{text:t});await sleep(400);};
+          const state=async label=>{const r=await send('Runtime.evaluate',{expression:`JSON.stringify({label:${JSON.stringify(label)},canvas:[...document.querySelectorAll('canvas')].map(c=>({w:c.width,h:c.height})),inputs:[...document.querySelectorAll('input')].map(i=>({type:i.type,value:i.value,display:getComputedStyle(i).display}))})`,returnByValue:true});fs.appendFileSync('screenshots/runtime-state.txt',(r.result?.value||'')+'\n');};
 
-          await state('initial-loaded');
-          // LoginScene first exposes the genuine "VÀO TRÒ CHƠI" button.
-          await click(640,508);
-          await sleep(2500);
-          await shot('01-dang-nhap');
+          // Open actual Login UI from LoginScene.
+          await click(640,508); await sleep(2500); await shot('01-dang-nhap');
 
-          // Fill the real Cocos EditBoxes and register through the production server flow.
           const username=`preview${Date.now().toString().slice(-9)}`;
           const password='Preview2026!';
-          fs.writeFileSync('screenshots/test-account.txt',`username=${username}\npassword=${password}\n`);
           await click(640,299); await type(username);
           await click(640,373); await type(password);
-          await state('login-filled');
-          await click(640,562); // ĐĂNG KÝ TÀI KHOẢN
-          await sleep(18000);
-          await state('after-register');
-          await shot('debug-after-register');
+          await state('credentials-filled');
+          // First outside click only blurs Cocos EditBox's HTML input. Second click reaches the Cocos Button.
+          await click(640,570); await sleep(700); await click(640,570);
+          await sleep(22000); await state('after-register-login'); await shot('debug-after-register');
 
-          // New accounts receive the real role-creation prefab. Its button coordinate is derived from source.
-          let create={x:640,y:610};
-          try { create=JSON.parse(fs.readFileSync('/tmp/create-screen.json','utf8')); } catch {}
-          console.log('create button',create);
-          await click(create.x,create.y);
-          await sleep(28000);
-          await state('after-role-create');
+          // Real new-account role creation.
+          let create={x:638,y:529}; try{create=JSON.parse(fs.readFileSync('/tmp/create-screen.json','utf8'));}catch{}
+          await click(create.x,create.y); await sleep(32000); await state('after-role-create');
           await shot('02-ban-do');
 
-          // Real Map HUD buttons. Coordinates come from ReferenceMapHud at 1280x720.
-          await click(75,164); // TƯỚNG
-          await sleep(5000);
-          await shot('03-tuong');
-          await click(1190,50); // close roster
-          await sleep(2000);
-
-          await click(75,268); // CHIÊU MỘ
-          await sleep(5000);
-          await shot('04-chieu-mo');
-          // Most rebuilt full-screen popup close controls live in the upper-right zone.
-          await click(1190,50);
-          await sleep(2000);
-
-          await click(75,216); // CHIẾN BÁO
-          await sleep(5000);
-          await shot('05-chien-bao');
+          // Real Map HUD menus.
+          await click(75,164); await sleep(5500); await shot('03-tuong');
+          await click(1190,50); await sleep(1800);
+          await click(75,268); await sleep(5500); await shot('04-chieu-mo');
+          await click(1190,50); await sleep(1800);
+          await click(75,216); await sleep(5500); await shot('05-chien-bao');
           await state('finished');
+          fs.writeFileSync('screenshots/browser-events.txt',events.slice(-800).join('\n'));
           ws.close();
           NODE
 
@@ -206,7 +141,7 @@ jobs:
       - name: Upload real project screenshots
         uses: actions/upload-artifact@v4
         with:
-          name: slgclient-real-runtime-screenshots
+          name: slgclient-real-runtime-screenshots-v2
           path: screenshots/
           if-no-files-found: error
           retention-days: 3
