@@ -1,9 +1,8 @@
-import { _decorator, Component, Label, Layout, Node, Prefab, UITransform, Vec2, instantiate } from 'cc';
+import { _decorator, Color, Component, Label, Layout, Node, Prefab, UITransform, Vec2, instantiate } from 'cc';
 const { ccclass, property } = _decorator;
 
 import { AudioManager } from '../../common/AudioManager';
 import { LogicEvent } from '../../common/LogicEvent';
-import { SkillConf } from '../../config/skill/Skill';
 import { GeneralData } from '../../general/GeneralProxy';
 import {
     ANCIENT_UI,
@@ -191,7 +190,7 @@ export default class MapUILogic extends Component {
         const profile = ensureUiChild(hudRoot, '__MapProfilePanel');
         profile.setPosition(-500, 307, 0);
         profile.setSiblingIndex(0);
-        drawAncientPanel(profile, 270, 94, 10, new (ANCIENT_UI.panel.constructor as any)(16, 14, 12, 230));
+        drawAncientPanel(profile, 270, 94, 10, new Color(16, 14, 12, 230));
 
         this.nameLabel.node.setParent(profile);
         this.nameLabel.node.setPosition(28, 18, 0);
@@ -215,7 +214,7 @@ export default class MapUILogic extends Component {
         this.ridLabel.color = ANCIENT_UI.muted;
         ensureUiTransform(this.ridLabel.node, 190, 24);
 
-        const profileMark = createUiText(profile, '__ProfileMark', '将', 30, ANCIENT_UI.gold, 54, 54, true);
+        const profileMark = createUiText(profile, '__ProfileMark', 'T', 29, ANCIENT_UI.gold, 54, 54, true);
         profileMark.node.setPosition(-90, 0, 0);
 
         this.srollLayout.type = Layout.Type.HORIZONTAL;
