@@ -74,6 +74,8 @@ const viDictionary: Record<string, string> = {
     '秒': 'giây',
 };
 
+// Chỉ thay theo cụm từ từ hai ký tự trở lên để tránh làm hỏng tên riêng
+// hoặc câu chưa có trong từ điển bởi các mục đơn ký tự như 主, 吴, 魏.
 const phraseReplacementEntries = Object.entries(viDictionary)
     .filter(([source]) => source.length >= 2)
     .sort((left, right) => right[0].length - left[0].length);
@@ -97,6 +99,10 @@ export function translateText(value: string): string {
     return translated;
 }
 
+/**
+ * Việt hoá dữ liệu JSON đã được Cocos nạp. Hàm thay đổi object tại chỗ để
+ * các proxy và model hiện tại tiếp tục sử dụng cùng tham chiếu dữ liệu.
+ */
 export function localizeData<T>(value: T): T {
     if (typeof value === 'string') {
         return translateText(value) as unknown as T;
@@ -124,6 +130,7 @@ function applyVietnameseFont(label: Label): void {
     label.fontFamily = VIETNAMESE_FONT_FAMILY;
 }
 
+/** Áp dụng bản dịch và phông tiếng Việt cho toàn bộ cây giao diện. */
 export function localizeNode(root: Node): void {
     const labels = root.getComponentsInChildren(Label);
     for (const label of labels) {
