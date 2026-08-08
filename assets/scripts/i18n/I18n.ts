@@ -3,6 +3,22 @@ import { gameTermTranslations } from './GameTerms';
 import { generalNameTranslations } from './GeneralNames';
 import { runtimeTermTranslations } from './RuntimeTerms';
 
+export {
+    ANCIENT_UI,
+    addAncientScreenTitle,
+    applyAncientScreenChrome,
+    createUiText,
+    drawAncientPanel,
+    ensureUiChild,
+    ensureUiTransform,
+    findButtonByHandler,
+    getButtonHandler,
+    hideDirectUiSprites,
+    styleAncientButton,
+    styleAncientEditBox,
+    suppressLegacyChrome,
+} from '../common/AudioManager';
+
 /**
  * Phông hệ thống hỗ trợ đầy đủ dấu tiếng Việt trên trình duyệt.
  * Arial có sẵn trên hầu hết hệ điều hành; trình duyệt sẽ tự dùng sans-serif tương thích khi cần.
