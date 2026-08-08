@@ -1,0 +1,45 @@
+name: Apply reference UI batch retry
+
+on:
+  push:
+    branches:
+      - feat/modern-vietnamese-ui-overhaul
+    paths:
+      - .github/workflows/apply-reference-ui-batch-retry.yml
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/modern-vietnamese-ui-overhaul
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Apply the tested prefab transformer
+        shell: bash
+        run: |
+          awk '
+            /<<'"'"'NODE'"'"'/ { capture=1; next }
+            capture && /^[[:space:]]*NODE[[:space:]]*$/ { exit }
+            capture { sub(/^          /, ""); print }
+          ' .github/workflows/apply-reference-ui-batch.yml > "$RUNNER_TEMP/apply-reference-ui.cjs"
+          node --check "$RUNNER_TEMP/apply-reference-ui.cjs"
+          node "$RUNNER_TEMP/apply-reference-ui.cjs"
+
+      - name: Commit real prefab changes
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/scenes/LoginScene.prefab assets/scenes/MapUIScene.prefab assets/prefab
+          if git diff --cached --quiet; then
+            echo 'No prefab changes were required.'
+            exit 0
+          fi
+          git commit -m "feat(ui): restyle real game screens to reference art direction"
+          git push origin HEAD:feat/modern-vietnamese-ui-overhaul
