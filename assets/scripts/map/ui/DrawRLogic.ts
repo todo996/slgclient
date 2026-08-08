@@ -1,83 +1,85 @@
-import { _decorator, Component, Prefab, Layout, instantiate, Vec3 } from 'cc';
+import { _decorator, Component, Layout, Prefab, Vec3, instantiate } from 'cc';
 const { ccclass, property } = _decorator;
 
-import GeneralItemLogic, { GeneralItemType } from "./GeneralItemLogic";
 import { AudioManager } from '../../common/AudioManager';
+import {
+    applyAncientScreenChrome,
+    ensureUiTransform,
+    findButtonByHandler,
+    styleAncientButton,
+} from '../../i18n/I18n';
+import GeneralItemLogic, { GeneralItemType } from './GeneralItemLogic';
 
 @ccclass('DrawRLogic')
 export default class DrawRLogic extends Component {
-
-
     @property(Prefab)
     generalItemPrefab: Prefab = null;
-
     @property(Layout)
-    tenLayout:Layout = null;
-
+    tenLayout: Layout = null;
     @property(Layout)
-    oneLayout:Layout = null;
+    oneLayout: Layout = null;
 
-    private _maxSize:number = 10;
-    private _scale:number = 0.4;
+    private _maxSize = 10;
+    private _scale = 0.4;
 
-    protected onLoad():void{
-
-        for(var i = 0; i < this._maxSize;i++){
-            let _generalNode = instantiate(this.generalItemPrefab);
-            _generalNode.parent = this.tenLayout.node;
-            _generalNode.scale = new Vec3(this._scale, this._scale, this._scale);
-            _generalNode.active = false;
+    protected onLoad(): void {
+        this.applyModernResult();
+        for (let i = 0; i < this._maxSize; i += 1) {
+            const generalNode = instantiate(this.generalItemPrefab);
+            generalNode.parent = this.tenLayout.node;
+            generalNode.scale = new Vec3(this._scale, this._scale, this._scale);
+            generalNode.active = false;
         }
-
-
-        let _generalNode = instantiate(this.generalItemPrefab);
-        _generalNode.parent = this.oneLayout.node;
-        _generalNode.scale = new Vec3(this._scale, this._scale, this._scale);
-        _generalNode.active = false;
-
+        const generalNode = instantiate(this.generalItemPrefab);
+        generalNode.parent = this.oneLayout.node;
+        generalNode.scale = new Vec3(0.72, 0.72, 0.72);
+        generalNode.active = false;
     }
 
+    private applyModernResult(): void {
+        applyAncientScreenChrome(this.node, 'Kết quả chiêu mộ');
+        this.tenLayout.node.setPosition(0, -15, 0);
+        ensureUiTransform(this.tenLayout.node, 1050, 500);
+        this.oneLayout.node.setPosition(0, -20, 0);
+        ensureUiTransform(this.oneLayout.node, 520, 500);
+        const close = findButtonByHandler(this.node, 'onClickClose');
+        if (close) {
+            close.node.setPosition(-574, 320, 0);
+            styleAncientButton(close.node, '←', 'dark', 72, 52);
+            close.node.setSiblingIndex(this.node.children.length - 1);
+        }
+    }
 
-
-    public setData(data:any):void{
+    public setData(data: any): void {
         this.tenLayout.node.active = this.oneLayout.node.active = false;
-        if(data.length == 1){
+        if (data.length == 1) {
             this.oneLayout.node.active = true;
-            var children = this.oneLayout.node.children;
-            let com = children[0].getComponent(GeneralItemLogic);
+            const children = this.oneLayout.node.children;
+            const comp = children[0].getComponent(GeneralItemLogic);
             children[0].active = true;
-            if(com){
-                com.setData(data[0],GeneralItemType.GeneralNoThing);
+            if (comp) {
+                comp.setData(data[0], GeneralItemType.GeneralNoThing);
             }
-
-        }else{
+        } else {
             this.tenLayout.node.active = true;
-            var children = this.tenLayout.node.children;
-            for(var i = 0; i < this._maxSize;i++){
-                var child = children[i];
-                if(data[i]){
+            const children = this.tenLayout.node.children;
+            for (let i = 0; i < this._maxSize; i += 1) {
+                const child = children[i];
+                if (data[i]) {
                     child.active = true;
-                    let com = child.getComponent(GeneralItemLogic);
-                    if(com){
-                        com.setData(data[i],GeneralItemType.GeneralNoThing);
+                    const comp = child.getComponent(GeneralItemLogic);
+                    if (comp) {
+                        comp.setData(data[i], GeneralItemType.GeneralNoThing);
                     }
-                }
-                else{
+                } else {
                     child.active = false;
                 }
             }
         }
-
     }
-
 
     protected onClickClose(): void {
         this.node.active = false;
         AudioManager.instance.playClick();
     }
-
-
-
-
-
 }
