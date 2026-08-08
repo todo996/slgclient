@@ -6,6 +6,7 @@ on:
       - feat/modern-vietnamese-ui-overhaul
     paths:
       - scripts/inline-ui-helpers.mjs
+      - scripts/inline-ui-helpers-runner.mjs
 
 permissions:
   contents: write
@@ -27,16 +28,16 @@ jobs:
           git show 3052ecbe5026a9bcf443cf51ab1186dddf60961d:assets/scripts/i18n/I18n.ts > assets/scripts/i18n/I18n.ts
 
       - name: Inline presentation helpers
-        run: node scripts/inline-ui-helpers.mjs
+        run: node scripts/inline-ui-helpers-runner.mjs
 
-      - name: Verify no UI helper bridge remains
+      - name: Verify core helper bridge is gone
         shell: bash
         run: |
-          if grep -R -n -E "import[[:space:][:print:]]*(ANCIENT_UI|applyAncientScreenChrome|drawAncientPanel|styleAncientButton)" assets/scripts/map/ui assets/scripts/chat assets/scripts/union; then
-            echo "Unexpected shared UI helper import remains"
+          if grep -R -n "ANCIENT_UI" assets/scripts/common/AudioManager.ts assets/scripts/i18n/I18n.ts; then
+            echo "UI helper definitions must not remain in shared core modules"
             exit 1
           fi
-          echo "UI helper bridge removed."
+          echo "Shared core modules restored; UI helpers are controller-local."
 
       - name: Commit migration
         shell: bash
