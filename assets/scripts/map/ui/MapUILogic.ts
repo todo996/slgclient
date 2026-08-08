@@ -187,23 +187,14 @@ export default class MapUILogic extends Component {
         const contentRoot = this.topLevelChildOf(this.contentNode);
         const oldWidget = this.widgetNode;
 
+        // HUD cũ không còn xuất hiện ở runtime. Chỉ giữ contentRoot để popup/logic thật tiếp tục hoạt động.
         for (const child of legacyRoots) {
-            if (child !== contentRoot) {
-                child.active = false;
-            }
+            if (child !== contentRoot) child.active = false;
         }
-        if (oldWidget && oldWidget !== contentRoot) {
-            oldWidget.active = false;
-        }
-        if (this.srollLayout && this.srollLayout.node) {
-            this.srollLayout.node.active = false;
-        }
-        if (this.nameLabel && this.nameLabel.node) {
-            this.nameLabel.node.active = false;
-        }
-        if (this.ridLabel && this.ridLabel.node) {
-            this.ridLabel.node.active = false;
-        }
+        if (oldWidget && oldWidget !== contentRoot) oldWidget.active = false;
+        if (this.srollLayout?.node) this.srollLayout.node.active = false;
+        if (this.nameLabel?.node) this.nameLabel.node.active = false;
+        if (this.ridLabel?.node) this.ridLabel.node.active = false;
 
         const hud = new Node('ReferenceMapHud');
         hud.parent = this.node;
@@ -212,15 +203,24 @@ export default class MapUILogic extends Component {
         this._referenceHud = hud;
         this.widgetNode = hud;
 
-        // Hồ sơ người chơi góc trái trên.
-        const profile = this.makePanel(hud, 'PlayerProfile', 258, 92, -501, 309, new Color(17, 13, 10, 235), new Color(171, 126, 63, 255), 2, 12);
-        this.makePanel(profile, 'AvatarFrame', 66, 66, -88, 0, new Color(54, 34, 20, 255), new Color(220, 174, 91, 255), 2, 33);
-        this.makeLabel(profile, 'AvatarMark', 'T', -88, 0, 28, new Color(232, 196, 124, 255), true, 58);
-        this._referenceRoleName = this.makeLabel(profile, 'RoleName', '', 24, 18, 19, new Color(241, 222, 184, 255), true, 150);
-        this._referenceRoleId = this.makeLabel(profile, 'RoleId', '', 24, -14, 13, new Color(160, 142, 113, 255), false, 150);
-        this.makeButton(profile, 'Logout', 'Thoát', 88, -38, 68, 24, () => this.onBack(), false, 12);
+        // Hồ sơ nhỏ ở góc trái, giữ phần lớn bản đồ thông thoáng như ảnh mẫu.
+        const profile = this.makePanel(
+            hud, 'PlayerProfile', 252, 86, -506, 310,
+            new Color(12, 10, 8, 224), new Color(159, 112, 54, 238), 2, 8,
+        );
+        this.makePanel(profile, 'AvatarOuter', 72, 72, -87, 0, new Color(41, 25, 16, 255), new Color(224, 174, 86, 255), 3, 36);
+        this.makePanel(profile, 'AvatarInner', 58, 58, -87, 0, new Color(74, 42, 23, 255), new Color(102, 65, 31, 255), 1, 29);
+        this.makeLabel(profile, 'AvatarMark', 'T', -87, 1, 28, new Color(239, 205, 135, 255), true, 54);
+        this._referenceRoleName = this.makeLabel(profile, 'RoleName', '', 25, 18, 18, new Color(247, 225, 180, 255), true, 148);
+        this._referenceRoleId = this.makeLabel(profile, 'RoleId', '', 25, -8, 12, new Color(166, 143, 104, 255), false, 148);
+        this.makeLabel(profile, 'ProfileCaption', 'CHỦ CÔNG', 20, -30, 10, new Color(116, 91, 58, 255), true, 100);
+        this.makeButton(profile, 'Logout', 'Thoát', 91, -29, 54, 24, () => this.onBack(), false, 10);
 
-        // Thanh tài nguyên theo đúng tinh thần chip đen-vàng của mẫu.
+        // Thanh tài nguyên liền, mảnh và trong suốt hơn bản trước.
+        const resourceBar = this.makePanel(
+            hud, 'ResourceBar', 860, 46, 196, 333,
+            new Color(11, 9, 7, 222), new Color(112, 79, 39, 225), 1, 5,
+        );
         const resources: Array<{key: string; title: string}> = [
             {key: 'decree', title: 'Lệnh'},
             {key: 'gold', title: 'Vàng'},
@@ -229,32 +229,55 @@ export default class MapUILogic extends Component {
             {key: 'stone', title: 'Đá'},
             {key: 'grain', title: 'Lương'},
         ];
-        const startX = -260;
         resources.forEach((item, index) => {
-            const chip = this.makePanel(hud, `Resource_${item.key}`, 142, 44, startX + index * 145, 326, new Color(16, 12, 9, 228), new Color(100, 73, 39, 255), 1, 7);
-            this.makeLabel(chip, `${item.key}_title`, item.title, -39, 0, 13, new Color(180, 153, 105, 255), true, 58);
-            this._referenceResourceLabels[item.key] = this.makeLabel(chip, `${item.key}_value`, '0', 34, 0, 15, new Color(244, 224, 180, 255), true, 72);
+            const x = -355 + index * 142;
+            if (index > 0) {
+                this.makePanel(resourceBar, `ResourceDivider_${index}`, 1, 27, x - 70, 0, new Color(86, 59, 31, 170), new Color(0, 0, 0, 0), 0, 0);
+            }
+            this.makeLabel(resourceBar, `${item.key}_title`, item.title, x - 28, 0, 11, new Color(169, 140, 93, 255), true, 48);
+            this._referenceResourceLabels[item.key] = this.makeLabel(resourceBar, `${item.key}_value`, '0', x + 30, 0, 14, new Color(239, 220, 178, 255), true, 72);
         });
 
-        // Menu dọc bên trái. Chỉ đưa vào những chức năng có handler thật.
+        // Menu dọc trái: chỉ các chức năng đã có handler thật.
+        const rail = this.makePanel(
+            hud, 'LeftRail', 128, 376, -568, 84,
+            new Color(8, 7, 6, 155), new Color(92, 62, 31, 150), 1, 8,
+        );
         const menu: Array<{title: string; action: () => void}> = [
-            {title: 'TƯỚNG', action: () => this.onClickGeneral()},
-            {title: 'CHIẾN BÁO', action: () => this.openWarReport()},
-            {title: 'CHIÊU MỘ', action: () => this.openDraw()},
-            {title: 'LIÊN MINH', action: () => this.openUnion()},
-            {title: 'CHỢ', action: () => this.openTr()},
-            {title: 'TRÒ CHUYỆN', action: () => this.openChat()},
-            {title: 'THU THUẾ', action: () => this.onClickCollection()},
-            {title: 'KỸ NĂNG', action: () => this.onClickSkillBtn()},
+            {title: 'Tướng', action: () => this.onClickGeneral()},
+            {title: 'Chiến báo', action: () => this.openWarReport()},
+            {title: 'Chiêu mộ', action: () => this.openDraw()},
+            {title: 'Liên minh', action: () => this.openUnion()},
+            {title: 'Chợ', action: () => this.openTr()},
+            {title: 'Trò chuyện', action: () => this.openChat()},
+            {title: 'Thu thuế', action: () => this.onClickCollection()},
+            {title: 'Kỹ năng', action: () => this.onClickSkillBtn()},
         ];
         menu.forEach((item, index) => {
-            this.makeButton(hud, `Menu_${index}`, item.title, -565, 196 - index * 52, 136, 44, item.action, false, 14);
+            const y = 158 - index * 45;
+            const btn = this.makeButton(rail, `Menu_${index}`, item.title, 0, y, 112, 38, item.action, false, 12);
+            this.makePanel(btn, `MenuAccent_${index}`, 3, 24, -50, 0, new Color(190, 139, 65, 235), new Color(0, 0, 0, 0), 0, 0);
         });
 
-        // Cụm chức năng góc phải dưới như ảnh mẫu.
-        this.makeButton(hud, 'SettingButton', 'CÀI ĐẶT', 560, -311, 118, 42, () => this.onClickSetting(), false, 13);
+        // Thanh chat góc dưới trái dùng đúng openChat(), không hiển thị nội dung giả.
+        const chatBar = this.makePanel(
+            hud, 'WorldChatBar', 350, 42, -434, -323,
+            new Color(8, 8, 7, 205), new Color(118, 82, 39, 225), 1, 7,
+        );
+        chatBar.addComponent(Button);
+        chatBar.on(Button.EventType.CLICK, () => this.openChat(), this);
+        this.makeLabel(chatBar, 'ChatChannel', 'THẾ GIỚI', -118, 0, 11, new Color(213, 166, 83, 255), true, 80);
+        this.makePanel(chatBar, 'ChatDivider', 1, 22, -70, 0, new Color(91, 62, 34, 210), new Color(0, 0, 0, 0), 0, 0);
+        this.makeLabel(chatBar, 'ChatHint', 'Mở trò chuyện', 35, 0, 12, new Color(185, 174, 153, 255), false, 190);
+        this.makeLabel(chatBar, 'ChatArrow', '›', 151, 0, 20, new Color(217, 172, 88, 255), true, 24);
 
-        // contentNode chứa popup thật luôn được đặt trên HUD mới.
+        // Cài đặt thật ở góc phải dưới như ảnh mẫu.
+        const utility = this.makePanel(
+            hud, 'BottomRightUtility', 104, 58, 569, -317,
+            new Color(10, 8, 7, 215), new Color(129, 89, 43, 235), 1, 8,
+        );
+        this.makeButton(utility, 'SettingButton', 'Cài đặt', 0, 0, 90, 42, () => this.onClickSetting(), false, 12);
+
         if (contentRoot) {
             contentRoot.active = true;
             contentRoot.setSiblingIndex(this.node.children.length - 1);
