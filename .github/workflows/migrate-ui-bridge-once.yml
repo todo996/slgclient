@@ -6,6 +6,7 @@ on:
       - feat/modern-vietnamese-ui-overhaul
     paths:
       - scripts/migrate-ui-bridge.mjs
+      - .github/workflows/migrate-ui-bridge-once.yml
 
 permissions:
   contents: write
