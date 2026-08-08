@@ -38,10 +38,10 @@ jobs:
             red: { __type__: 'cc.Color', r: 120, g: 45, b: 38, a: 255 },
           };
           const VI = [
-            ['武将', 'Tướng'], ['将领', 'Tướng'], ['图鉴', 'Danh sách tướng'], ['转换', 'Chuyển đổi'],
-            ['分解', 'Chuyển đổi'], ['返回', 'Quay lại'], ['关闭', 'Đóng'], ['确定', 'Xác nhận'],
-            ['取消', 'Hủy'], ['阵容', 'Đội hình'], ['队伍', 'Đội hình'], ['上阵', 'Ra trận'],
-            ['兵种', 'Binh chủng'], ['等级', 'Cấp'], ['阵营', 'Phe'], ['统御', 'Thống lĩnh'],
+            ['武将卡：', 'Thẻ tướng:'], ['武将卡:', 'Thẻ tướng:'], ['武将', 'Tướng'], ['将领', 'Tướng'],
+            ['图鉴', 'Danh sách tướng'], ['转换', 'Chuyển đổi'], ['分解', 'Chuyển đổi'], ['返回', 'Quay lại'],
+            ['关闭', 'Đóng'], ['确定', 'Xác nhận'], ['取消', 'Hủy'], ['阵容', 'Đội hình'], ['队伍', 'Đội hình'],
+            ['上阵', 'Ra trận'], ['兵种', 'Binh chủng'], ['等级', 'Cấp'], ['阵营', 'Phe'], ['统御', 'Thống lĩnh'],
             ['汉', 'Hán'], ['群', 'Quần Hùng'], ['魏', 'Ngụy'], ['蜀', 'Thục'], ['吴', 'Ngô'],
           ];
 
@@ -92,47 +92,36 @@ jobs:
           function restyleList(path) {
             const data=JSON.parse(fs.readFileSync(path,'utf8')); const before=JSON.stringify(handlers(data)); const ix=index(data);
             data.forEach(e=>{ if(e?.__type__==='cc.Label') styleLabel(e); });
-
-            // Fullscreen mask and main panel become charcoal/bronze rather than the old bright chrome.
             for(const [id,n] of ix.nodes){
               const name=(n._name||'').toLowerCase();
               if(name==='mask') { tint(ix,id,C.panel,false); for(const c of ix.comps(id)) if(c.__type__==='cc.UIOpacity') c._opacity=205; }
               if(/background|diban|panel|frame|kuang/.test(name)) tint(ix,id,C.panel2,false);
-              if(name==='titlelab') { setPos(ix,id,0,310); for(const l of labels(ix,id)) styleLabel(l,'TƯỚNG',36,true); }
+              if(name==='titlelab') { setPos(ix,id,0,310); for(const l of labels(ix,id)) { styleLabel(l,true,36); l._string='TƯỚNG'; } }
             }
-
-            // Existing virtualized real-data grid already uses GeneralItemLogic. Match the 5-column reference layout.
             for(const e of data){
               if(e && e.itemLogicScriptName==='GeneralItemLogic'){
                 e.columnCount=5; e.autoColumnCount=false; e.spaceColumn=18; e.spaceRow=18; e.scale=0.54; e.updateInterval=0.06;
               }
             }
-            for(const [id,n] of ix.nodes){
-              const hasScroll=ix.comps(id).some(c=>c.__type__==='cc.ScrollView');
-              if(hasScroll){ setPos(ix,id,0,-10); setSize(ix,id,1120,575); }
+            for(const [id] of ix.nodes){
+              if(ix.comps(id).some(c=>c.__type__==='cc.ScrollView')){ setPos(ix,id,0,-10); setSize(ix,id,1120,575); }
             }
-
-            // Style only real buttons and name them from their existing ClickEvents. Never add new filters/actions.
             for(const e of data){
               if(e?.__type__!=='cc.Button'||!e.node) continue;
               const id=e.node.__id__; tint(ix,id,C.button,true);
               const refs=Array.isArray(e.clickEvents)?e.clickEvents:[];
               const ev=refs.map(r=>data[r.__id__]).find(v=>v?.__type__==='cc.ClickEvent');
               if(!ev) continue;
-              const ls=labels(ix,id);
-              let text=null;
+              const ls=labels(ix,id); let text=null;
               if(ev.handler==='onClickClose') text='Đóng';
               else if(ev.handler==='onClickConvert') text='Chuyển đổi';
               else if(ev.handler==='onTuJianConvert') text='Danh sách tướng';
               if(text&&ls.length){ styleLabel(ls[0],false,17); ls[0]._string=text; }
               if(ev.handler==='onClickClose'){ setPos(ix,id,585,310); setSize(ix,id,64,48); tint(ix,id,C.red,true); }
             }
-
-            // Count label remains bound to cntLab and gets a compact owned-count treatment.
             for(const e of data){
               if(e && e.cntLab?.__id__!==undefined){ const lab=data[e.cntLab.__id__]; if(lab?.__type__==='cc.Label'){ styleLabel(lab,false,17); lab._color={...C.muted}; } }
             }
-
             const after=JSON.stringify(handlers(data)); if(before!==after) throw new Error('GeneralList ClickEvent wiring changed.');
             const cjk=data.filter(e=>e?.__type__==='cc.Label').map(e=>e._string||'').filter(s=>/[\u3400-\u9fff]/.test(s));
             if(cjk.length) throw new Error('GeneralList still has CJK labels: '+[...new Set(cjk)].join(' | '));
@@ -142,16 +131,12 @@ jobs:
           function restyleItem(path) {
             const data=JSON.parse(fs.readFileSync(path,'utf8')); const before=JSON.stringify(handlers(data)); const ix=index(data);
             data.forEach(e=>{ if(e?.__type__==='cc.Label') styleLabel(e); });
-
             for(const [id,n] of ix.nodes){
               const name=(n._name||'').toLowerCase();
               if(name==='bg'){ tint(ix,id,C.panel2,false); setSize(ix,id,352,480); }
-              // Never tint the real portrait or stars.
               if(/pic|head_wrap|star/.test(name)) continue;
               if(/frame|kuang|bottom|diban|background/.test(name)) tint(ix,id,C.panel,false);
             }
-
-            // Emphasize fields that GeneralItemLogic fills with live data.
             for(const e of data){
               if(!e || typeof e!=='object') continue;
               for(const key of ['nameLabel','lvLabel','campLabel','armLabel','costLabel']){
@@ -162,7 +147,6 @@ jobs:
                 if(key==='campLabel'||key==='armLabel') lab._color={...C.muted};
               }
             }
-
             const after=JSON.stringify(handlers(data)); if(before!==after) throw new Error('GeneralItem ClickEvent wiring changed.');
             const cjk=data.filter(e=>e?.__type__==='cc.Label').map(e=>e._string||'').filter(s=>/[\u3400-\u9fff]/.test(s));
             if(cjk.length) throw new Error('GeneralItem still has CJK labels: '+[...new Set(cjk)].join(' | '));
