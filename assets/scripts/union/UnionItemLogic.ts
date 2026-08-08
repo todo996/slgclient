@@ -3,8 +3,6 @@ const { ccclass, property } = _decorator;
 
 import { AudioManager } from '../common/AudioManager';
 import { LogicEvent } from '../common/LogicEvent';
-import {
-    ANCIENT_UI } from '../common/AudioManager';
 import { EventMgr } from '../utils/EventMgr';
 import UnionCommand from './UnionCommand';
 import { Union } from './UnionProxy';

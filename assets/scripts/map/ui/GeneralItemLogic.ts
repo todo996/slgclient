@@ -5,8 +5,6 @@ import { AudioManager } from '../../common/AudioManager';
 import { LogicEvent } from '../../common/LogicEvent';
 import GeneralCommand from '../../general/GeneralCommand';
 import { GeneralCampType, GeneralData } from '../../general/GeneralProxy';
-import {
-    ANCIENT_UI } from '../../common/AudioManager';
 import { EventMgr } from '../../utils/EventMgr';
 import GeneralHeadLogic from './GeneralHeadLogic';
 

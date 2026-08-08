@@ -4,8 +4,6 @@ const { ccclass, property } = _decorator;
 import { AudioManager } from '../../common/AudioManager';
 import { LogicEvent } from '../../common/LogicEvent';
 import GeneralCommand from '../../general/GeneralCommand';
-import {
-    ANCIENT_UI } from '../../common/AudioManager';
 import { EventMgr } from '../../utils/EventMgr';
 import ListLogic from '../../utils/ListLogic';
 import MapUICommand from './MapUICommand';

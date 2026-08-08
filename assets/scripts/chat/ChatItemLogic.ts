@@ -1,6 +1,4 @@
 import { _decorator, Component, Label, UITransform, Button, Color, EditBox, Graphics, HorizontalTextAlignment, Node, Sprite, VerticalTextAlignment } from 'cc';
-import {
-    ANCIENT_UI } from '../common/AudioManager';
 import DateUtil from '../utils/DateUtil';
 import { ChatMsg } from './ChatProxy';
 

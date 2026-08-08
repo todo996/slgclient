@@ -1,8 +1,6 @@
 import { _decorator, Component, Label, Node, Prefab, ToggleContainer, instantiate, Button, Color, EditBox, Graphics, HorizontalTextAlignment, Sprite, UITransform, VerticalTextAlignment } from 'cc';
 import { AudioManager } from '../../common/AudioManager';
 import { LogicEvent } from '../../common/LogicEvent';
-import {
-    ANCIENT_UI } from '../../common/AudioManager';
 import { EventMgr } from '../../utils/EventMgr';
 
 // UI presentation helpers are intentionally local to this existing controller.

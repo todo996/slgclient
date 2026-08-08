@@ -4,8 +4,6 @@ const { ccclass, property } = _decorator;
 import { AudioManager } from '../../common/AudioManager';
 import { LogicEvent } from '../../common/LogicEvent';
 import { GeneralData } from '../../general/GeneralProxy';
-import {
-    applyAncientScreenChrome } from '../../common/AudioManager';
 import SkillCommand from '../../skill/SkillCommand';
 import { Skill } from '../../skill/SkillProxy';
 import { EventMgr } from '../../utils/EventMgr';

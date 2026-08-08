@@ -1,7 +1,6 @@
 import { _decorator, Component, Label, Node, SpriteFrame, UITransform, Button, Color, EditBox, Graphics, HorizontalTextAlignment, Sprite, VerticalTextAlignment } from 'cc';
 const { ccclass, property } = _decorator;
 
-import { ANCIENT_UI } from '../../common/AudioManager';
 import SkillCommand from '../../skill/SkillCommand';
 import { Skill } from '../../skill/SkillProxy';
 import SkillIconLogic from './SkillIconLogic';

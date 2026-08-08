@@ -4,8 +4,6 @@ const { ccclass, property } = _decorator;
 import { AudioManager } from '../../common/AudioManager';
 import { LogicEvent } from '../../common/LogicEvent';
 import { GeneralData } from '../../general/GeneralProxy';
-import {
-    ANCIENT_UI } from '../../common/AudioManager';
 import LoginCommand from '../../login/LoginCommand';
 import { Skill } from '../../skill/SkillProxy';
 import UnionCommand from '../../union/UnionCommand';

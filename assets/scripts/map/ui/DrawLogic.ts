@@ -5,8 +5,6 @@ import { AudioManager } from '../../common/AudioManager';
 import { LogicEvent } from '../../common/LogicEvent';
 import GeneralCommand from '../../general/GeneralCommand';
 import { GeneralCommonConfig } from '../../general/GeneralProxy';
-import {
-    ANCIENT_UI } from '../../common/AudioManager';
 import LoginCommand from '../../login/LoginCommand';
 import { EventMgr } from '../../utils/EventMgr';
 import MapUICommand from './MapUICommand';

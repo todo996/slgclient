@@ -2,8 +2,6 @@ import { _decorator, Component, Label, ScrollView, Button, Color, EditBox, Graph
 const { ccclass, property } = _decorator;
 
 import { LogicEvent } from '../common/LogicEvent';
-import {
-    ANCIENT_UI } from '../common/AudioManager';
 import { EventMgr } from '../utils/EventMgr';
 import ListLogic from '../utils/ListLogic';
 import UnionCommand from './UnionCommand';

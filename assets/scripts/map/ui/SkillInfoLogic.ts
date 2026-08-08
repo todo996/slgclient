@@ -6,8 +6,6 @@ import { LogicEvent } from '../../common/LogicEvent';
 import { SkillConf, SkillOutline } from '../../config/skill/Skill';
 import GeneralCommand from '../../general/GeneralCommand';
 import { GeneralData } from '../../general/GeneralProxy';
-import {
-    ANCIENT_UI } from '../../common/AudioManager';
 import SkillCommand from '../../skill/SkillCommand';
 import { Skill } from '../../skill/SkillProxy';
 import { EventMgr } from '../../utils/EventMgr';
