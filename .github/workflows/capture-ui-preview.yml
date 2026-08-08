@@ -1,0 +1,64 @@
+name: Capture rebuilt UI preview
+
+on:
+  push:
+    branches:
+      - feat/modern-vietnamese-ui-overhaul
+    paths:
+      - .github/workflows/capture-ui-preview.yml
+
+permissions:
+  contents: read
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout generated preview build
+        uses: actions/checkout@v4
+        with:
+          ref: build-web-preview
+          path: preview
+          fetch-depth: 1
+
+      - name: Start local preview server
+        shell: bash
+        run: |
+          cd preview/build/web-desktop
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/slg-preview-server.log 2>&1 &
+          echo $! > /tmp/slg-preview-server.pid
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:4173/ >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/slg-preview-server.log
+          exit 1
+
+      - name: Capture 1536x864 runtime screenshot
+        shell: bash
+        run: |
+          CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          if [ -z "$CHROME" ]; then
+            echo "Chrome/Chromium not present on runner" >&2
+            exit 1
+          fi
+          mkdir -p screenshots
+          "$CHROME" \
+            --headless=new \
+            --no-sandbox \
+            --disable-gpu \
+            --hide-scrollbars \
+            --window-size=1536,864 \
+            --virtual-time-budget=15000 \
+            --screenshot=screenshots/runtime-1536x864.png \
+            http://127.0.0.1:4173/
+          test -s screenshots/runtime-1536x864.png
+
+      - name: Upload screenshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-preview-runtime
+          path: screenshots/runtime-1536x864.png
+          if-no-files-found: error
+          retention-days: 2
