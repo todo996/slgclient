@@ -1,0 +1,193 @@
+name: Apply general roster UI overhaul once
+
+on:
+  push:
+    branches:
+      - feat/modern-vietnamese-ui-overhaul
+    paths:
+      - .github/workflows/apply-general-ui-overhaul.yml
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/modern-vietnamese-ui-overhaul
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Restyle real general list and cards
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          @'
+          const fs = require('fs');
+
+          const FILES = ['assets/prefab/GeneralList.prefab', 'assets/prefab/GeneralItem.prefab'];
+          const C = {
+            gold: { __type__: 'cc.Color', r: 231, g: 190, b: 109, a: 255 },
+            text: { __type__: 'cc.Color', r: 239, g: 225, b: 198, a: 255 },
+            muted: { __type__: 'cc.Color', r: 177, g: 163, b: 139, a: 255 },
+            panel: { __type__: 'cc.Color', r: 24, g: 19, b: 15, a: 248 },
+            panel2: { __type__: 'cc.Color', r: 45, g: 32, b: 22, a: 255 },
+            button: { __type__: 'cc.Color', r: 89, g: 59, b: 29, a: 255 },
+            red: { __type__: 'cc.Color', r: 120, g: 45, b: 38, a: 255 },
+          };
+          const VI = [
+            ['武将', 'Tướng'], ['将领', 'Tướng'], ['图鉴', 'Danh sách tướng'], ['转换', 'Chuyển đổi'],
+            ['分解', 'Chuyển đổi'], ['返回', 'Quay lại'], ['关闭', 'Đóng'], ['确定', 'Xác nhận'],
+            ['取消', 'Hủy'], ['阵容', 'Đội hình'], ['队伍', 'Đội hình'], ['上阵', 'Ra trận'],
+            ['兵种', 'Binh chủng'], ['等级', 'Cấp'], ['阵营', 'Phe'], ['统御', 'Thống lĩnh'],
+            ['汉', 'Hán'], ['群', 'Quần Hùng'], ['魏', 'Ngụy'], ['蜀', 'Thục'], ['吴', 'Ngô'],
+          ];
+
+          function tr(s) {
+            if (typeof s !== 'string') return s;
+            let out = s;
+            for (const [a,b] of VI) out = out.split(a).join(b);
+            return out;
+          }
+
+          function index(data) {
+            const nodes = new Map();
+            data.forEach((e,i) => { if (e?.__type__ === 'cc.Node') nodes.set(i,e); });
+            const comps = id => (nodes.get(id)?._components || []).map(r => data[r.__id__]).filter(Boolean);
+            const children = id => (nodes.get(id)?._children || []).map(r => r.__id__);
+            const descendants = (id, out=[]) => { for (const c of children(id)) { out.push(c); descendants(c,out); } return out; };
+            return {nodes, comps, children, descendants};
+          }
+
+          function handlers(data) {
+            return data.filter(e => e?.__type__ === 'cc.ClickEvent').map(e => ({component:e._componentId, handler:e.handler, custom:e.customEventData, target:e.target?.__id__ ?? -1}));
+          }
+
+          function setSize(ix,id,w,h) {
+            for (const c of ix.comps(id)) if (c.__type__ === 'cc.UITransform' && c._contentSize) { c._contentSize.width=w; c._contentSize.height=h; }
+          }
+          function setPos(ix,id,x,y) { const n=ix.nodes.get(id); if(n?._lpos){n._lpos.x=x;n._lpos.y=y;} }
+          function labels(ix,id) {
+            const out=[];
+            for (const n of [id,...ix.descendants(id)]) for (const c of ix.comps(n)) if(c.__type__==='cc.Label') out.push(c);
+            return out;
+          }
+          function styleLabel(l, title=false, size=null) {
+            l._string=tr(l._string||''); l._font=null; l._isSystemFontUsed=true;
+            l._fontFamily=title?'Times New Roman':'Arial'; l._color={...(title?C.gold:C.text)};
+            l._enableWrapText=false;
+            if(size){l._fontSize=size;l._actualFontSize=size;l._lineHeight=Math.ceil(size*1.2);}
+          }
+          function tint(ix,id,color,deep=false) {
+            const ids=deep?[id,...ix.descendants(id)]:[id];
+            for(const nid of ids){
+              const name=(ix.nodes.get(nid)?._name||'').toLowerCase();
+              const art=/pic|head|portrait|general|hero|star|skill|icon/.test(name);
+              for(const c of ix.comps(nid)) if(c.__type__==='cc.Sprite'&&!art)c._color={...color};
+            }
+          }
+
+          function restyleList(path) {
+            const data=JSON.parse(fs.readFileSync(path,'utf8')); const before=JSON.stringify(handlers(data)); const ix=index(data);
+            data.forEach(e=>{ if(e?.__type__==='cc.Label') styleLabel(e); });
+
+            // Fullscreen mask and main panel become charcoal/bronze rather than the old bright chrome.
+            for(const [id,n] of ix.nodes){
+              const name=(n._name||'').toLowerCase();
+              if(name==='mask') { tint(ix,id,C.panel,false); for(const c of ix.comps(id)) if(c.__type__==='cc.UIOpacity') c._opacity=205; }
+              if(/background|diban|panel|frame|kuang/.test(name)) tint(ix,id,C.panel2,false);
+              if(name==='titlelab') { setPos(ix,id,0,310); for(const l of labels(ix,id)) styleLabel(l,'TƯỚNG',36,true); }
+            }
+
+            // Existing virtualized real-data grid already uses GeneralItemLogic. Match the 5-column reference layout.
+            for(const e of data){
+              if(e && e.itemLogicScriptName==='GeneralItemLogic'){
+                e.columnCount=5; e.autoColumnCount=false; e.spaceColumn=18; e.spaceRow=18; e.scale=0.54; e.updateInterval=0.06;
+              }
+            }
+            for(const [id,n] of ix.nodes){
+              const hasScroll=ix.comps(id).some(c=>c.__type__==='cc.ScrollView');
+              if(hasScroll){ setPos(ix,id,0,-10); setSize(ix,id,1120,575); }
+            }
+
+            // Style only real buttons and name them from their existing ClickEvents. Never add new filters/actions.
+            for(const e of data){
+              if(e?.__type__!=='cc.Button'||!e.node) continue;
+              const id=e.node.__id__; tint(ix,id,C.button,true);
+              const refs=Array.isArray(e.clickEvents)?e.clickEvents:[];
+              const ev=refs.map(r=>data[r.__id__]).find(v=>v?.__type__==='cc.ClickEvent');
+              if(!ev) continue;
+              const ls=labels(ix,id);
+              let text=null;
+              if(ev.handler==='onClickClose') text='Đóng';
+              else if(ev.handler==='onClickConvert') text='Chuyển đổi';
+              else if(ev.handler==='onTuJianConvert') text='Danh sách tướng';
+              if(text&&ls.length){ styleLabel(ls[0],false,17); ls[0]._string=text; }
+              if(ev.handler==='onClickClose'){ setPos(ix,id,585,310); setSize(ix,id,64,48); tint(ix,id,C.red,true); }
+            }
+
+            // Count label remains bound to cntLab and gets a compact owned-count treatment.
+            for(const e of data){
+              if(e && e.cntLab?.__id__!==undefined){ const lab=data[e.cntLab.__id__]; if(lab?.__type__==='cc.Label'){ styleLabel(lab,false,17); lab._color={...C.muted}; } }
+            }
+
+            const after=JSON.stringify(handlers(data)); if(before!==after) throw new Error('GeneralList ClickEvent wiring changed.');
+            const cjk=data.filter(e=>e?.__type__==='cc.Label').map(e=>e._string||'').filter(s=>/[\u3400-\u9fff]/.test(s));
+            if(cjk.length) throw new Error('GeneralList still has CJK labels: '+[...new Set(cjk)].join(' | '));
+            fs.writeFileSync(path,JSON.stringify(data,null,2)+'\n','utf8');
+          }
+
+          function restyleItem(path) {
+            const data=JSON.parse(fs.readFileSync(path,'utf8')); const before=JSON.stringify(handlers(data)); const ix=index(data);
+            data.forEach(e=>{ if(e?.__type__==='cc.Label') styleLabel(e); });
+
+            for(const [id,n] of ix.nodes){
+              const name=(n._name||'').toLowerCase();
+              if(name==='bg'){ tint(ix,id,C.panel2,false); setSize(ix,id,352,480); }
+              // Never tint the real portrait or stars.
+              if(/pic|head_wrap|star/.test(name)) continue;
+              if(/frame|kuang|bottom|diban|background/.test(name)) tint(ix,id,C.panel,false);
+            }
+
+            // Emphasize fields that GeneralItemLogic fills with live data.
+            for(const e of data){
+              if(!e || typeof e!=='object') continue;
+              for(const key of ['nameLabel','lvLabel','campLabel','armLabel','costLabel']){
+                const ref=e[key]; if(!ref||ref.__id__===undefined) continue;
+                const lab=data[ref.__id__]; if(lab?.__type__!=='cc.Label') continue;
+                styleLabel(lab,key==='nameLabel',key==='nameLabel'?25:17);
+                if(key==='nameLabel') lab._color={...C.gold};
+                if(key==='campLabel'||key==='armLabel') lab._color={...C.muted};
+              }
+            }
+
+            const after=JSON.stringify(handlers(data)); if(before!==after) throw new Error('GeneralItem ClickEvent wiring changed.');
+            const cjk=data.filter(e=>e?.__type__==='cc.Label').map(e=>e._string||'').filter(s=>/[\u3400-\u9fff]/.test(s));
+            if(cjk.length) throw new Error('GeneralItem still has CJK labels: '+[...new Set(cjk)].join(' | '));
+            fs.writeFileSync(path,JSON.stringify(data,null,2)+'\n','utf8');
+          }
+
+          restyleList(FILES[0]); restyleItem(FILES[1]);
+          '@ | Set-Content -Path "$env:RUNNER_TEMP/apply-general-ui.cjs" -Encoding utf8
+          node "$env:RUNNER_TEMP/apply-general-ui.cjs"
+
+      - name: Verify logic and server wiring are untouched
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          git diff --exit-code HEAD -- assets/scripts assets/scenes
+          $diff = git diff -- assets/prefab/GeneralList.prefab assets/prefab/GeneralItem.prefab
+          if ($diff -match '"handler"|"_componentId"|"customEventData"|"itemLogicScriptName"') { throw 'General prefab migration changed gameplay wiring.' }
+
+      - name: Commit prefab-only general UI changes
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/prefab/GeneralList.prefab assets/prefab/GeneralItem.prefab
+          if (git diff --cached --quiet) { throw 'General UI migration produced no changes.' }
+          git commit -m "feat(ui): rebuild real general roster and hero cards"
+          git push origin HEAD:feat/modern-vietnamese-ui-overhaul
